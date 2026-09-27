@@ -942,5 +942,125 @@ console.log('[FIREBASE] Модуль синхронизации заказов �
 
 })();
 </script>
+  <script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, push, onValue }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+/* ЗАМЕНИТЕ НА ВАШ КОНФИГ */
+const firebaseConfig = {
+
+  apiKey: "AIzaSyAEg7bBrcHTPKztpdu239imUYIjQQkbfRU",
+
+  authDomain: "hydra-386cd.firebaseapp.com",
+
+  databaseURL: "https://hydra-386cd-default-rtdb.europe-west1.firebasedatabase.app",
+
+  projectId: "hydra-386cd",
+
+  storageBucket: "hydra-386cd.firebasestorage.app",
+
+  messagingSenderId: "935855682328",
+
+  appId: "1:935855682328:web:29d2871866b86ef5ac246d",
+
+  measurementId: "G-LY95R9B548"
+
+};
+
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const ordersRef = ref(db, 'orders');
+
+/* Время */
+function timeAgo(t){
+  const s = Math.floor((Date.now() - t) / 1000);
+  if (s < 60) return s + ' сек назад';
+  const m = Math.floor(s / 60);
+  if (m < 60) return m + ' мин назад';
+  return Math.floor(m / 60) + ' ч назад';
+}
+
+/* Показываем заказы */
+onValue(ordersRef, (snap) => {
+  const list = document.getElementById('ordersList');
+  if (!list) return;
+
+  const data = snap.val();
+  if (!data){
+    list.innerHTML = '<div class="orders-empty">Пока заказов нет. Будьте первым!</div>';
+    return;
+  }
+
+  const arr = Object.values(data).sort((a, b) => b.time - a.time);
+
+  list.innerHTML = arr.map(o =>
+    '<div class="ord">' +
+      '<div class="ord-top">' +
+        '<div class="ord-name"><span class="av">' + o.name[0].toUpperCase() + '</span>' + o.name + '</div>' +
+        '<div class="ord-time">' + timeAgo(o.time) + '</div>' +
+      '</div>' +
+      '<div class="ord-addr">📍 ' + o.address + '</div>' +
+      '<div class="ord-items">' +
+        o.items.map(i => '<div class="ord-item"><span><span class="q">' + i.qty + '×</span>' + i.name + '</span><span>' + (i.price * i.qty) + ' ₽</span></div>').join('') +
+      '</div>' +
+      '<div class="ord-bot">' +
+        '<span class="ord-code">' + o.code + '</span>' +
+        '<span class="ord-total">' + o.total.toLocaleString('ru-RU') + ' ₽</span>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+});
+
+/* Отправляем заказ при оформлении */
+document.addEventListener('click', async (e) => {
+  if (!e.target.closest('#checkoutBtn')) return;
+
+  const rows = document.querySelectorAll('.cart-row, .row');
+  const items = [];
+
+  rows.forEach(row => {
+    const nameEl = row.querySelector('h4');
+    const qtyEl = row.querySelector('.qty, .q');
+    const priceEl = row.querySelector('.unit, .u');
+
+    if (!nameEl || !qtyEl) return;
+
+    const name = nameEl.textContent.trim();
+    const qty = parseInt(qtyEl.textContent.replace(/\D/g, ''), 10) || 1;
+    let price = 0;
+    if (priceEl){
+      const m = priceEl.textContent.match(/\d+/);
+      if (m) price = parseInt(m[0], 10);
+    }
+
+    if (name) items.push({ name, price, qty });
+  });
+
+  if (!items.length) return;
+
+  const name = prompt('Ваше имя:', 'Гость');
+  if (!name) return;
+  const address = prompt('Адрес:', '');
+  if (!address) return;
+
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const code = 'HYDRA-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+
+  await push(ordersRef, {
+    name: name.trim().slice(0, 24),
+    address: address.trim().slice(0, 120),
+    code,
+    items,
+    total,
+    time: Date.now()
+  });
+}, true);
+
+console.log('[HYDRA] Firebase подключён');
+</script>
 </body>
 </html>
