@@ -5804,5 +5804,176 @@ footer{
   /* ничего — они в основном заданы через CSS выше */
 }
 </style>
-    
+   <body>
+     <style>
+/* ====== ОРАНЖЕВАЯ ПАЛИТРА ====== */
+
+body, html{
+  background:#1a0d05 !important;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,140,40,.14) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255,170,60,.12) 0%, transparent 45%) !important;
+  color:#ffeedd !important;
+}
+
+/* Шапка */
+header, .topbar{
+  background:rgba(26,13,5,.92) !important;
+  border-bottom:1px solid #3a2010 !important;
+}
+
+/* Логотип */
+.brand-mark, .mark, .logo-mark{
+  background:linear-gradient(135deg,#ff8c1a,#ffb84d) !important;
+  box-shadow:0 0 20px rgba(255,140,26,.5) !important;
+  color:#1a0d05 !important;
+}
+
+/* Кнопка корзины */
+#cartBtn, .cart-btn, .cart-trigger, .cart-trigger{
+  background:linear-gradient(135deg,#ff8c1a,#ffaa33) !important;
+  color:#1a0d05 !important;
+  box-shadow:0 6px 20px rgba(255,140,26,.45) !important;
+}
+
+/* Все заголовки */
+h1, h2, h3, .hero, .section-title, .section-head h2{
+  color:#ffeedd !important;
+  background:none !important;
+  -webkit-text-fill-color:#ffeedd !important;
+}
+h1 em, .hero em{
+  color:#ffb84d !important;
+  background:none !important;
+  -webkit-text-fill-color:#ffb84d !important;
+}
+h2 span, .section-head h2 span{
+  color:#ff8c1a !important;
+}
+
+/* Акценты */
+.accent, .cat, .product-cat{
+  color:#ff8c1a !important;
+}
+
+/* Карточки */
+.product, .card{
+  background:linear-gradient(160deg,#2a1508,#1a0d05) !important;
+  border:1px solid #3a2010 !important;
+}
+.product:hover, .card:hover{
+  border-color:#ff8c1a !important;
+  box-shadow:0 20px 40px -20px rgba(255,140,26,.6) !important;
+}
+
+/* Кнопки «В корзину» */
+.add-btn, .add, .btn-primary{
+  border-color:#ff8c1a !important;
+  color:#ffb84d !important;
+}
+.add-btn:hover, .add:hover, .btn-primary:hover{
+  background:#ff8c1a !important;
+  color:#1a0d05 !important;
+  box-shadow:0 0 24px rgba(255,140,26,.6) !important;
+}
+
+/* Цены */
+.price, .product-price{
+  color:#ffb84d !important;
+  background:none !important;
+  -webkit-text-fill-color:#ffb84d !important;
+}
+.price small, .product-price small{
+  color:#ff8c1a !important;
+}
+
+/* Корзина */
+.drawer, .cart-panel, .cart{
+  background:#201005 !important;
+  border-left:1px solid #3a2010 !important;
+}
+.dtop, .cart-top{ border-bottom:1px solid #3a2010 !important; }
+.dbot, .cart-bottom{ background:#150a03 !important; border-top:1px solid #3a2010 !important; }
+
+/* Кнопки +/- в корзине */
+.cnt button, .counter button, .qty-btn{
+  background:rgba(255,140,26,.15) !important;
+  border-color:rgba(255,140,26,.4) !important;
+  color:#ffb84d !important;
+}
+.cnt button:hover, .counter button:hover{
+  background:#ff8c1a !important;
+  color:#1a0d05 !important;
+}
+
+/* Итог */
+.sum, .cart-total-value, .total-line .sum{
+  color:#ffb84d !important;
+  background:none !important;
+  -webkit-text-fill-color:#ffb84d !important;
+}
+
+/* Кнопка «Оформить» */
+.checkout, .checkout-btn, .co{
+  background:linear-gradient(135deg,#ff8c1a,#ffaa33) !important;
+  color:#1a0d05 !important;
+  box-shadow:0 10px 30px rgba(255,140,26,.5) !important;
+}
+
+/* Меню */
+nav a{ color:#c09070 !important; }
+nav a:hover{ color:#ff8c1a !important; background:rgba(255,140,26,.12) !important; }
+
+/* Заказы */
+.order-card, .order{
+  background:linear-gradient(160deg,#2a1508,#1a0d05) !important;
+  border-color:#3a2010 !important;
+}
+.order-card::before, .order::before{
+  background:linear-gradient(90deg,#ff8c1a,#ffb84d,#ffd97a,#ffb84d,#ff8c1a) !important;
+}
+
+/* Плашки-уведомления */
+.toast, #hydraToast{
+  background:linear-gradient(135deg,#ff8c1a,#ffaa33) !important;
+  color:#1a0d05 !important;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff8c1a,#ffaa33) !important;
+}
+
+/* Футер */
+footer{
+  border-top:1px solid #3a2010 !important;
+  color:#8a5a30 !important;
+}
+
+/* Цены в корзине — оранжевым */
+.line-total, .lt{
+  color:#ffb84d !important;
+  background:none !important;
+  -webkit-text-fill-color:#ffb84d !important;
+}
+
+/* Названия товаров в корзине */
+.row-head h4, .cart-row-head h4{
+  color:#ffeedd !important;
+}
+
+/* Счётчик */
+.cart-count, .cart-top-count{
+  background:rgba(255,140,26,.18) !important;
+  border-color:rgba(255,140,26,.45) !important;
+  color:#ffb84d !important;
+}
+
+/* Иконки новых товаров в корзине */
+.cart-row-thumb, .row-thumb{
+  background:linear-gradient(135deg,#ff8c1a,#7a3a08) !important;
+  border:1px solid #ff8c1a !important;
+  box-shadow:0 0 12px rgba(255,140,26,.3) !important;
+}
+</style>
   <html>
