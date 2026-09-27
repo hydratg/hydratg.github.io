@@ -5376,4 +5376,70 @@ body{
   <html>
     
   </html>
-</body>
+</body><script>
+(function(){
+
+  /* Убираем все всплывающие окна на этой странице */
+  window.alert = function(){};
+  window.confirm = function(){ return true; };
+  window.prompt = function(msg, def){ 
+    // Возвращаем значения по умолчанию без диалога
+    if (msg && msg.toLowerCase().indexOf('имя') !== -1) return 'Гость';
+    if (msg && msg.toLowerCase().indexOf('адрес') !== -1) return 'Адрес не указан';
+    return def || '';
+  };
+
+  /* Создаём всплывашку-плашку (toast) внизу экрана */
+  if (!document.getElementById('hydraToast')){
+    var t = document.createElement('div');
+    t.id = 'hydraToast';
+    t.style.cssText =
+      'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(140px);' +
+      'background:linear-gradient(135deg,#ff7a1a,#ff2d95);color:#0a0608;' +
+      'padding:14px 28px;border-radius:100px;font-weight:800;font-size:14px;' +
+      'z-index:9999;opacity:0;transition:transform .35s,opacity .3s;' +
+      'box-shadow:0 15px 40px rgba(255,45,149,.5);pointer-events:none;' +
+      'font-family:system-ui,sans-serif;white-space:nowrap;';
+    document.body.appendChild(t);
+  }
+
+  var toast = document.getElementById('hydraToast');
+  var toastTimer;
+
+  window.hydraToast = function(msg){
+    toast.textContent = msg;
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    toast.style.opacity = '1';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){
+      toast.style.transform = 'translateX(-50%) translateY(140px)';
+      toast.style.opacity = '0';
+    }, 2000);
+  };
+
+  /* Перехватываем клики по кнопкам и показываем плашку вместо alert */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-add], .add-btn, .checkout, .checkout-btn, #checkoutBtn, .clear, #clearBtn');
+    if (!btn) return;
+
+    var name = btn.getAttribute('data-name');
+    if (name){
+      window.hydraToast('✓ Добавлено: ' + name);
+      return;
+    }
+
+    var text = (btn.textContent || '').toLowerCase();
+    if (text.indexOf('оформ') !== -1){
+      window.hydraToast('✓ Заказ оформлен!');
+    } else if (text.indexOf('очист') !== -1){
+      window.hydraToast('✓ Корзина очищена');
+    } else if (text.indexOf('корзин') !== -1){
+      window.hydraToast('Корзина открыта');
+    }
+  }, true);
+
+})();
+</script>
+  <html>
+    
+  </html>
