@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HYDRA BLACK · пиццерия</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --neon: #00ffd5;
+  --neon-2: #ff2d75;
+  --bg-dark: #0a0a0f;
+  --bg-card: #12121a;
+  --line: #1e1e2e;
+  --muted: #6b6b80;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--bg-dark);
+  color: #fff;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    linear-gradient(rgba(0, 255, 213, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 213, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============ HEADER ============ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--neon), var(--neon-2));
+  display: grid;
+  place-items: center;
+  color: #0a0a0f;
+  font-size: 22px;
+  font-weight: 900;
+  box-shadow: 0 0 20px rgba(0, 255, 213, 0.5);
+}
+
+.brand-text .accent { color: var(--neon); }
+.brand-text .thin { font-weight: 300; color: #fff; }
+
+.geo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  font-size: 14px;
+  color: #c0c0d0;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-card);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.nav-menu a {
+  color: #a0a0b0;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.nav-menu a:hover {
+  color: var(--neon);
+  background: rgba(0, 255, 213, 0.08);
+}
+
+.cart-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--neon), #00c9a7);
+  color: #0a0a0f;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 0 24px rgba(0, 255, 213, 0.35);
+}
+
+.cart-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 32px rgba(0, 255, 213, 0.6);
+}
+
+.cart-trigger.bump {
+  animation: bumpAnim 0.4s ease;
+}
+
+@keyframes bumpAnim {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15) rotate(-3deg); }
+}
+
+/* ============ HERO ============ */
+.hero-new {
+  padding: 70px 0 50px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.hero-label {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 22px;
+  padding: 6px 14px;
+  border: 1px solid rgba(0, 255, 213, 0.3);
+  border-radius: 4px;
+}
+
+.hero-grid h1 {
+  font-size: 68px;
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -3px;
+  margin-bottom: 24px;
+}
+
+.hero-grid h1 .n1 { color: var(--neon); }
+
+.hero-grid h1 .n2 {
+  color: var(--neon-2);
+  text-shadow: 0 0 30px rgba(255, 45, 117, 0.5);
+}
+
+.hero-grid p {
+  color: var(--muted);
+  font-size: 17px;
+  max-width: 520px;
+  margin-bottom: 30px;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pill-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 100px;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  color: #ddd;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pill-outline .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hero-visual {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.hero-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 255, 213, 0.3);
+  animation: rotate 30s linear infinite;
+}
+
+.hero-ring.r2 {
+  inset: 12%;
+  border-color: rgba(255, 45, 117, 0.3);
+  animation-duration: 22s;
+  animation-direction: reverse;
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+.hero-emoji {
+  font-size: 200px;
+  filter: drop-shadow(0 20px 40px rgba(0, 255, 213, 0.4));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* ============ ТОВАРЫ ============ */
+.products-section {
+  padding: 30px 0 60px;
+  scroll-margin-top: 100px;
+}
+
+.section-head-new {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.section-head-new h2 {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+
+.section-head-new h2 .slash { color: var(--neon); font-weight: 300; }
+.section-head-new h2 .pink { color: var(--neon-2); }
+
+.section-head-new .hint {
+  color: var(--muted);
+  font-size: 14px;
+  max-width: 300px;
+  text-align: right;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.product {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.product:hover {
+  transform: translateY(-6px);
+  border-color: rgba(0, 255, 213, 0.4);
+  box-shadow: 0 20px 40px -20px rgba(0, 255, 213, 0.4);
+}
+
+.product-thumb {
+  aspect-ratio: 16 / 11;
+  display: grid;
+  place-items: center;
+  font-size: 90px;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, var(--bg-card) 100%);
+  pointer-events: none;
+}
+
+.product[data-type="pizza-pepperoni"] .product-thumb { background: radial-gradient(circle at 50% 40%, #6b1f0c, #200804); }
+.product[data-type="pizza-margherita"] .product-thumb { background: radial-gradient(circle at 50% 40%, #3f5a2e, #0f1e08); }
+.product[data-type="drink-cola"] .product-thumb { background: radial-gradient(circle at 50% 40%, #5a0808, #180202); }
+.product[data-type="drink-orange"] .product-thumb { background: radial-gradient(circle at 50% 40%, #8a4d00, #2b1400); }
+
+.product[data-type="pizza-pepperoni"] .product-thumb::before,
+.product[data-type="pizza-margherita"] .product-thumb::before { content: "🍕"; }
+.product[data-type="drink-cola"] .product-thumb::before { content: "🥤"; }
+.product[data-type="drink-orange"] .product-thumb::before { content: "🧃"; }
+
+.product-body {
+  padding: 22px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-cat {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 8px;
+}
+
+.product h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.product-desc {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.product-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.product-price {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: #fff;
+}
+
+.product-price small {
+  font-size: 14px;
+  color: var(--neon);
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.product-weight {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 100px;
+  border: 1px solid var(--line);
+}
+
+.add-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--neon);
+  background: transparent;
+  color: var(--neon);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  background: var(--neon);
+  color: #0a0a0f;
+  box-shadow: 0 0 24px rgba(0, 255, 213, 0.5);
+}
+
+.add-btn:active { transform: scale(0.97); }
+
+/* ============ О НАС ============ */
+.about-new {
+  padding: 60px 0;
+  scroll-margin-top: 100px;
+}
+
+.about-panel {
+  background: linear-gradient(135deg, rgba(0, 255, 213, 0.06), rgba(255, 45, 117, 0.06));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 60px 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-panel::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 255, 213, 0.15), transparent 70%);
+  border-radius: 50%;
+}
+
+.about-panel::after {
+  content: "";
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 45, 117, 0.15), transparent 70%);
+  border-radius: 50%;
+}
+
+.about-content { position: relative; z-index: 1; }
+
+.about-content .tag {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--neon-2);
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.about-content h2 {
+  font-size: 46px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 22px;
+}
+
+.about-content h2 .hl {
+  color: var(--neon);
+}
+
+.about-content p {
+  color: #b0b0c0;
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.about-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  border-radius: 16px;
+  background: rgba(10, 10, 15, 0.6);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.badge-row:hover {
+  border-color: rgba(0, 255, 213, 0.4);
+  transform: translateX(6px);
+}
+
+.badge-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  background: rgba(0, 255, 213, 0.1);
+  border: 1px solid rgba(0, 255, 213, 0.3);
+  flex-shrink: 0;
+}
+
+.badge-row:nth-child(2) .badge-icon {
+  background: rgba(255, 45, 117, 0.1);
+  border-color: rgba(255, 45, 117, 0.3);
+}
+
+.badge-row:nth-child(3) .badge-icon {
+  background: rgba(255, 200, 0, 0.1);
+  border-color: rgba(255, 200, 0, 0.3);
+}
+
+.badge-text h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.badge-text p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ============ КОРЗИНА ============ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.overlay.open { opacity: 1; visibility: visible; }
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 460px;
+  background: #0d0d14;
+  border-left: 1px solid var(--line);
+  z-index: 210;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -30px 0 80px rgba(0, 255, 213, 0.08);
+}
+
+.cart-drawer.open { transform: translateX(0); }
+
+.cart-top {
+  padding: 24px 26px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.cart-top h3 {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-top h3 .neon { color: var(--neon); }
+
+.cart-top-count {
+  font-size: 12px;
+  background: rgba(0, 255, 213, 0.12);
+  border: 1px solid rgba(0, 255, 213, 0.3);
+  color: var(--neon);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+}
+
+.close-x {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.close-x:hover {
+  background: rgba(255, 45, 117, 0.15);
+  border-color: rgba(255, 45, 117, 0.4);
+  color: var(--neon-2);
+  transform: rotate(90deg);
+}
+
+.cart-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 26px;
+}
+
+.cart-empty-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.cart-empty-state .ico {
+  font-size: 70px;
+  opacity: 0.4;
+  margin-bottom: 20px;
+}
+
+.cart-empty-state p {
+  font-size: 17px;
+  color: #888;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.cart-empty-state small {
+  color: #555;
+  font-size: 13px;
+}
+
+.cart-row {
+  display: flex;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  animation: rowIn 0.3s ease;
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cart-row-thumb {
+  width: 68px;
+  height: 68px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  border: 1px solid var(--line);
+}
+
+.cart-row[data-type="pizza-pepperoni"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #6b1f0c, #200804); }
+.cart-row[data-type="pizza-margherita"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #3f5a2e, #0f1e08); }
+.cart-row[data-type="drink-cola"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #5a0808, #180202); }
+.cart-row[data-type="drink-orange"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #8a4d00, #2b1400); }
+
+.cart-row[data-type="pizza-pepperoni"] .cart-row-thumb::before,
+.cart-row[data-type="pizza-margherita"] .cart-row-thumb::before { content: "🍕"; }
+.cart-row[data-type="drink-cola"] .cart-row-thumb::before { content: "🥤"; }
+.cart-row[data-type="drink-orange"] .cart-row-thumb::before { content: "🧃"; }
+
+.cart-row-main { flex: 1; min-width: 0; }
+
+.cart-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.cart-row-head h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cart-row-head .unit-price {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.del-btn {
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  font-family: inherit;
+  transition: color 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.del-btn:hover { color: var(--neon-2); transform: scale(1.2); }
+
+.cart-row-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 4px;
+}
+
+.counter button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  transition: all 0.15s;
+}
+
+.counter button:hover {
+  background: rgba(0, 255, 213, 0.15);
+  border-color: rgba(0, 255, 213, 0.4);
+  color: var(--neon);
+}
+
+.counter button:active { transform: scale(0.9); }
+
+.counter .qty {
+  min-width: 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.line-total {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--neon);
+  white-space: nowrap;
+}
+
+.cart-bottom {
+  padding: 22px 26px 26px;
+  border-top: 1px solid var(--line);
+  background: #0a0a0f;
+  flex-shrink: 0;
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
+}
+
+.total-line .lbl {
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.total-line .sum {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--neon);
+  letter-spacing: -1.5px;
+  text-shadow: 0 0 20px rgba(0, 255, 213, 0.4);
+}
+
+.checkout {
+  width: 100%;
+  padding: 17px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, var(--neon), #00c9a7);
+  color: #0a0a0f;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 10px 30px rgba(0, 255, 213, 0.25);
+}
+
+.checkout:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 14px 40px rgba(0, 255, 213, 0.5);
+}
+
+.checkout:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.clear-all {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: #888;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.clear-all:hover {
+  background: rgba(255, 45, 117, 0.1);
+  color: var(--neon-2);
+  border-color: rgba(255, 45, 117, 0.35);
+}
+
+/* ============ TOAST ============ */
+.toast-msg {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(140px);
+  background: linear-gradient(135deg, var(--neon), #00c9a7);
+  color: #0a0a0f;
+  padding: 15px 32px;
+  border-radius: 100px;
+  font-weight: 800;
+  font-size: 14px;
+  z-index: 300;
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+  box-shadow: 0 15px 40px rgba(0, 255, 213, 0.6);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast-msg.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ============ FOOTER ============ */
+.foot {
+  padding: 40px 0 50px;
+  border-top: 1px solid var(--line);
+  color: #4a4a5a;
+  font-size: 13px;
+  margin-top: 30px;
+}
+
+.foot-inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.foot-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.foot-links a {
+  color: #6b6b80;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.foot-links a:hover { color: var(--neon); }
+
+/* ============ АДАПТИВ ============ */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  .hero-visual { max-width: 320px; margin: 0 auto; }
+  .hero-grid h1 { font-size: 48px; letter-spacing: -2px; }
+  .hero-emoji { font-size: 140px; }
+  .about-panel { grid-template-columns: 1fr; padding: 40px 30px; gap: 30px; }
+  .about-content h2 { font-size: 34px; }
+  .section-head-new h2 { font-size: 32px; }
+}
+
+@media (max-width: 600px) {
+  .topbar-inner { justify-content: center; }
+  .nav-menu { order: 3; width: 100%; justify-content: center; }
+  .hero-grid h1 { font-size: 36px; }
+  .section-head-new .hint { text-align: left; }
+  .cart-drawer { max-width: 100%; }
+  .foot-inner { flex-direction: column; align-items: flex-start; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a4a; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">H</div>
+      <div class="brand-text">
+        <span class="accent">HYDRA</span>
+        <span class="thin">BLACK</span>
+      </div>
+    </div>
+    <div class="geo">📍 Санкт-Петербург</div>
+    <nav class="nav-menu">
+      <a href="#pizza">Пицца</a>
+      <a href="#drinks">Напитки</a>
+      <a href="#about">О нас</a>
+    </nav>
+    <button class="cart-trigger" id="cartTrigger" type="button">
+      🛒 Корзина · <span id="headerTotal">0</span> ₽
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero-new">
+    <div class="wrap hero-grid">
+      <div class="hero-content">
+        <span class="hero-label">// ЛУЧШАЯ ПИЦЦА В ГОРОДЕ</span>
+        <h1>
+          Тёмная сторона <span class="n1">вкуса</span><br>
+          с доставкой <span class="n2">30 мин</span>
+        </h1>
+        <p>Пеперонни и Маргарита, ледяная Кока-Кола и свежевыжатый апельсиновый сок. Готовим на дровах — доставляем горячим.</p>
+        <div class="hero-cta-row">
+          <a href="#pizza" class="pill-outline" style="text-decoration:none; color:#ddd;">
+            <span class="dot"></span> Открыть меню
+          </a>
+          <span class="pill-outline">🔥 Бесплатно от 700 ₽</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-ring"></div>
+        <div class="hero-ring r2"></div>
+        <div class="hero-emoji">🍕</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ПИЦЦА ============ -->
+  <section class="products-section" id="pizza">
+    <div class="wrap">
+      <div class="section-head-new">
+        <h2><span class="slash">//</span> ПИЦЦА <span class="pink">HYDRA</span></h2>
+        <div class="hint">Готовим на дровах · тесто 48 часов · свежие ингредиенты</div>
+      </div>
+      <div class="products-grid">
+        <!-- Пеперонни -->
+        <article class="product" data-type="pizza-pepperoni">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Пицца · 30 см</div>
+            <h3>Пеперонни</h3>
+            <p class="product-desc">Острая пепперони, моцарелла, томатный соус, смесь итальянских трав.</p>
+            <div class="product-meta">
+              <div class="product-price">599<small>₽</small></div>
+              <div class="product-weight">570 г</div>
+            </div>
+            <button class="add-btn" type="button"
+              data-add
+              data-id="pepperoni"
+              data-name="Пеперонни"
+              data-price="599"
+              data-type="pizza-pepperoni">+ В корзину</button>
+          </div>
+        </article>
+
+        <!-- Маргарита -->
+        <article class="product" data-type="pizza-margherita">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Пицца · 30
