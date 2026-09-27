@@ -7011,4 +7011,181 @@ footer{padding:40px 0;border-top:1px solid #3a2010;color:#8a5a30;font-size:13px;
   document.addEventListener('mousedown', addRipple, true);
 })();
 </script>
+    </body><style>
+/* ====== КРУГЛЫЕ КНОПКИ-ПИЦЦЫ «В КОРЗИНУ» ====== */
+
+.add,
+.add-btn,
+.btn-primary,
+.card .add,
+.product .add-btn,
+[data-add]{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  width:auto !important;
+  min-width:200px !important;
+  margin:0 auto !important;
+  padding:14px 26px !important;
+  border-radius:100px !important;
+  border:none !important;
+  background:
+    linear-gradient(#3a0a05,#3a0a05) padding-box,
+    linear-gradient(135deg,#e8a048 0%,#c87830 50%,#e8a048 100%) border-box !important;
+  border:2px solid transparent !important;
+  color:#ffb84d !important;
+  font-weight:900 !important;
+  font-size:13px !important;
+  letter-spacing:3px !important;
+  text-transform:uppercase !important;
+  cursor:pointer !important;
+  font-family:system-ui,-apple-system,sans-serif !important;
+  text-align:center !important;
+  transition:all .25s ease !important;
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.4),
+    inset 0 0 20px rgba(255,140,26,.1) !important;
+  overflow:hidden !important;
+}
+
+/* Иконка пиццы слева от текста */
+.add::before,
+.add-btn::before,
+.btn-primary::before,
+.card .add::before,
+.product .add-btn::before,
+[data-add]::before{
+  content:"" !important;
+  position:static !important;
+  display:inline-block !important;
+  width:36px !important;
+  height:36px !important;
+  flex-shrink:0 !important;
+  border-radius:50% !important;
+  background:
+    radial-gradient(circle at 50% 55%, #b8291a 55%, #8a1e10 65%, #6b3a1a 75%, #c89858 82%, #a06838 100%) !important;
+  background-image:
+    radial-gradient(circle at 50% 55%, #b8291a 55%, #8a1e10 65%, #6b3a1a 75%, #c89858 82%, #a06838 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><path d='M30 6 L50 44 Q30 52 10 44 Z' fill='%23f5c542' stroke='%233a1a08' stroke-width='2'/><circle cx='26' cy='26' r='3.5' fill='%23c8361e'/><circle cx='34' cy='32' r='3.5' fill='%23c8361e'/><circle cx='28' cy='38' r='3' fill='%23c8361e'/><circle cx='40' cy='40' r='2.5' fill='%233a8a2a'/><circle cx='22' cy='42' r='2.5' fill='%233a8a2a'/></svg>") !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:100%, 70% !important;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.5)) !important;
+}
+
+/* Убираем старую полоску-псевдо */
+.add::after,
+.add-btn::after,
+.btn-primary::after,
+.card .add::after,
+.product .add-btn::after,
+[data-add]::after{
+  content:"" !important;
+  position:absolute !important;
+  top:0 !important;
+  left:-100% !important;
+  width:100% !important;
+  height:100% !important;
+  background:linear-gradient(135deg,#ff8c1a,#ffb84d) !important;
+  transition:left .35s cubic-bezier(.4,0,.2,1) !important;
+  z-index:-1 !important;
+  border-radius:100px !important;
+}
+
+/* ХОВЕР — заливка едет слева направо */
+.add:hover,
+.add-btn:hover,
+.btn-primary:hover,
+.card .add:hover,
+.product .add-btn:hover,
+[data-add]:hover{
+  color:#1a0d05 !important;
+  transform:translateY(-3px) !important;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.5),
+    0 0 30px rgba(255,140,26,.6),
+    inset 0 0 20px rgba(255,255,255,.15) !important;
+}
+.add:hover::after,
+.add-btn:hover::after,
+.btn-primary:hover::after,
+.card .add:hover::after,
+.product .add-btn:hover::after,
+[data-add]:hover::after{
+  left:0 !important;
+}
+.add:hover::before,
+.add-btn:hover::before,
+.btn-primary:hover::before,
+.card .add:hover::before,
+.product .add-btn:hover::before,
+[data-add]:hover::before{
+  transform:rotate(15deg) scale(1.1) !important;
+}
+
+/* Сжимание при нажатии */
+.add:active,
+.add-btn:active,
+.btn-primary:active,
+.card .add:active,
+.product .add-btn:active,
+[data-add]:active{
+  transform:scale(.96) !important;
+}
+
+/* Ripple-волна */
+.add .hydra-ripple,
+.add-btn .hydra-ripple,
+[data-add] .hydra-ripple{
+  position:absolute !important;
+  border-radius:50% !important;
+  background:rgba(255,200,80,.5) !important;
+  transform:translate(-50%,-50%) scale(0) !important;
+  animation:hydraRipple .6s ease-out forwards !important;
+  pointer-events:none !important;
+  z-index:1 !important;
+}
+@keyframes hydraRipple{
+  to{transform:translate(-50%,-50%) scale(30);opacity:0}
+}
+
+/* Чуть увеличим для читаемости на мобильных */
+@media(max-width:600px){
+  .add, .add-btn, [data-add]{
+    font-size:12px !important;
+    min-width:170px !important;
+    padding:12px 20px !important;
+    letter-spacing:2px !important;
+  }
+  .add::before, .add-btn::before, [data-add]::before{
+    width:30px !important;
+    height:30px !important;
+  }
+}
+</style>
+
+<script>
+/* Ripple-эффект при клике */
+(function(){
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-add], .add, .add-btn, .btn-primary');
+    if (!btn) return;
+
+    var rect = btn.getBoundingClientRect();
+    var x = (e.clientX || (rect.left + rect.width/2)) - rect.left;
+    var y = (e.clientY || (rect.top + rect.height/2)) - rect.top;
+
+    var r = document.createElement('span');
+    r.className = 'hydra-ripple';
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    r.style.width = '8px';
+    r.style.height = '8px';
+    btn.appendChild(r);
+    setTimeout(function(){ r.remove(); }, 700);
+  }, true);
+})();
+</script>
   <html>
