@@ -1176,3 +1176,489 @@ renderCart();
   };
 })();
 </script>
+<body></body>
+html
+
+<script>
+/* ===== ФИКС: подсветка новых заказов + код заказа ===== */
+(function(){
+  const LS_KEY = 'hydra_orders_v1';
+  let lastCount = 0;
+  let firstRender = true;
+
+  /* --- Генерация кода --- */
+  function generateCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const block = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return 'HYDRA-' + block(4) + '-' + block(2);
+  }
+
+  /* --- Читаем заказы --- */
+  function getOrders(){
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveOrders(arr){
+    try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e){}
+  }
+
+  /* --- Присваиваем коды старым заказам без кода --- */
+  function ensureCodes(){
+    const orders = getOrders();
+    const used = new Set(orders.map(o => o.code).filter(Boolean));
+    let changed = false;
+    orders.forEach(o => {
+      if (!o.code){
+        let c;
+        do { c = generateCode(); } while (used.has(c));
+        used.add(c);
+        o.code = c;
+        changed = true;
+      }
+    });
+    if (changed) saveOrders(orders);
+    return orders;
+  }
+
+  /* --- Время "N минут назад" --- */
+  function timeAgo(t){
+    const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
+    if (m < 1) return 'только что';
+    if (m < 60) return m + ' мин назад';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + ' ч назад';
+    return Math.floor(h / 24) + ' дн назад';
+  }
+
+  /* --- Собственный рендер ленты --- */
+  function renderOrders(){
+    const list = document.getElementById('ordersList');
+    if (!list) return;
+
+    const orders = ensureCodes();
+
+    if (!orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      lastCount = 0;
+      return;
+    }
+
+    const isNew = orders.length > lastCount && !firstRender;
+    firstRender = false;
+
+    list.innerHTML = orders.map((o, idx) => {
+      const total = o.items.reduce((s,i) => s + i.price * i.qty, 0);
+      const fresh = (isNew && idx === 0) ? ' fresh' : '';
+      return `
+        <div class="order-card${fresh}">
+          <div class="order-top">
+            <div class="order-name">
+              <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
+            </div>
+            <div class="order-time">${timeAgo(o.time)}</div>
+          </div>
+          <div class="order-items">
+            ${o.items.map(i => `
+              <div class="order-item">
+                <span><span class="qty">${i.qty}×</span>${i.name}</span>
+                <span>${i.price * i.qty} ₽</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="order-bottom">
+            <span class="order-status done">${o.status || 'Оформлен'}</span>
+            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div class="order-code">Код: ${o.code}</div>
+        </div>
+      `;
+    }).join('');
+
+    lastCount = orders.length;
+  }
+
+  /* --- Стили для кода --- */
+  const style = document.createElement('style');
+  style.textContent = `
+    .order-card.fresh {
+      border-color: #00ffd5 !important;
+      box-shadow: 0 0 40px rgba(0,255,213,.45) !important;
+      animation: freshPulse 1.2s ease;
+    }
+    @keyframes freshPulse {
+      0%   { transform: scale(.95); opacity: 0; }
+      40%  { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .order-code {
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(0,255,213,.08);
+      border: 1px dashed rgba(0,255,213,.35);
+      color: #00ffd5;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      display: inline-block;
+    }
+  `;
+  document.head.appendChild(style);
+
+  /* --- Публикуем функцию наружу, чтобы другие скрипты могли её звать --- */
+  window.renderOrdersList = renderOrders;
+
+  /* --- Отслеживаем появление новых заказов каждые 2 сек --- */
+  let prevRaw = localStorage.getItem(LS_KEY);
+  setInterval(() => {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw !== prevRaw){
+      prevRaw = raw;
+      renderOrders();
+    } else {
+      // Обновляем только "N минут назад"
+      renderOrders();
+    }
+  }, 2000);
+
+  /* --- Также следим за событием storage (из других вкладок) --- */
+  window.addEventListener('storage', e => {
+    if (e.key === LS_KEY){
+      prevRaw = e.newValue;
+      renderOrders();
+    }
+  });
+
+  /* --- Первый рендер --- */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderOrders);
+  } else {
+    renderOrders();
+  }
+})();
+</script>
+html
+
+<script>
+/* ===== ФИКС: подсветка новых заказов + код заказа ===== */
+(function(){
+  const LS_KEY = 'hydra_orders_v1';
+  let lastCount = 0;
+  let firstRender = true;
+
+  /* --- Генерация кода --- */
+  function generateCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const block = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return 'HYDRA-' + block(4) + '-' + block(2);
+  }
+
+  /* --- Читаем заказы --- */
+  function getOrders(){
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveOrders(arr){
+    try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e){}
+  }
+
+  /* --- Присваиваем коды старым заказам без кода --- */
+  function ensureCodes(){
+    const orders = getOrders();
+    const used = new Set(orders.map(o => o.code).filter(Boolean));
+    let changed = false;
+    orders.forEach(o => {
+      if (!o.code){
+        let c;
+        do { c = generateCode(); } while (used.has(c));
+        used.add(c);
+        o.code = c;
+        changed = true;
+      }
+    });
+    if (changed) saveOrders(orders);
+    return orders;
+  }
+
+  /* --- Время "N минут назад" --- */
+  function timeAgo(t){
+    const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
+    if (m < 1) return 'только что';
+    if (m < 60) return m + ' мин назад';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + ' ч назад';
+    return Math.floor(h / 24) + ' дн назад';
+  }
+
+  /* --- Собственный рендер ленты --- */
+  function renderOrders(){
+    const list = document.getElementById('ordersList');
+    if (!list) return;
+
+    const orders = ensureCodes();
+
+    if (!orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      lastCount = 0;
+      return;
+    }
+
+    const isNew = orders.length > lastCount && !firstRender;
+    firstRender = false;
+
+    list.innerHTML = orders.map((o, idx) => {
+      const total = o.items.reduce((s,i) => s + i.price * i.qty, 0);
+      const fresh = (isNew && idx === 0) ? ' fresh' : '';
+      return `
+        <div class="order-card${fresh}">
+          <div class="order-top">
+            <div class="order-name">
+              <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
+            </div>
+            <div class="order-time">${timeAgo(o.time)}</div>
+          </div>
+          <div class="order-items">
+            ${o.items.map(i => `
+              <div class="order-item">
+                <span><span class="qty">${i.qty}×</span>${i.name}</span>
+                <span>${i.price * i.qty} ₽</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="order-bottom">
+            <span class="order-status done">${o.status || 'Оформлен'}</span>
+            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div class="order-code">Код: ${o.code}</div>
+        </div>
+      `;
+    }).join('');
+
+    lastCount = orders.length;
+  }
+
+  /* --- Стили для кода --- */
+  const style = document.createElement('style');
+  style.textContent = `
+    .order-card.fresh {
+      border-color: #00ffd5 !important;
+      box-shadow: 0 0 40px rgba(0,255,213,.45) !important;
+      animation: freshPulse 1.2s ease;
+    }
+    @keyframes freshPulse {
+      0%   { transform: scale(.95); opacity: 0; }
+      40%  { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .order-code {
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(0,255,213,.08);
+      border: 1px dashed rgba(0,255,213,.35);
+      color: #00ffd5;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      display: inline-block;
+    }
+  `;
+  document.head.appendChild(style);
+
+  /* --- Публикуем функцию наружу, чтобы другие скрипты могли её звать --- */
+  window.renderOrdersList = renderOrders;
+
+  /* --- Отслеживаем появление новых заказов каждые 2 сек --- */
+  let prevRaw = localStorage.getItem(LS_KEY);
+  setInterval(() => {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw !== prevRaw){
+      prevRaw = raw;
+      renderOrders();
+    } else {
+      // Обновляем только "N минут назад"
+      renderOrders();
+    }
+  }, 2000);
+
+  /* --- Также следим за событием storage (из других вкладок) --- */
+  window.addEventListener('storage', e => {
+    if (e.key === LS_KEY){
+      prevRaw = e.newValue;
+      renderOrders();
+    }
+  });
+
+  /* --- Первый рендер --- */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderOrders);
+  } else {
+    renderOrders();
+  }
+})();
+</script>
+html
+
+<script>
+/* ===== ФИКС: подсветка новых заказов + код заказа ===== */
+(function(){
+  const LS_KEY = 'hydra_orders_v1';
+  let lastCount = 0;
+  let firstRender = true;
+
+  /* --- Генерация кода --- */
+  function generateCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const block = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return 'HYDRA-' + block(4) + '-' + block(2);
+  }
+
+  /* --- Читаем заказы --- */
+  function getOrders(){
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveOrders(arr){
+    try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e){}
+  }
+
+  /* --- Присваиваем коды старым заказам без кода --- */
+  function ensureCodes(){
+    const orders = getOrders();
+    const used = new Set(orders.map(o => o.code).filter(Boolean));
+    let changed = false;
+    orders.forEach(o => {
+      if (!o.code){
+        let c;
+        do { c = generateCode(); } while (used.has(c));
+        used.add(c);
+        o.code = c;
+        changed = true;
+      }
+    });
+    if (changed) saveOrders(orders);
+    return orders;
+  }
+
+  /* --- Время "N минут назад" --- */
+  function timeAgo(t){
+    const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
+    if (m < 1) return 'только что';
+    if (m < 60) return m + ' мин назад';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + ' ч назад';
+    return Math.floor(h / 24) + ' дн назад';
+  }
+
+  /* --- Собственный рендер ленты --- */
+  function renderOrders(){
+    const list = document.getElementById('ordersList');
+    if (!list) return;
+
+    const orders = ensureCodes();
+
+    if (!orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      lastCount = 0;
+      return;
+    }
+
+    const isNew = orders.length > lastCount && !firstRender;
+    firstRender = false;
+
+    list.innerHTML = orders.map((o, idx) => {
+      const total = o.items.reduce((s,i) => s + i.price * i.qty, 0);
+      const fresh = (isNew && idx === 0) ? ' fresh' : '';
+      return `
+        <div class="order-card${fresh}">
+          <div class="order-top">
+            <div class="order-name">
+              <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
+            </div>
+            <div class="order-time">${timeAgo(o.time)}</div>
+          </div>
+          <div class="order-items">
+            ${o.items.map(i => `
+              <div class="order-item">
+                <span><span class="qty">${i.qty}×</span>${i.name}</span>
+                <span>${i.price * i.qty} ₽</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="order-bottom">
+            <span class="order-status done">${o.status || 'Оформлен'}</span>
+            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div class="order-code">Код: ${o.code}</div>
+        </div>
+      `;
+    }).join('');
+
+    lastCount = orders.length;
+  }
+
+  /* --- Стили для кода --- */
+  const style = document.createElement('style');
+  style.textContent = `
+    .order-card.fresh {
+      border-color: #00ffd5 !important;
+      box-shadow: 0 0 40px rgba(0,255,213,.45) !important;
+      animation: freshPulse 1.2s ease;
+    }
+    @keyframes freshPulse {
+      0%   { transform: scale(.95); opacity: 0; }
+      40%  { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .order-code {
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(0,255,213,.08);
+      border: 1px dashed rgba(0,255,213,.35);
+      color: #00ffd5;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      display: inline-block;
+    }
+  `;
+  document.head.appendChild(style);
+
+  /* --- Публикуем функцию наружу, чтобы другие скрипты могли её звать --- */
+  window.renderOrdersList = renderOrders;
+
+  /* --- Отслеживаем появление новых заказов каждые 2 сек --- */
+  let prevRaw = localStorage.getItem(LS_KEY);
+  setInterval(() => {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw !== prevRaw){
+      prevRaw = raw;
+      renderOrders();
+    } else {
+      // Обновляем только "N минут назад"
+      renderOrders();
+    }
+  }, 2000);
+
+  /* --- Также следим за событием storage (из других вкладок) --- */
+  window.addEventListener('storage', e => {
+    if (e.key === LS_KEY){
+      prevRaw = e.newValue;
+      renderOrders();
+    }
+  });
+
+  /* --- Первый рендер --- */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderOrders);
+  } else {
+    renderOrders();
+  }
+})();
+  <body>
+    
+</script>
