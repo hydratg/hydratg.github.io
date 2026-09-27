@@ -2874,6 +2874,122 @@ body{
 </script>
   <body>
 
-  
+  <script>
+(function(){
+  /* ============ 1. ФОН С ПИЦЦАМИ ============ */
+  document.body.style.background = '#0a0608';
+  document.body.style.backgroundImage =
+    'radial-gradient(circle at 15% 10%, rgba(255,122,26,.14) 0%, transparent 40%),' +
+    'radial-gradient(circle at 85% 80%, rgba(255,45,149,.14) 0%, transparent 40%),' +
+    'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'220\' height=\'220\'><text x=\'20\' y=\'65\' font-size=\'44\' opacity=\'0.07\'>🍕</text><text x=\'130\' y=\'120\' font-size=\'36\' opacity=\'0.06\'>🍕</text><text x=\'60\' y=\'185\' font-size=\'40\' opacity=\'0.07\'>🍕</text><text x=\'160\' y=\'35\' font-size=\'30\' opacity=\'0.06\'>🍕</text></svg>")';
+  document.body.style.backgroundSize = '100% 100%, 100% 100%, 220px 220px';
+  document.body.style.backgroundAttachment = 'fixed';
+
+  /* ============ 2. НОВЫЕ ТОВАРЫ ============ */
+  var NEW = [
+    { type:'pizza-hawaii',      cat:'Пицца · 30 см',  name:'Гавайская',
+      desc:'Курица, ананасы, моцарелла, сливочный соус.',
+      price:649, weight:'620 г', icon:'🍕',
+      bg:'radial-gradient(circle at 40% 35%, #ffb84d 0%, #d9822b 35%, #a85a1a 65%, #4a2808 100%)' },
+    { type:'pizza-bbq',         cat:'Пицца · 30 см',  name:'BBQ Чикен',
+      desc:'Курица, бекон, красный лук, соус барбекю, моцарелла.',
+      price:699, weight:'640 г', icon:'🍕',
+      bg:'radial-gradient(circle at 50% 40%, #8a3a12 0%, #5a2308 45%, #2a0a04 100%)' },
+    { type:'pizza-four-cheese', cat:'Пицца · 30 см',  name:'Четыре сыра',
+      desc:'Моцарелла, пармезан, дорблю, чеддер, сливочный соус.',
+      price:749, weight:'560 г', icon:'🍕',
+      bg:'radial-gradient(circle at 50% 40%, #f5d878 0%, #c9a748 45%, #6b5518 80%, #2a2208 100%)' },
+    { type:'pizza-veggie',      cat:'Пицца · 30 см',  name:'Вегетарианская',
+      desc:'Перец, грибы, черри, оливки, лук, моцарелла.',
+      price:549, weight:'520 г', icon:'🍕',
+      bg:'radial-gradient(circle at 50% 40%, #4a8a3a 0%, #2a5a1a 45%, #122a08 100%)' },
+    { type:'drink-coffee',      cat:'Напиток · 0.3 л', name:'Кофе Латте',
+      desc:'Двойной эспрессо с горячим молоком.',
+      price:189, weight:'0.3 л', icon:'☕',
+      bg:'radial-gradient(circle at 50% 40%, #a8754a 0%, #6b4520 45%, #2a1a0a 100%)' }
+  ];
+
+  function cardStyle(){
+    return 'background:linear-gradient(160deg,#1a0f18,#0a0608);' +
+           'border:1px solid #2a1a26;border-radius:20px;overflow:hidden;' +
+           'display:flex;flex-direction:column;font-family:inherit;color:#fff;';
+  }
+
+  function thumbStyle(bg){
+    return 'aspect-ratio:16/11;display:grid;place-items:center;font-size:90px;' +
+           'background:' + bg + ';';
+  }
+
+  function makeCard(item){
+    var art = document.createElement('article');
+    art.className = 'product';
+    art.setAttribute('data-type', item.type);
+    art.style.cssText = cardStyle();
+
+    art.innerHTML =
+      '<div class="product-thumb" style="' + thumbStyle(item.bg) + '">' + item.icon + '</div>' +
+      '<div class="product-body" style="padding:22px;display:flex;flex-direction:column;flex:1;">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ff7a1a;margin-bottom:8px;">' + item.cat + '</div>' +
+        '<h3 style="font-size:22px;font-weight:800;margin-bottom:8px;color:#fff;">' + item.name + '</h3>' +
+        '<p style="color:#8a7080;font-size:14px;line-height:1.55;margin-bottom:20px;flex:1;">' + item.desc + '</p>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #2a1a26;">' +
+          '<div style="font-size:28px;font-weight:900;color:#fff;">' + item.price + '<small style="font-size:14px;color:#ff7a1a;font-weight:700;margin-left:2px;">₽</small></div>' +
+          '<div style="font-size:12px;color:#8a7080;padding:5px 12px;background:rgba(255,255,255,.03);border-radius:100px;border:1px solid #2a1a26;">' + item.weight + '</div>' +
+        '</div>' +
+        '<button class="add-btn" type="button" ' +
+          'data-add data-id="' + item.type.replace(/^(pizza|drink)-/,'') + '" ' +
+          'data-name="' + item.name + '" data-price="' + item.price + '" data-type="' + item.type + '" ' +
+          'style="width:100%;padding:14px;border-radius:12px;border:1.5px solid #ff7a1a;background:transparent;color:#ff7a1a;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit;">' +
+          '+ В корзину</button>' +
+      '</div>';
+
+    return art;
+  }
+
+  function findGrid(){
+    /* Ищем сетку, где уже есть товары */
+    var any = document.querySelector('[data-type]');
+    if (!any) return null;
+    return any.parentElement;
+  }
+
+  function addAll(){
+    var grid = findGrid();
+    if (!grid){
+      /* Если товаров вообще нет — создаём свою секцию */
+      var section = document.getElementById('hydra-new-products');
+      if (!section){
+        section = document.createElement('section');
+        section.id = 'hydra-new-products';
+        section.style.cssText = 'max-width:1320px;margin:40px auto;padding:0 24px;';
+        section.innerHTML =
+          '<h2 style="font-size:42px;font-weight:900;letter-spacing:-1.5px;margin-bottom:30px;color:#fff;">' +
+            '<span style="color:#ff7a1a;">//</span> НОВИНКИ' +
+          '</h2>' +
+          '<div id="hydra-new-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;"></div>';
+        document.body.appendChild(section);
+      }
+      grid = document.getElementById('hydra-new-grid');
+    }
+
+    NEW.forEach(function(item){
+      if (!document.querySelector('[data-type="' + item.type + '"]')){
+        grid.appendChild(makeCard(item));
+      }
+    });
+  }
+
+  function start(){
+    try { addAll(); } catch(e){ console.error('[HYDRA]', e); }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+  [100, 400, 1000, 2500, 5000].forEach(function(t){ setTimeout(start, t); });
+})();
+</script>
   </body>
   
