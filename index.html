@@ -1753,3 +1753,339 @@ html
   });
 })();
 </script>
+  <script>
+/* ===== HYDRA BLACK — заказы через сервер Socket.IO ===== */
+(function(){
+  const CART_KEY = 'hydra_cart_v1';
+  const $ = id => document.getElementById(id);
+
+  /* ---------- Хранилище корзины ---------- */
+  function getCart(){
+    try { const r = localStorage.getItem(CART_KEY); const a = r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
+    catch(e){ return []; }
+  }
+  function setCart(a){ try { localStorage.setItem(CART_KEY, JSON.stringify(a)); } catch(e){} }
+
+  function genCode(){
+    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const b=n=>Array.from({length:n},()=>c[Math.floor(Math.random()*c.length)]).join('');
+    return 'HYDRA-'+b(4)+'-'+b(2);
+  }
+  function toNum(v){ return parseInt(String(v).replace(/[^\d]/g,''),10)||0; }
+
+  /* ---------- Устройство ---------- */
+  function detectDevice(){
+    const ua = navigator.userAgent || '';
+    let type='Компьютер', icon='💻';
+    if (/iPad|Tablet|PlayBook|Silk/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) { type='Планшет'; icon='📱'; }
+    else if (/Mobi|Android|iPhone|iPod|Windows Phone|BlackBerry/i.test(ua)) { type='Телефон'; icon='📱'; }
+    let os='Неизвестно';
+    if (/Windows NT 10/i.test(ua)) os='Windows 10/11';
+    else if (/Windows NT 6\.3/i.test(ua)) os='Windows 8.1';
+    else if (/Windows NT 6\.1/i.test(ua)) os='Windows 7';
+    else if (/Windows/i.test(ua)) os='Windows';
+    else if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) os='macOS';
+    else if (/iPhone|iPad|iPod/i.test(ua)) os='iOS';
+    else if (/Android/i.test(ua)) os='Android';
+    else if (/Linux/i.test(ua) && !/Android/i.test(ua)) os='Linux';
+    let browser='Неизвестно';
+    if (/YaBrowser/i.test(ua)) browser='Яндекс.Браузер';
+    else if (/Edg\//i.test(ua)) browser='Edge';
+    else if (/OPR|Opera/i.test(ua)) browser='Opera';
+    else if (/Chrome/i.test(ua) && !/Edg|OPR/i.test(ua)) browser='Chrome';
+    else if (/Firefox/i.test(ua)) browser='Firefox';
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari';
+    return { type, icon, os, browser, screen:(screen.width||0)+'×'+(screen.height||0), lang: navigator.language||'—' };
+  }
+
+  let clientInfo = { ...detectDevice() };
+  async function refreshInfo(){
+    const dev = detectDevice();
+    let ip='—', city='—', country='—', provider='—';
+    try {
+      const r = await fetch('https://ipapi.co/json/');
+      const d = await r.json();
+      ip = d.ip||'—'; city = d.city||'—'; country = d.country_name||'—'; provider = d.org||'—';
+    } catch(e){
+      try {
+        const r = await fetch('https://ipwho.is/');
+        const d = await r.json();
+        ip = d.ip||'—'; city = d.city||'—'; country = d.country||'—';
+        provider = (d.connection && d.connection.isp)||'—';
+      } catch(e2){}
+    }
+    clientInfo = { ...dev, ip, city, country, provider };
+  }
+  refreshInfo();
+
+  /* ---------- Toast ---------- */
+  let toast = document.querySelector('.toast');
+  if (!toast){ toast = document.createElement('div'); toast.className='toast'; document.body.appendChild(toast); }
+  let toastTimer;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 1800);
+  }
+
+  /* ---------- Открытие/закрытие корзины ---------- */
+  function openCart(){
+    const p = document.querySelector('.cart, .cart-panel');
+    const o = document.querySelector('.overlay');
+    if (p) p.classList.add('open');
+    if (o) o.classList.add('open');
+    renderCart();
+  }
+  function closeCart(){
+    document.querySelectorAll('.cart, .cart-panel').forEach(p=>p.classList.remove('open'));
+    document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open'));
+  }
+
+  /* ---------- Рендер корзины ---------- */
+  function renderCart(){
+    const cart = getCart();
+    const list = $('cartList');
+    const countEl = $('cartCount');
+    const sumEl = $('cartSum');
+    const headerTotal = $('headerTotal');
+    const checkoutBtn = $('checkoutBtn');
+
+    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const count = cart.reduce((s,i)=>s+i.qty,0);
+
+    if (countEl) countEl.textContent = count;
+    if (sumEl) sumEl.textContent = total.toLocaleString('ru-RU')+' ₽';
+    if (headerTotal) headerTotal.textContent = total.toLocaleString('ru-RU');
+    if (checkoutBtn) checkoutBtn.disabled = cart.length===0;
+
+    if (!list) return;
+    if (!cart.length){
+      list.innerHTML = '<div class="cart-empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
+      return;
+    }
+    list.innerHTML = cart.map((it,i)=>`
+      <div class="cart-row" data-type="${it.type||''}">
+        <div class="cart-row-thumb"></div>
+        <div class="cart-row-main">
+          <div class="cart-row-head">
+            <div><h4>${it.name}</h4><div class="unit">${it.price} ₽ / шт</div></div>
+            <button class="del" type="button" data-del="${i}">×</button>
+          </div>
+          <div class="cart-row-foot">
+            <div class="counter">
+              <button type="button" data-minus="${i}">−</button>
+              <span class="qty">${it.qty}</span>
+              <button type="button" data-plus="${i}">+</button>
+            </div>
+            <div class="line-total">${(it.price*it.qty).toLocaleString('ru-RU')} ₽</div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---------- Лента заказов ---------- */
+  let ordersCache = [];
+
+  function timeAgo(t){
+    const m = Math.max(0, Math.floor((Date.now()-t)/60000));
+    if (m<1) return 'только что';
+    if (m<60) return m+' мин назад';
+    const h = Math.floor(m/60);
+    if (h<24) return h+' ч назад';
+    return Math.floor(h/24)+' дн назад';
+  }
+
+  function renderOrders(){
+    const list = $('ordersList');
+    if (!list) return;
+
+    if (!ordersCache.length){
+      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      return;
+    }
+    list.innerHTML = ordersCache.map(o=>{
+      const total = (o.items||[]).reduce((s,i)=>s+i.price*i.qty,0);
+      const addr = o.address ? `<div class="order-address">📍 ${o.address}</div>` : '';
+      let devBlock = '';
+      if (o.device){
+        const d = o.device;
+        devBlock = `
+          <div class="order-device">
+            <span class="device-line">${d.icon||'💻'} ${d.type||'—'} · ${d.os||'—'}</span>
+            <span class="device-line">🌐 ${d.browser||'—'} · 🖥️ ${d.screen||'—'} · ${d.lang||'—'}</span>
+            <span class="device-line">🔌 IP: ${d.ip||'—'}</span>
+            <span class="device-line">🌍 ${d.city||'—'}, ${d.country||'—'}</span>
+            <span class="device-line">📡 ${d.provider||'—'}</span>
+          </div>`;
+      }
+      return `
+        <div class="order-card">
+          <div class="order-top">
+            <div class="order-name"><span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}</div>
+            <div class="order-time">${timeAgo(o.time)}</div>
+          </div>
+          ${addr}${devBlock}
+          <div class="order-items">
+            ${(o.items||[]).map(i=>`
+              <div class="order-item">
+                <span><span class="qty">${i.qty}×</span>${i.name}</span>
+                <span>${i.price*i.qty} ₽</span>
+              </div>`).join('')}
+          </div>
+          <div class="order-bottom">
+            <span class="order-status">${o.status||'Оформлен'}</span>
+            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div class="order-code">Код: ${o.code}</div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ---------- Подключение к серверу ---------- */
+  let socket = null;
+  try {
+    if (typeof io !== 'undefined'){
+      socket = io();
+
+      socket.on('connect', () => console.log('[HYDRA] Подключен к серверу'));
+
+      socket.on('init-orders', (list) => {
+        ordersCache = (list || []).map(o => ({ ...o, time: o.time || Date.now() }))
+          .sort((a,b) => b.time - a.time);
+        renderOrders();
+      });
+
+      socket.on('new-order', (order) => {
+        // Добавляем новый заказ в начало списка
+        ordersCache.unshift({ ...order, time: order.time || Date.now() });
+        renderOrders();
+      });
+
+      socket.on('disconnect', () => console.log('[HYDRA] Отключён от сервера'));
+    } else {
+      console.warn('[HYDRA] socket.io не подключён. Проверь <script src="/socket.io/socket.io.js">');
+    }
+  } catch(e){
+    console.error('[HYDRA] Ошибка подключения к серверу:', e);
+  }
+
+  // Также забираем заказы через REST API — на случай, если сокет не сработал
+  fetch('/api/orders')
+    .then(r => r.json())
+    .then(list => {
+      if (Array.isArray(list) && list.length && !ordersCache.length){
+        ordersCache = list.map(o => ({ ...o, time: o.time || Date.now() }))
+          .sort((a,b) => b.time - a.time);
+        renderOrders();
+      }
+    })
+    .catch(()=>{});
+
+  setInterval(()=>{ if (ordersCache.length) renderOrders(); }, 30000);
+
+  /* ---------- Клики ---------- */
+  document.addEventListener('click', async function(e){
+    const addBtn = e.target.closest('.add-btn, [data-add]');
+    if (addBtn){
+      e.preventDefault();
+      const id = addBtn.dataset.id || addBtn.getAttribute('data-id');
+      const name = addBtn.dataset.name || addBtn.getAttribute('data-name');
+      const price = toNum(addBtn.dataset.price || addBtn.getAttribute('data-price'));
+      const type = addBtn.dataset.type || addBtn.getAttribute('data-type') || '';
+      if (!name) return;
+
+      const cart = getCart();
+      const ex = cart.find(x=>x.id===id);
+      if (ex) ex.qty++;
+      else cart.push({ id: id||name, name, price, type, qty: 1 });
+      setCart(cart);
+      renderCart();
+      showToast('Добавлено: '+name);
+
+      const cartBtn = $('cartBtn');
+      if (cartBtn){ cartBtn.classList.remove('bump'); void cartBtn.offsetWidth; cartBtn.classList.add('bump'); }
+      return;
+    }
+
+    const del = e.target.closest('[data-del]');
+    if (del){ const c = getCart(); c.splice(toNum(del.dataset.del),1); setCart(c); renderCart(); return; }
+    const plus = e.target.closest('[data-plus]');
+    if (plus){ const c = getCart(); c[toNum(plus.dataset.plus)].qty++; setCart(c); renderCart(); return; }
+    const minus = e.target.closest('[data-minus]');
+    if (minus){
+      const c = getCart(); const i = toNum(minus.dataset.minus);
+      c[i].qty--; if (c[i].qty<=0) c.splice(i,1); setCart(c); renderCart(); return;
+    }
+
+    if (e.target.closest('#cartBtn')){ openCart(); return; }
+    if (e.target.closest('#closeCart') || e.target.closest('.overlay')){ closeCart(); return; }
+
+    if (e.target.closest('#clearCart')){
+      if (!getCart().length) return;
+      if (!confirm('Очистить корзину?')) return;
+      setCart([]); renderCart(); showToast('Корзина очищена'); return;
+    }
+
+    /* ---------- ОФОРМИТЬ ЗАКАЗ ---------- */
+    if (e.target.closest('#checkoutBtn')){
+      const cart = getCart();
+      if (!cart.length) return;
+
+      const name = prompt('Ваше имя для заказа:', 'Гость');
+      if (name === null) return;
+      const cleanName = (name.trim() || 'Гость').slice(0, 24);
+
+      const address = prompt('Адрес доставки (улица, дом, квартира):', '');
+      if (address === null) return;
+      const cleanAddress = (address.trim() || 'Адрес не указан').slice(0, 120);
+
+      await refreshInfo();
+
+      const payload = {
+        name: cleanName,
+        address: cleanAddress,
+        device: { ...clientInfo },
+        items: cart.map(i=>({ name:i.name, price:i.price, qty:i.qty })),
+        code: genCode()
+      };
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok){
+          showToast('На вас оформлен кредит');
+          setCart([]);
+          renderCart();
+          closeCart();
+        } else {
+          showToast('Ошибка: ' + (data.error || 'не удалось'));
+        }
+      } catch(err){
+        console.error(err);
+        showToast('Нет связи с сервером');
+      }
+      return;
+    }
+  }, true);
+
+  /* ---------- Стили ---------- */
+  const st = document.createElement('style');
+  st.textContent = `
+    .order-device{margin-top:12px;padding:14px 16px;border-radius:12px;background:rgba(0,229,255,.05);border:1px dashed rgba(0,229,255,.25);display:flex;flex-direction:column;gap:6px}
+    .order-device .device-line{color:#00e5ff;font-size:12px;font-weight:600;font-family:ui-monospace,monospace}
+    .order-address{margin-top:10px;padding:8px 14px;border-radius:10px;background:rgba(255,45,149,.08);border:1px dashed rgba(255,45,149,.35);color:#ff2d95;font-size:13px;font-weight:600}
+    .order-code{margin-top:14px;padding:8px 14px;border-radius:10px;background:rgba(255,122,26,.08);border:1px dashed rgba(255,122,26,.35);color:#ff7a1a;font-family:ui-monospace,monospace;font-size:12px;font-weight:800;letter-spacing:2px;display:inline-block}
+  `;
+  document.head.appendChild(st);
+
+  /* ---------- Старт ---------- */
+  renderCart();
+  renderOrders();
+})();
+</script>
+  
