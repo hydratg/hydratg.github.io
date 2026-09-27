@@ -1,0 +1,927 @@
+пидорас TELEGRAM
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HYDRA BLACK · пиццерия</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background-color: #070707;
+      color: #ffffff;
+      line-height: 1.45;
+      scroll-behavior: smooth;
+      padding-bottom: 20px;
+    }
+
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+
+    /* ---------- ШАПКА ---------- */
+    header {
+      padding: 18px 0;
+      border-bottom: 1px solid #1f1f1f;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background-color: rgba(7, 7, 7, 0.94);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo .hydra {
+      background: linear-gradient(135deg, #c084fc, #7c3aed, #4c1d95);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 900;
+    }
+
+    .logo .black { color: #ffffff; font-weight: 300; letter-spacing: 2px; }
+
+    .city-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #141414;
+      padding: 8px 18px;
+      border-radius: 40px;
+      border: 1px solid #2a2a2a;
+      font-size: 15px;
+      font-weight: 500;
+      color: #ddd;
+    }
+
+    nav { display: flex; gap: 28px; font-weight: 500; font-size: 16px; }
+
+    nav a {
+      color: #b0b0b0;
+      text-decoration: none;
+      transition: color 0.2s, border-color 0.2s;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+
+    nav a:hover { color: #c084fc; border-bottom-color: #c084fc; }
+
+    .cart-btn {
+      background: linear-gradient(145deg, #c084fc, #7c3aed);
+      color: #070707;
+      font-weight: 800;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+      transition: filter 0.15s, transform 0.15s;
+      font-family: inherit;
+    }
+
+    .cart-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+    .cart-btn.bump { animation: bump 0.3s ease; }
+
+    @keyframes bump {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    /* ---------- HERO ---------- */
+    .hero { padding: 48px 0 24px; }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: #ffffff;
+      max-width: 780px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p { color: #a0a0a0; font-size: 18px; max-width: 620px; margin-bottom: 26px; }
+
+    .promo-badge {
+      display: inline-block;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      color: #ddd;
+      padding: 9px 22px;
+      border-radius: 40px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    /* ---------- СЕКЦИИ ---------- */
+    .menu-section { padding: 32px 0 50px; scroll-margin-top: 90px; }
+
+    .section-title {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 30px;
+      color: #ffffff;
+      letter-spacing: -0.8px;
+    }
+
+    .section-title span {
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-left: 8px;
+    }
+
+    /* ---------- СЕТКА КАРТОЧЕК ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background-color: #101010;
+      border-radius: 26px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.9), 0 0 0 1px #202020 inset;
+      transition: transform 0.25s ease, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 45px -12px #000000, 0 0 0 1px #353535 inset;
+    }
+
+    .card-visual {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 92px;
+      box-shadow: 0 0 0 2px #2a2a2a, 0 16px 28px -10px black;
+      position: relative;
+    }
+
+    .card[data-type="pizza-pepperoni"] .card-visual { background: radial-gradient(circle at 30% 30%, #7a2e1a, #2b0f07); }
+    .card[data-type="pizza-margherita"] .card-visual { background: radial-gradient(circle at 30% 30%, #4b6b3a, #1b2a10); }
+    .card[data-type="drink-cola"] .card-visual { background: radial-gradient(circle at 30% 30%, #3b0a0a, #1a0404); }
+    .card[data-type="drink-orange"] .card-visual { background: radial-gradient(circle at 30% 30%, #7a4a0a, #3b1e04); }
+
+    .card[data-type="pizza-pepperoni"] .card-visual::before,
+    .card[data-type="pizza-margherita"] .card-visual::before {
+      content: "🍕";
+      filter: drop-shadow(0 8px 12px black);
+    }
+    .card[data-type="drink-cola"] .card-visual::before {
+      content: "🥤";
+      filter: drop-shadow(0 8px 12px black);
+    }
+    .card[data-type="drink-orange"] .card-visual::before {
+      content: "🧃";
+      filter: drop-shadow(0 8px 12px black);
+    }
+
+    .card h3 {
+      font-size: 27px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+    }
+
+    .card-desc {
+      color: #949494;
+      font-size: 15px;
+      margin-bottom: 22px;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .price {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+
+    .price small {
+      font-size: 16px;
+      font-weight: 400;
+      color: #777;
+      margin-left: 4px;
+      -webkit-text-fill-color: #777;
+    }
+
+    .weight {
+      color: #777;
+      font-size: 14px;
+      background: #1a1a1a;
+      padding: 5px 14px;
+      border-radius: 40px;
+      border: 1px solid #262626;
+    }
+
+    .card-actions { display: flex; gap: 12px; margin-top: 4px; }
+
+    .btn-primary {
+      background: linear-gradient(145deg, #c084fc, #7c3aed);
+      border: none;
+      color: #070707;
+      font-weight: 800;
+      padding: 15px 18px;
+      border-radius: 40px;
+      font-size: 16px;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+      transition: filter 0.15s, transform 0.1s;
+      box-shadow: 0 6px 12px rgba(124, 58, 237, 0.25);
+      letter-spacing: 0.2px;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover { filter: brightness(1.15); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #333;
+      color: #ccc;
+      font-weight: 600;
+      padding: 15px 18px;
+      border-radius: 40px;
+      font-size: 16px;
+      cursor: default;
+      flex: 1;
+      text-align: center;
+      font-family: inherit;
+    }
+
+    /* ---------- О НАС ---------- */
+    .about-section { padding: 50px 0 40px; scroll-margin-top: 90px; }
+
+    .about-card {
+      background: #0e0e0e;
+      border-radius: 32px;
+      padding: 48px 44px;
+      border: 1px solid #1f1f1f;
+      box-shadow: 0 25px 40px -18px black;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .about-text { flex: 2 1 360px; }
+
+    .about-text h2 {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 18px;
+      color: #ffffff;
+    }
+
+    .about-text h2 em {
+      font-style: normal;
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-text p {
+      color: #a5a5a5;
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      max-width: 600px;
+    }
+
+    .about-features {
+      flex: 1 1 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #141414;
+      padding: 16px 20px;
+      border-radius: 50px;
+      border: 1px solid #242424;
+    }
+
+    .feature-icon { font-size: 26px; }
+    .feature span { font-weight: 600; font-size: 16px; color: #ddd; }
+
+    /* ---------- ИНФО-ПАНЕЛЬ ---------- */
+    .info-bar {
+      background-color: #0c0c0c;
+      border-radius: 24px;
+      padding: 28px 34px;
+      margin: 40px 0 30px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border: 1px solid #1e1e1e;
+    }
+
+    .info-item { display: flex; align-items: center; gap: 16px; }
+    .info-icon { font-size: 30px; }
+
+    .info-text h4 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .info-text p { color: #818181; font-size: 14px; }
+
+    /* ---------- ФУТЕР ---------- */
+    footer {
+      padding: 36px 0 44px;
+      border-top: 1px solid #1a1a1a;
+      color: #5a5a5a;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
+
+    .footer-links a { color: #7a7a7a; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: #c084fc; }
+
+    /* ========== КОРЗИНА (панель) ========== */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .cart-overlay.open { opacity: 1; visibility: visible; }
+
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 100%;
+      max-width: 460px;
+      background: #0c0c0c;
+      border-left: 1px solid #1f1f1f;
+      z-index: 210;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -20px 0 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .cart-panel.open { transform: translateX(0); }
+
+    .cart-header {
+      padding: 24px 26px;
+      border-bottom: 1px solid #1c1c1c;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .cart-header h2 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cart-header h2 span {
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cart-count {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #c084fc;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .cart-close {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      line-height: 1;
+      font-family: inherit;
+    }
+
+    .cart-close:hover {
+      background: #2a2a2a;
+      border-color: #444;
+      transform: rotate(90deg);
+    }
+
+    .cart-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 22px;
+    }
+
+    .cart-empty {
+      text-align: center;
+      padding: 70px 20px;
+      color: #666;
+    }
+
+    .cart-empty-icon {
+      font-size: 68px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 4px 8px black);
+      opacity: 0.6;
+    }
+
+    .cart-empty p { font-size: 18px; color: #888; margin-bottom: 8px; }
+    .cart-empty small { color: #555; font-size: 14px; }
+
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 18px 0;
+      border-bottom: 1px solid #1a1a1a;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cart-item-visual {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 0 0 1.5px #2a2a2a;
+    }
+
+    .cart-item[data-type="pizza-pepperoni"] .cart-item-visual { background: radial-gradient(circle at 30% 30%, #7a2e1a, #2b0f07); }
+    .cart-item[data-type="pizza-margherita"] .cart-item-visual { background: radial-gradient(circle at 30% 30%, #4b6b3a, #1b2a10); }
+    .cart-item[data-type="drink-cola"] .cart-item-visual { background: radial-gradient(circle at 30% 30%, #3b0a0a, #1a0404); }
+    .cart-item[data-type="drink-orange"] .cart-item-visual { background: radial-gradient(circle at 30% 30%, #7a4a0a, #3b1e04); }
+
+    .cart-item[data-type="pizza-pepperoni"] .cart-item-visual::before,
+    .cart-item[data-type="pizza-margherita"] .cart-item-visual::before { content: "🍕"; }
+    .cart-item[data-type="drink-cola"] .cart-item-visual::before { content: "🥤"; }
+    .cart-item[data-type="drink-orange"] .cart-item-visual::before { content: "🧃"; }
+
+    .cart-item-main { flex: 1; min-width: 0; }
+
+    .cart-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .cart-item-info h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+
+    .cart-item-info .cart-item-price {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: #555;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: color 0.15s, transform 0.15s;
+      line-height: 1;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+
+    .remove-btn:hover { color: #ef4444; transform: scale(1.2); }
+
+    .cart-item-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #141414;
+      border-radius: 40px;
+      padding: 4px;
+      border: 1px solid #222;
+    }
+
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1e1e1e;
+      border: 1px solid #2e2e2e;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      line-height: 1;
+      font-family: inherit;
+    }
+
+    .qty-btn:hover { background: #2e2e2e; border-color: #4a4a4a; }
+    .qty-btn:active { transform: scale(0.9); }
+
+    .qty-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .cart-item-total {
+      font-size: 17px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      white-space: nowrap;
+    }
+
+    .cart-footer {
+      padding: 22px 26px 26px;
+      border-top: 1px solid #1c1c1c;
+      flex-shrink: 0;
+      background: #0a0a0a;
+    }
+
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 18px;
+    }
+
+    .cart-total-row span:first-child {
+      font-size: 16px;
+      color: #999;
+    }
+
+    .cart-total-row .cart-total-value {
+      font-size: 34px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 18px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(145deg, #c084fc, #7c3aed);
+      color: #070707;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.35);
+      letter-spacing: 0.3px;
+      font-family: inherit;
+    }
+
+    .checkout-btn:hover:not(:disabled) { filter: brightness(1.15); }
+    .checkout-btn:active:not(:disabled) { transform: scale(0.98); }
+
+    .checkout-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .clear-cart-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 50px;
+      border: 1px solid #2a2a2a;
+      background: transparent;
+      color: #888;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .clear-cart-btn:hover {
+      background: #1a1a1a;
+      color: #ef4444;
+      border-color: #3a3a3a;
+    }
+
+    /* ========== УВЕДОМЛЕНИЕ ========== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: linear-gradient(145deg, #c084fc, #7c3aed);
+      color: #070707;
+      padding: 14px 30px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 15px;
+      z-index: 300;
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+      box-shadow: 0 12px 30px rgba(124, 58, 237, 0.5);
+      pointer-events: none;
+      white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ---------- АДАПТИВ ---------- */
+    @media (max-width: 850px) {
+      .header-inner { flex-direction: column; align-items: stretch; }
+      nav { justify-content: center; flex-wrap: wrap; gap: 18px; }
+      .hero h1 { font-size: 40px; }
+      .about-card { padding: 34px 26px; }
+      .about-text h2 { font-size: 32px; }
+      .info-bar { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 520px) {
+      .hero h1 { font-size: 32px; }
+      .card-actions { flex-direction: column; }
+      .cart-btn { padding: 8px 16px; font-size: 14px; }
+      .grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .about-features { width: 100%; }
+      .cart-panel { max-width: 100%; }
+    }
+
+    ::-webkit-scrollbar { width: 10px; background: #070707; }
+    ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+  </style>
+</head>
+<body>
+  <!-- ШАПКА -->
+  <header>
+    <div class="container header-inner">
+      <div class="logo">
+        <span class="hydra">HYDRA</span>
+        <span class="black">BLACK</span>
+      </div>
+      <div class="city-selector">
+        <i>📍</i> Санкт-Петербург
+      </div>
+      <nav>
+        <a href="#pizza">Пицца</a>
+        <a href="#drinks">Напитки</a>
+        <a href="#about">О нас</a>
+      </nav>
+      <button class="cart-btn" id="cartBtn" type="button">
+        <i>🛒</i> Корзина · <span id="cartTotalHeader">0</span> ₽
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- HERO -->
+      <div class="hero">
+        <h1>Тёмная сторона <em>вкуса</em> — пицца HYDRA BLACK</h1>
+        <p>Пеперонни и Маргарита, ледяная Кока-Кола и свежевыжатый апельсиновый сок. Доставка по городу за 30 минут.</p>
+        <div class="promo-badge">🔥 Лучшая пицца в городе — по мнению наших гостей</div>
+      </div>
+
+      <!-- ПИЦЦА -->
+      <section id="pizza" class="menu-section">
+        <h2 class="section-title">Пицца <span>HYDRA</span></h2>
+        <div class="grid">
+          <!-- Пеперонни -->
+          <div class="card" data-type="pizza-pepperoni">
+            <div class="card-visual" aria-label="Пицца Пеперонни"></div>
+            <h3>Пеперонни</h3>
+            <div class="card-desc">
+              Острая пепперони, моцарелла, томатный соус, смесь итальянских трав. Для тех, кто любит поострее.
+            </div>
+            <div class="price-row">
+              <div class="price">599 <small>₽</small></div>
+              <div class="weight">30 см · 570 г</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-primary" type="button"
+                data-add
+                data-id="pepperoni"
+                data-name="Пеперонни"
+                data-price="599"
+                data-type="pizza-pepperoni">В корзину</button>
+              <button class="btn-outline" type="button">Подробнее</button>
+            </div>
+          </div>
+
+          <!-- Маргарита -->
+          <div class="card" data-type="pizza-margherita">
+            <div class="card-visual" aria-label="Пицца Маргарита"></div>
+            <h3>Маргарита</h3>
+            <div class="card-desc">
+              Томаты, моцарелла, свежий базилик, оливковое масло и немного пармезана. Нежная классика.
+            </div>
+            <div class="price-row">
+              <div class="price">499 <small>₽</small></div>
+              <div class="weight">30 см · 480 г</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-primary" type="button"
+                data-add
+                data-id="margherita"
+                data-name="Маргарита"
+                data-price="499"
+                data-type="pizza-margherita">В корзину</button>
+              <button class="btn-outline" type="button">Подробнее</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- НАПИТКИ -->
+      <section id="drinks" class="menu-section">
+        <h2 class="section-title">Напитки <span>к пицце</span></h2>
+        <div class="grid">
+          <!-- Кока-Кола -->
+          <div class="card" data-type="drink-cola">
+            <div class="card-visual" aria-label="Кока-Кола"></div>
+            <h3>Кока-Кола</h3>
+            <div class="card-desc">
+              Классическая ледяная Кока-Кола. Идеально подходит к острой пеперонни.
+            </div>
+            <div class="price-row">
+              <div class="price">149 <small>₽</small></div>
+              <div class="weight">0.5 л</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-primary" type="button"
+                data-add
+                data-id="cola"
+                data-name="Кока-Кола"
+                data-price="149"
+                data-type="drink-cola">В корзину</button>
+              <button class="btn-outline" type="button">Подробнее</button>
+            </div>
+          </div>
+
+          <!-- Апельсиновый сок -->
+          <div class="card" data-type="drink-orange">
+            <div class="card-visual" aria-label="Апельсиновый сок"></div>
+            <h3>Апельсиновый сок</h3>
+            <div class="card-desc">
+              Свежевыжатый сок из спелых апельсинов. Яркий вкус и витамин C.
+            </div>
+            <div class="price-row">
+              <div class="price">199 <small>₽</small></div>
+              <div class="weight">0.4 л</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-primary" type="button"
+                data-add
+                data-id="orange"
+                data-name="Апельсиновый сок"
+                data-price="199"
+                data-type="drink-orange">В корзину</button>
+              <button class="btn-outline" type="button">Подробнее</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- О НАС -->
+      <section id="about" class="about-section">
+        <div class="about-card">
+          <div class="about-text">
+            <h2>О нас — <em>лучшая пицца в городе</em></h2>
+            <p>
+              HYDRA BLACK — это не просто пиццерия. Это место, где классические рецепты встречаются с тёмной эстетикой.
+              Мы готовим на дровах, используем только свежие продукты и никогда не экономим на начинке.
+            </p>
+            <p>
+              Наши гости говорят, что у нас лучшая пицца в городе. Мы не спорим — мы просто продолжаем готовить
+              Пеперонни и Маргариту так, как это должно быть. Заходите за своей порцией вкуса.
+            </p>
+          </div>
