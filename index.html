@@ -331,3 +331,452 @@ footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-s
   function glassIcon(fill, top, ice){
     let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
     s += '<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
+    <body> <script>
+(function(){
+
+  /* ============================================================
+     SVG-ИКОНКИ
+     ============================================================ */
+  function pizzaIcon(sauce, cheese, tops){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
+    s += '<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
+    s += '<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
+    s += '<circle cx="100" cy="100" r="74" fill="' + sauce + '"/>';
+    cheese.forEach(function(c){
+      s += '<ellipse cx="' + c[0] + '" cy="' + c[1] + '" rx="' + c[2] + '" ry="' + c[3] + '" fill="#f5d878" opacity="0.94"/>';
+    });
+    tops.forEach(function(t){
+      s += '<circle cx="' + t.x + '" cy="' + t.y + '" r="' + t.r + '" fill="' + t.c + '"/>';
+      s += '<circle cx="' + (t.x-2) + '" cy="' + (t.y-2) + '" r="' + (t.r*0.45) + '" fill="#fff" opacity="0.3"/>';
+    });
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  function bottleIcon(color, dark, label){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="190" rx="36" ry="6" fill="#000" opacity="0.4"/>';
+    s += '<rect x="76" y="8" width="48" height="18" rx="4" fill="' + label + '"/>';
+    s += '<path d="M78 26 L122 26 L128 60 L72 60 Z" fill="' + dark + '"/>';
+    s += '<path d="M70 60 Q60 70 60 90 L60 172 Q60 184 72 184 L128 184 Q140 184 140 172 L140 90 Q140 70 130 60 Z" fill="' + color + '"/>';
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 148 Q110 152 100 148 Q90 144 60 148 Z" fill="' + label + '"/>';
+    s += '<path d="M68 70 L68 176 Q72 179 74 176 L74 68 Z" fill="#fff" opacity="0.22"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  function glassIcon(fill, top, ice){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="' + fill + '"/>';
+    s += '<ellipse cx="100" cy="62" rx="42" ry="6" fill="' + top + '"/>';
+    if (ice) {
+      s += '<rect x="78" y="78" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 91 89)"/>';
+      s += '<rect x="104" y="108" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 116 118)"/>';
+    }
+    s += '<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ============================================================
+     ПИЦЦЫ
+     ============================================================ */
+  var PIZZAS = [
+    { type:'pizza-pepperoni', name:'Пеперонни', price:599, w:'570 г', desc:'Острая пепперони, моцарелла, томатный соус, итальянские травы.',
+      icon: pizzaIcon('#8a1e10',
+        [[70,72,30,22],[132,82,28,20],[75,138,30,22],[138,132,26,18]],
+        [{x:75,y:70,r:15,c:'#b0301a'},{x:130,y:80,r:14,c:'#b0301a'},{x:70,y:135,r:14,c:'#b0301a'},{x:135,y:130,r:13,c:'#b0301a'},{x:105,y:105,r:15,c:'#b0301a'}]) },
+
+    { type:'pizza-margherita', name:'Маргарита', price:499, w:'480 г', desc:'Томаты, моцарелла, базилик, оливковое масло.',
+      icon: pizzaIcon('#a82814',
+        [[65,72,32,26],[140,82,30,24],[75,138,32,26]],
+        [{x:70,y:70,r:8,c:'#3a8a2a'},{x:130,y:80,r:8,c:'#3a8a2a'},{x:105,y:105,r:8,c:'#3a8a2a'}]) },
+
+    { type:'pizza-hawaii', name:'Гавайская', price:649, w:'620 г', desc:'Курица, ананасы, моцарелла, сливочный соус.',
+      icon: pizzaIcon('#d9822b',
+        [[65,72,30,22],[135,82,28,20]],
+        [{x:70,y:75,r:9,c:'#ffe97a'},{x:135,y:80,r:8,c:'#ffe97a'},{x:105,y:105,r:8,c:'#d94a4a'}]) },
+
+    { type:'pizza-bbq', name:'BBQ Чикен', price:699, w:'640 г', desc:'Курица, бекон, лук, соус барбекю.',
+      icon: pizzaIcon('#5a2308',
+        [[70,72,30,22],[130,82,28,20]],
+        [{x:75,y:70,r:12,c:'#d94020'},{x:135,y:80,r:11,c:'#d94020'},{x:105,y:105,r:10,c:'#d94020'}]) },
+
+    { type:'pizza-four-cheese', name:'Четыре сыра', price:749, w:'560 г', desc:'Моцарелла, пармезан, дорблю, чеддер.',
+      icon: pizzaIcon('#e0c070',
+        [[60,68,34,26],[140,80,32,24],[70,135,34,26]],
+        [{x:55,y:70,r:5,c:'#fff8d8'},{x:140,y:85,r:5,c:'#f0e8c8'},{x:75,y:135,r:5,c:'#fff8d8'}]) },
+
+    { type:'pizza-veggie', name:'Вегетарианская', price:549, w:'520 г', desc:'Перец, грибы, черри, оливки, лук.',
+      icon: pizzaIcon('#c8361e',
+        [[70,72,30,22],[130,82,28,20]],
+        [{x:70,y:70,r:7,c:'#d94a4a'},{x:80,y:138,r:7,c:'#3a8a2a'},{x:105,y:105,r:6,c:'#8a5a2a'}]) },
+
+    { type:'pizza-diablo', name:'Дьябло', price:699, w:'580 г', desc:'Острая пепперони, халапеньо, чили.',
+      icon: pizzaIcon('#7a1a08',
+        [[70,72,30,22],[130,82,28,20]],
+        [{x:75,y:70,r:11,c:'#d0201a'},{x:130,y:80,r:10,c:'#d0201a'},{x:60,y:110,r:7,c:'#3a8a2a'}]) },
+
+    { type:'pizza-meat', name:'Мясная', price:799, w:'680 г', desc:'Пепперони, бекон, ветчина, курица.',
+      icon: pizzaIcon('#8a1e10',
+        [[70,72,30,22],[130,82,28,20]],
+        [{x:70,y:70,r:10,c:'#b0301a'},{x:130,y:80,r:9,c:'#8a1a08'},{x:105,y:105,r:9,c:'#b0301a'}]) },
+
+    { type:'pizza-carbonara', name:'Карбонара', price:729, w:'600 г', desc:'Бекон, сливочный соус, пармезан, яйцо.',
+      icon: pizzaIcon('#f0e0a0',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:8,c:'#a8481a'},{x:130,y:80,r:8,c:'#a8481a'},{x:105,y:105,r:7,c:'#f0c040'}]) },
+
+    { type:'pizza-cheese', name:'Сырная', price:599, w:'540 г', desc:'Моцарелла, чеддер, пармезан, сливки.',
+      icon: pizzaIcon('#f0c050',
+        [[65,72,32,24],[135,82,30,22],[75,138,32,24]],
+        [{x:70,y:70,r:4,c:'#fff8d8'},{x:135,y:85,r:4,c:'#fff8d8'},{x:80,y:130,r:4,c:'#fff8d8'}]) },
+
+    { type:'pizza-truffle', name:'Трюфельная', price:899, w:'560 г', desc:'Трюфельный соус, шампиньоны, пармезан.',
+      icon: pizzaIcon('#3a2410',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:6,c:'#8a6a3a'},{x:130,y:80,r:6,c:'#8a6a3a'},{x:105,y:105,r:5,c:'#d0b878'}]) },
+
+    { type:'pizza-salmon', name:'С лососем', price:949, w:'580 г', desc:'Лосось, сливочный сыр, шпинат, каперсы.',
+      icon: pizzaIcon('#f0d8c0',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:8,c:'#e85040'},{x:130,y:80,r:8,c:'#e85040'},{x:105,y:105,r:6,c:'#3a8a2a'}]) },
+
+    { type:'pizza-tuna', name:'Тунец', price:829, w:'560 г', desc:'Тунец, красный лук, оливки, моцарелла.',
+      icon: pizzaIcon('#c8a890',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:7,c:'#a86050'},{x:130,y:80,r:7,c:'#a86050'},{x:105,y:105,r:5,c:'#3a3a3a'}]) },
+
+    { type:'pizza-shrimp', name:'С креветками', price:949, w:'540 г', desc:'Креветки, чеснок, сливочный соус.',
+      icon: pizzaIcon('#f0e0d0',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:7,c:'#ff8888'},{x:130,y:80,r:7,c:'#ff8888'},{x:105,y:105,r:5,c:'#3a8a2a'}]) },
+
+    { type:'pizza-mushroom', name:'Грибная', price:649, w:'520 г', desc:'Шампиньоны, белые грибы, моцарелла.',
+      icon: pizzaIcon('#8a6a3a',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:8,c:'#4a3018'},{x:130,y:80,r:8,c:'#4a3018'},{x:105,y:105,r:6,c:'#6a4828'}]) },
+
+    { type:'pizza-bacon', name:'С беконом', price:749, w:'600 г', desc:'Бекон, моцарелла, томатный соус, розмарин.',
+      icon: pizzaIcon('#a82814',
+        [[65,72,32,24],[135,82,30,22]],
+        [{x:70,y:70,r:9,c:'#a8481a'},{x:130,y:80,r:9,c:'#a8481a'},{x:105,y:105,r:7,c:'#a8481a'}]) },
+
+    { type:'pizza-signature', name:'Фирменная', price:999, w:'700 г', desc:'Авторский рецепт от шеф-повара.',
+      icon: pizzaIcon('#8a1e10',
+        [[65,72,32,24],[135,82,30,22],[75,138,32,24]],
+        [{x:60,y:70,r:8,c:'#b0301a'},{x:130,y:80,r:8,c:'#3a8a2a'},{x:105,y:105,r:8,c:'#d94a4a'},{x:90,y:130,r:6,c:'#d94020'}]) }
+  ];
+
+  /* ============================================================
+     НАПИТКИ
+     ============================================================ */
+  var DRINKS = [
+    { type:'drink-cola', name:'Кока-Кола', price:149, w:'0.5 л', desc:'Классическая ледяная Кока-Кола.', icon: bottleIcon('#1a0505','#2a0808','#c8102e') },
+    { type:'drink-orange', name:'Апельсиновый сок', price:199, w:'0.4 л', desc:'Свежевыжатый сок из спелых апельсинов.', icon: bottleIcon('#c05a10','#a84a0a','#f0a838') },
+    { type:'drink-sprite', name:'Спрайт', price:149, w:'0.5 л', desc:'Освежающий лимон-лайм со льдом.', icon: bottleIcon('#1a5a2a','#1a6a2a','#3aaa4a') },
+    { type:'drink-lemonade', name:'Лимонад', price:179, w:'0.4 л', desc:'Домашний лимонад с мятой и лаймом.', icon: glassIcon('#e8e050','#f8f070',1) },
+    { type:'drink-pee', name:'Моча', price:99, w:'0.3 л', desc:'Оригинальный напиток. Не для слабонервных.', icon: glassIcon('#d4c020','#e8d840',0) },
+    { type:'drink-coffee', name:'Кофе Латте', price:189, w:'0.3 л', desc:'Двойной эспрессо с горячим молоком.', icon: glassIcon('#6b4520','#3a2010',0) },
+    { type:'drink-fanta', name:'Фанта', price:149, w:'0.5 л', desc:'Апельсиновая газировка.', icon: bottleIcon('#e88010','#c86008','#ffa838') },
+    { type:'drink-water', name:'Вода', price:99, w:'0.5 л', desc:'Минеральная вода без газа.', icon: bottleIcon('#a0c8e0','#80b0d0','#ffffff') },
+    { type:'drink-milkshake', name:'Молочный коктейль', price:249, w:'0.4 л', desc:'Коктейль из мороженого и молока.', icon: glassIcon('#f0e8d8','#ffffff',0) },
+    { type:'drink-tea', name:'Чай', price:129, w:'0.3 л', desc:'Горячий чёрный чай с лимоном.', icon: glassIcon('#a86020','#c08040',0) }
+  ];
+
+  /* ============================================================
+     СОЗДАЁМ КАРТОЧКУ
+     ============================================================ */
+  function makeCard(item, isPizza){
+    var d = document.createElement('div');
+    d.className = 'card';
+    d.setAttribute('data-type', item.type);
+    d.innerHTML =
+      '<div class="cat" style="position:absolute;top:16px;left:16px;z-index:5;background:linear-gradient(135deg,#ff9f2e,#e63a1f);color:#0d0603;font-size:10px;font-weight:900;padding:8px 15px;border-radius:100px;letter-spacing:1.5px;text-transform:uppercase;box-shadow:0 6px 18px rgba(255,159,46,.55);">' + (isPizza ? 'ПИЦЦА · 30 СМ' : 'НАПИТОК') + '</div>' +
+      '<div class="thumb" style="background-image:' + item.icon + '"></div>' +
+      '<div class="body">' +
+        '<h3>' + item.name + '</h3>' +
+        '<p class="desc">' + item.desc + '</p>' +
+        '<div class="meta">' +
+          '<div class="price">' + item.price + '<small>₽</small></div>' +
+          '<div class="weight">' + item.w + '</div>' +
+        '</div>' +
+        '<button class="add" data-add data-id="' + item.type + '" data-name="' + item.name + '" data-price="' + item.price + '" data-type="' + item.type + '">+ В корзину</button>' +
+      '</div>';
+    return d;
+  }
+
+  /* ============================================================
+     РИСУЕМ ТОВАРЫ
+     ============================================================ */
+  function render(){
+    var pg = document.getElementById('pizzaGrid');
+    var dg = document.getElementById('drinksGrid');
+
+    /* Если сеток нет — создадим секции сами */
+    if (!pg || !dg) {
+      var newPizzaSec = document.createElement('section');
+      newPizzaSec.className = 'sec';
+      newPizzaSec.id = 'pizza';
+      newPizzaSec.innerHTML =
+        '<div class="wrap">' +
+          '<div class="sec-head">' +
+            '<h2><span class="num">01 //</span> ПИЦЦА <span class="red">HYDRA</span></h2>' +
+            '<p>18 рецептов — от классики до авторских</p>' +
+          '</div>' +
+          '<div class="grid" id="pizzaGrid"></div>' +
+        '</div>';
+
+      var newDrinkSec = document.createElement('section');
+      newDrinkSec.className = 'sec';
+      newDrinkSec.id = 'drinks';
+      newDrinkSec.innerHTML =
+        '<div class="wrap">' +
+          '<div class="sec-head">' +
+            '<h2><span class="num">02 //</span> НАПИТКИ</h2>' +
+            '<p>Холодные и горячие — чтобы подчеркнуть вкус</p>' +
+          '</div>' +
+          '<div class="grid" id="drinksGrid"></div>' +
+        '</div>';
+
+      var main = document.querySelector('main');
+      if (main) {
+        main.appendChild(newPizzaSec);
+        main.appendChild(newDrinkSec);
+      } else {
+        document.body.appendChild(newPizzaSec);
+        document.body.appendChild(newDrinkSec);
+      }
+      pg = document.getElementById('pizzaGrid');
+      dg = document.getElementById('drinksGrid');
+    }
+
+    /* Очищаем и заново рисуем товары */
+    pg.innerHTML = '';
+    dg.innerHTML = '';
+
+    PIZZAS.forEach(function(item){
+      pg.appendChild(makeCard(item, true));
+    });
+
+    DRINKS.forEach(function(item){
+      dg.appendChild(makeCard(item, false));
+    });
+  }
+
+  /* ============================================================
+     КОРЗИНА
+     ============================================================ */
+  var cart = [];
+  var overlay = document.getElementById('overlay');
+  var drawer = document.getElementById('drawer');
+  var cartList = document.getElementById('cartList');
+  var cartCount = document.getElementById('cartCount');
+  var cartSum = document.getElementById('cartSum');
+  var headerTotal = document.getElementById('headerTotal');
+  var checkoutBtn = document.getElementById('checkoutBtn');
+  var clearBtn = document.getElementById('clearBtn');
+  var toast = document.getElementById('toast');
+
+  var toastTimer;
+  function showToast(msg){
+    if (!toast) { alert(msg); return; }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  }
+
+  function openCart(){
+    if (overlay) overlay.classList.add('open');
+    if (drawer) drawer.classList.add('open');
+    renderCart();
+  }
+  function closeCart(){
+    if (overlay) overlay.classList.remove('open');
+    if (drawer) drawer.classList.remove('open');
+  }
+
+  var cartBtn = document.getElementById('cartBtn');
+  var closeCartBtn = document.getElementById('closeCart');
+  if (cartBtn) cartBtn.onclick = openCart;
+  if (closeCartBtn) closeCartBtn.onclick = closeCart;
+  if (overlay) overlay.onclick = closeCart;
+
+  function totalSum(){ return cart.reduce(function(s,i){ return s + i.price * i.qty; }, 0); }
+  function totalCount(){ return cart.reduce(function(s,i){ return s + i.qty; }, 0); }
+
+  function renderCart(){
+    var sum = totalSum();
+    if (cartCount) cartCount.textContent = totalCount();
+    if (cartSum) cartSum.textContent = sum.toLocaleString('ru-RU') + ' ₽';
+    if (headerTotal) headerTotal.textContent = sum.toLocaleString('ru-RU');
+    if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
+
+    if (!cartList) return;
+    if (!cart.length) {
+      cartList.innerHTML = '<div class="empty"><div class="ic">🛒</div><p>Корзина пуста</p></div>';
+      return;
+    }
+
+    var allItems = PIZZAS.concat(DRINKS);
+    cartList.innerHTML = cart.map(function(it, i){
+      var src = allItems.find(function(x){ return x.type === it.type; });
+      var icon = src ? src.icon : '';
+      return '<div class="row">' +
+        '<div class="row-thumb" style="background-image:' + icon + '"></div>' +
+        '<div class="row-main">' +
+          '<div class="row-head">' +
+            '<div><h4>' + it.name + '</h4><div class="u">' + it.price + ' ₽ / шт</div></div>' +
+            '<button class="del" data-del="' + i + '">×</button>' +
+          '</div>' +
+          '<div class="row-foot">' +
+            '<div class="cnt">' +
+              '<button data-minus="' + i + '">−</button>' +
+              '<span class="q">' + it.qty + '</span>' +
+              '<button data-plus="' + i + '">+</button>' +
+            '</div>' +
+            '<div class="lt">' + (it.price * it.qty).toLocaleString('ru-RU') + ' ₽</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ============================================================
+     ОБРАБОТЧИКИ
+     ============================================================ */
+  document.addEventListener('click', function(e){
+    /* Добавить в корзину */
+    var addBtn = e.target.closest('[data-add]');
+    if (addBtn) {
+      var id = addBtn.dataset.id;
+      var found = cart.find(function(x){ return x.id === id; });
+      if (found) { found.qty++; }
+      else {
+        cart.push({
+          id: id,
+          name: addBtn.dataset.name,
+          price: +addBtn.dataset.price,
+          type: addBtn.dataset.type,
+          qty: 1
+        });
+      }
+      renderCart();
+      showToast('✓ Добавлено: ' + addBtn.dataset.name);
+      return;
+    }
+
+    /* Удалить */
+    var del = e.target.closest('[data-del]');
+    if (del) { cart.splice(+del.dataset.del, 1); renderCart(); return; }
+
+    /* Плюс */
+    var plus = e.target.closest('[data-plus]');
+    if (plus) { cart[+plus.dataset.plus].qty++; renderCart(); return; }
+
+    /* Минус */
+    var minus = e.target.closest('[data-minus]');
+    if (minus) {
+      var i = +minus.dataset.minus;
+      cart[i].qty--;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
+      renderCart();
+      return;
+    }
+
+    /* Очистить */
+    if (e.target.closest('#clearBtn')) {
+      if (!cart.length) return;
+      cart = [];
+      renderCart();
+      showToast('✓ Корзина очищена');
+      return;
+    }
+
+    /* Оформить */
+    if (e.target.closest('#checkoutBtn')) {
+      if (!cart.length) return;
+      var name = prompt('Ваше имя для заказа:', 'Гость');
+      if (name === null) return;
+      var address = prompt('Адрес доставки:', '');
+      if (address === null) return;
+
+      var order = {
+        name: (name.trim() || 'Гость').slice(0, 24),
+        address: (address.trim() || 'Адрес не указан').slice(0, 120),
+        items: cart.map(function(x){ return { name: x.name, price: x.price, qty: x.qty }; }),
+        total: totalSum(),
+        time: Date.now(),
+        code: 'HYDRA-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,4).toUpperCase()
+      };
+
+      addOrderToFeed(order);
+      cart = [];
+      renderCart();
+      closeCart();
+      showToast('✓ Заказ оформлен · ' + order.code);
+    }
+  });
+
+  /* ============================================================
+     ЗАКАЗЫ
+     ============================================================ */
+  var orders = [];
+
+  function addOrderToFeed(order){
+    orders.unshift(order);
+    renderOrders();
+  }
+
+  function renderOrders(){
+    var list = document.getElementById('ordersList');
+    if (!list) return;
+
+    if (!orders.length) {
+      list.innerHTML = '<div class="orders-empty">Пока заказов нет. Будьте первым!</div>';
+      return;
+    }
+
+    list.innerHTML = orders.map(function(o){
+      var mins = Math.max(1, Math.floor((Date.now() - o.time) / 60000));
+      return '<div class="ord">' +
+        '<div class="ord-top">' +
+          '<div class="ord-name"><span class="av">' + o.name[0].toUpperCase() + '</span>' + o.name + '</div>' +
+          '<div class="ord-time">' + mins + ' мин назад</div>' +
+        '</div>' +
+        '<div class="ord-addr">📍 ' + o.address + '</div>' +
+        '<div class="ord-items">' +
+          o.items.map(function(i){
+            return '<div class="ord-item"><span><span class="q">' + i.qty + '×</span>' + i.name + '</span><span>' + (i.price * i.qty) + ' ₽</span></div>';
+          }).join('') +
+        '</div>' +
+        '<div class="ord-bot">' +
+          '<span class="ord-code">' + o.code + '</span>' +
+          '<span class="ord-total">' + o.total.toLocaleString('ru-RU') + ' ₽</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ============================================================
+     СТАРТ
+     ============================================================ */
+  function start(){
+    try { render(); renderCart(); renderOrders(); }
+    catch(e){ console.error('Ошибка HYDRA:', e); }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+  setTimeout(start, 400);
+  setTimeout(start, 1200);
+
+})();
+</script>
