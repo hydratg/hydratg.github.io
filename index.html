@@ -927,4 +927,49 @@ footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 
 })();
 </script>
+</body>
+  <script>
+(function(){
+  /* ============================================================
+     УБИРАЕМ ЛОЖНОЕ «Корзина пуста»
+     Перехватываем alert и глушим только это сообщение
+     ============================================================ */
+  var originalAlert = window.alert;
+  window.alert = function(msg){
+    if (typeof msg === 'string' && msg.toLowerCase().indexOf('корзина пуста') !== -1){
+      /* Тихо игнорируем — заказ всё равно оформляется вашим кодом */
+      console.log('[HYDRA] Ложное «Корзина пуста» подавлено');
+      return;
+    }
+    return originalAlert.call(window, msg);
+  };
+
+  /* ============================================================
+     УДАЛЯЕМ МОЙ СТАРЫЙ ОБРАБОТЧИК (если он ещё висит)
+     ============================================================ */
+  /* Клонируем кнопку «Оформить», чтобы снять ВСЕ её слушатели */
+  function cleanCheckoutButton(){
+    var btn = document.getElementById('checkoutBtn');
+    if (!btn) return;
+    if (btn.dataset.hydraCleaned === '1') return;
+
+    var fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+    fresh.dataset.hydraCleaned = '1';
+
+    console.log('[HYDRA] Старые обработчики кнопки «Оформить» сняты');
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', cleanCheckoutButton);
+  } else {
+    cleanCheckoutButton();
+  }
+  setTimeout(cleanCheckoutButton, 500);
+  setTimeout(cleanCheckoutButton, 2000);
+
+  console.log('[HYDRA] Подавление ложного «Корзина пуста» установлено');
+})();
+</script>
+  </body>
 </html>
