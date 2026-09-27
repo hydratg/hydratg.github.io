@@ -719,6 +719,181 @@ footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 
 })();
 </script>
+<script type="module">
+/* ============================================================
+   FIREBASE — СИНХРОНИЗАЦИЯ ЗАКАЗОВ
+   Добавляется к существующему сайту, ничего не ломает.
+   ============================================================ */
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, push, onValue }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+  const firebaseConfig = {
 
+  apiKey: "AIzaSyAEg7bBrcHTPKztpdu239imUYIjQQkbfRU",
+
+  authDomain: "hydra-386cd.firebaseapp.com",
+
+  databaseURL: "https://hydra-386cd-default-rtdb.europe-west1.firebasedatabase.app",
+
+  projectId: "hydra-386cd",
+
+  storageBucket: "hydra-386cd.firebasestorage.app",
+
+  messagingSenderId: "935855682328",
+
+  appId: "1:935855682328:web:29d2871866b86ef5ac246d",
+
+  measurementId: "G-LY95R9B548"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const ordersRef = ref(db, 'orders');
+
+/* ============================================================
+   1. СЛУШАЕМ ЗАКАЗЫ ИЗ FIREBASE — чужие заказы видны всем
+   ============================================================ */
+let firebaseOrders = [];
+
+onValue(ordersRef, (snapshot) => {
+  const data = snapshot.val();
+  if (!data){
+    firebaseOrders = [];
+    renderFirebaseOrders();
+    return;
+  }
+  firebaseOrders = Object.entries(data).map(([key, o]) => ({
+    fbKey: key,
+    name: o.name || 'Гость',
+    address: o.address || 'Адрес не указан',
+    code: o.code || '—',
+    items: o.items || [],
+    total: o.total || 0,
+    time: o.time || Date.now()
+  })).sort((a, b) => b.time - a.time);
+
+  renderFirebaseOrders();
+  console.log('[FIREBASE] Заказов в ленте:', firebaseOrders.length);
+});
+
+/* ============================================================
+   2. РИСУЕМ ЗАКАЗЫ В БЛОКЕ #ordersList
+   ============================================================ */
+function timeAgo(t){
+  const sec = Math.floor((Date.now() - t) / 1000);
+  if (sec < 5)  return 'только что';
+  if (sec < 60) return sec + ' сек назад';
+  const m = Math.floor(sec / 60);
+  if (m < 60)   return m + ' мин назад';
+  const h = Math.floor(m / 60);
+  if (h < 24)   return h + ' ч назад';
+  return Math.floor(h / 24) + ' дн назад';
+}
+
+function renderFirebaseOrders(){
+  const list = document.getElementById('ordersList');
+  if (!list) return;
+
+  if (!firebaseOrders.length){
+    list.innerHTML = '<div class="orders-empty">Пока заказов нет. Будьте первым!</div>';
+    return;
+  }
+
+  list.innerHTML = firebaseOrders.map(o => {
+    return '<div class="ord">' +
+      '<div class="ord-top">' +
+        '<div class="ord-name"><span class="av">' + (o.name[0] || '?').toUpperCase() + '</span>' + o.name + '</div>' +
+        '<div class="ord-time">' + timeAgo(o.time) + '</div>' +
+      '</div>' +
+      '<div class="ord-addr">📍 ' + o.address + '</div>' +
+      '<div class="ord-items">' +
+        o.items.map(i =>
+          '<div class="ord-item"><span><span class="q">' + i.qty + '×</span>' + i.name + '</span><span>' + (i.price * i.qty) + ' ₽</span></div>'
+        ).join('') +
+      '</div>' +
+      '<div class="ord-bot">' +
+        '<span class="ord-code">' + o.code + '</span>' +
+        '<span class="ord-total">' + (o.total || 0).toLocaleString('ru-RU') + ' ₽</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* Обновляем «N сек назад» каждую секунду */
+setInterval(() => {
+  if (firebaseOrders.length) renderFirebaseOrders();
+}, 1000);
+
+/* ============================================================
+   3. ОТПРАВКА ЗАКАЗА В FIREBASE
+   Перехватываем кнопку «Оформить заказ»
+   ============================================================ */
+document.addEventListener('click', async function(e){
+  const btn = e.target.closest('#checkoutBtn, .checkout, .checkout-btn, .co');
+  if (!btn) return;
+
+  /* Читаем корзину прямо из DOM (из строк корзины) */
+  const rows = document.querySelectorAll('.cart-row, .row');
+  const items = [];
+
+  rows.forEach(function(row){
+    const nameEl = row.querySelector('h4, .name, .title');
+    if (!nameEl) return;
+    const name = (nameEl.textContent || '').trim();
+    if (!name) return;
+
+    const qtyEl = row.querySelector('.qty, .q, [class*="qty"]');
+    const qty = qtyEl ? (parseInt((qtyEl.textContent || '1').replace(/\D/g, ''), 10) || 1) : 1;
+
+    const priceEl = row.querySelector('.unit, .u, [class*="unit"]');
+    let price = 0;
+    if (priceEl){
+      const m = (priceEl.textContent || '').match(/(\d[\d\s]*)/);
+      if (m) price = parseInt(m[1].replace(/\s/g, ''), 10) || 0;
+    }
+    if (!price){
+      const totalEl = row.querySelector('.line-total, .lt');
+      if (totalEl && qty > 0){
+        const mt = (totalEl.textContent || '').match(/(\d[\d\s]*)/);
+        if (mt) price = Math.round(parseInt(mt[1].replace(/\s/g, ''), 10) / qty);
+      }
+    }
+
+    if (name && qty > 0) items.push({ name, price, qty });
+  });
+
+  /* Если корзина пуста в DOM — выходим */
+  if (!items.length) return;
+
+  /* Имя и адрес */
+  const name = prompt('Ваше имя для заказа:', 'Гость');
+  if (name === null) return;
+  const address = prompt('Адрес доставки:', '');
+  if (address === null) return;
+
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const code = 'HYDRA-' +
+    Math.random().toString(36).slice(2, 6).toUpperCase() + '-' +
+    Math.random().toString(36).slice(2, 4).toUpperCase();
+
+  /* Отправляем в Firebase */
+  try {
+    await push(ordersRef, {
+      name: (name.trim() || 'Гость').slice(0, 24),
+      address: (address.trim() || 'Адрес не указан').slice(0, 120),
+      code,
+      items,
+      total,
+      time: Date.now()
+    });
+    console.log('[FIREBASE] Заказ отправлен:', code);
+  } catch (err){
+    console.error('[FIREBASE] Ошибка:', err);
+  }
+}, true); /* capture: true — срабатываем параллельно вашему обработчику */
+
+console.log('[FIREBASE] Модуль синхронизации заказов загружен');
+</script>
 </body>
 </html>
