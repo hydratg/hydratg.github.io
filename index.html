@@ -5020,3 +5020,260 @@ body{
   });
 })();
 </script>
+<head> <script id="hydra-many-products">
+(function(){
+
+  /* ============================================================
+     SVG-ИКОНКИ — реалистичные
+     ============================================================ */
+
+  function pizza(sauce, cheese, toppings){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<defs><radialGradient id="crust' + Math.random().toString(36).slice(2,7) + '">';
+    s += '<stop offset="0%" stop-color="#e8b060"/><stop offset="100%" stop-color="#8a5a2a"/></radialGradient></defs>';
+    s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
+    s += '<circle cx="100" cy="100" r="88" fill="#a86a2a"/>';
+    s += '<circle cx="100" cy="100" r="84" fill="#d8a04a"/>';
+    s += '<circle cx="100" cy="100" r="80" fill="#e8b860"/>';
+    s += '<circle cx="100" cy="100" r="74" fill="' + sauce + '"/>';
+    cheese.forEach(function(c){
+      s += '<ellipse cx="' + c[0] + '" cy="' + c[1] + '" rx="' + c[2] + '" ry="' + c[3] + '" fill="#f5d878" opacity="0.94"/>';
+      s += '<ellipse cx="' + (c[0]-c[2]*0.3) + '" cy="' + (c[1]-c[3]*0.3) + '" rx="' + (c[2]*0.4) + '" ry="' + (c[3]*0.4) + '" fill="#fff8d8" opacity="0.5"/>';
+    });
+    toppings.forEach(function(t){
+      if (t.ring){
+        s += '<circle cx="' + t.x + '" cy="' + t.y + '" r="' + t.r + '" fill="' + t.c + '"/>';
+        s += '<circle cx="' + t.x + '" cy="' + t.y + '" r="' + (t.r-2) + '" fill="none" stroke="#3a0806" stroke-width="1.5" opacity="0.7"/>';
+        s += '<circle cx="' + (t.x-2) + '" cy="' + (t.y-2) + '" r="' + (t.r*0.5) + '" fill="#c84020" opacity="0.6"/>';
+        s += '<circle cx="' + (t.x+3) + '" cy="' + (t.y+2) + '" r="2" fill="#4a0a04" opacity="0.7"/>';
+      } else if (t.leaf){
+        s += '<ellipse cx="' + t.x + '" cy="' + t.y + '" rx="7" ry="3" fill="' + t.c + '" transform="rotate(' + t.rot + ' ' + t.x + ' ' + t.y + ')"/>';
+        s += '<ellipse cx="' + (t.x-2) + '" cy="' + (t.y-1) + '" rx="3" ry="1.3" fill="#7ad05a" opacity="0.5"/>';
+      } else {
+        s += '<circle cx="' + t.x + '" cy="' + t.y + '" r="' + t.r + '" fill="' + t.c + '"/>';
+        s += '<circle cx="' + (t.x-1) + '" cy="' + (t.y-1) + '" r="' + (t.r*0.5) + '" fill="#fff" opacity="0.35"/>';
+      }
+    });
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  function bottle(color, dark, label){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="190" rx="36" ry="6" fill="#000" opacity="0.4"/>';
+    s += '<rect x="76" y="8" width="48" height="18" rx="4" fill="' + label + '"/>';
+    s += '<rect x="76" y="10" width="48" height="5" rx="2" fill="#fff" opacity="0.25"/>';
+    s += '<path d="M78 26 L122 26 L128 60 L72 60 Z" fill="' + dark + '"/>';
+    s += '<path d="M70 60 Q60 70 60 90 L60 172 Q60 184 72 184 L128 184 Q140 184 140 172 L140 90 Q140 70 130 60 Z" fill="' + color + '"/>';
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 148 Q110 152 100 148 Q90 144 60 148 Z" fill="' + label + '"/>';
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 106 Q110 110 100 106 Q90 102 60 106 Z" fill="#fff" opacity="0.15"/>';
+    s += '<path d="M72 122 Q88 116 100 122 Q112 128 128 122 Q124 132 100 130 Q76 128 72 122 Z" fill="#fff"/>';
+    s += '<path d="M68 70 L68 176 Q72 179 74 176 L74 68 Z" fill="#fff" opacity="0.22"/>';
+    for (var i = 0; i < 14; i++){
+      s += '<circle cx="' + (72 + Math.random()*56) + '" cy="' + (95 + Math.random()*75) + '" r="1.2" fill="#fff" opacity="0.35"/>';
+    }
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  function glass(fill, top, ice){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="#ffffff" opacity="0.08"/>';
+    s += '<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="' + fill + '"/>';
+    s += '<ellipse cx="100" cy="62" rx="42" ry="6" fill="' + top + '"/>';
+    if (ice){
+      s += '<rect x="78" y="78" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 91 89)"/>';
+      s += '<rect x="104" y="108" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 116 118)"/>';
+      s += '<rect x="72" y="124" width="22" height="18" rx="3" fill="#fff" opacity="0.5" transform="rotate(-8 83 133)"/>';
+    }
+    s += '<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s += '<ellipse cx="100" cy="48" rx="48" ry="7" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s += '<path d="M68 58 L74 174" stroke="#fff" stroke-width="3" opacity="0.35"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ============================================================
+     КАРТА ИКОНОК
+     ============================================================ */
+  var ICONS = {
+    'pizza-pepperoni':  pizza('#8a1e10',
+      [[70,72,30,22],[132,82,28,20],[75,138,30,22],[138,132,26,18],[105,50,22,14]],
+      [{x:75,y:70,r:15,c:'#b0301a',ring:1},{x:130,y:80,r:14,c:'#b0301a',ring:1},
+       {x:70,y:135,r:14,c:'#b0301a',ring:1},{x:135,y:130,r:13,c:'#b0301a',ring:1},
+       {x:105,y:105,r:15,c:'#b0301a',ring:1},{x:110,y:48,r:12,c:'#b0301a',ring:1},
+       {x:55,y:100,r:11,c:'#b0301a',ring:1},{x:150,y:110,r:11,c:'#b0301a',ring:1}]),
+
+    'pizza-margherita': pizza('#a82814',
+      [[65,72,32,26],[140,82,30,24],[75,138,32,26],[140,140,28,22],[105,105,26,20],[105,45,22,14]],
+      [{x:55,y:65,leaf:1,c:'#2a7a1a',rot:-30},{x:140,y:78,leaf:1,c:'#2a7a1a',rot:20},
+       {x:80,y:125,leaf:1,c:'#2a7a1a',rot:-15},{x:135,y:135,leaf:1,c:'#2a7a1a',rot:35},
+       {x:108,y:105,leaf:1,c:'#2a7a1a',rot:0}]),
+
+    'pizza-hawaii': pizza('#d9822b',
+      [[65,72,30,22],[135,82,28,20],[75,138,30,22],[140,135,26,18]],
+      [{x:70,y:75,r:9,c:'#ffe97a'},{x:135,y:80,r:8,c:'#ffe97a'},
+       {x:75,y:140,r:9,c:'#ffe97a'},{x:140,y:138,r:8,c:'#ffe97a'},
+       {x:105,y:105,r:8,c:'#d94a4a'},{x:60,y:110,r:7,c:'#d94a4a'},
+       {x:150,y:110,r:6,c:'#d94a4a'}]),
+
+    'pizza-bbq': pizza('#5a2308',
+      [[70,72,30,22],[130,82,28,20],[75,138,30,22]],
+      [{x:75,y:70,r:12,c:'#d94020',ring:1},{x:135,y:80,r:11,c:'#d94020',ring:1},
+       {x:75,y:135,r:11,c:'#d94020',ring:1},{x:105,y:105,r:10,c:'#d94020',ring:1},
+       {x:55,y:100,r:8,c:'#c8a8d0'},{x:150,y:110,r:8,c:'#c8a8d0'}]),
+
+    'pizza-four-cheese': pizza('#e0c070',
+      [[60,68,34,26],[140,80,32,24],[70,135,34,26],[140,135,30,22],[105,105,28,22],[105,45,24,16]],
+      [{x:55,y:70,r:5,c:'#fff8d8'},{x:140,y:85,r:5,c:'#f0e8c8'},
+       {x:75,y:135,r:5,c:'#fff8d8'},{x:140,y:140,r:4,c:'#e8d8b0'},
+       {x:105,y:105,r:4,c:'#fff8d8'}]),
+
+    'pizza-veggie': pizza('#c8361e',
+      [[70,72,30,22],[130,82,28,20],[75,138,30,22]],
+      [{x:70,y:70,r:7,c:'#d94a4a'},{x:130,y:80,r:7,c:'#d94a4a'},
+       {x:80,y:138,r:7,c:'#3a8a2a'},{x:60,y:110,r:6,c:'#3a8a2a'},
+       {x:140,y:140,r:6,c:'#8a5a2a'},{x:105,y:105,r:6,c:'#8a5a2a'},
+       {x:150,y:110,r:5,c:'#f5f5f5'}]),
+
+    'drink-cola':     bottle('#1a0505','#2a0808','#c8102e'),
+    'drink-orange':   bottle('#c05a10','#a84a0a','#f0a838'),
+    'drink-sprite':   bottle('#1a5a2a','#1a6a2a','#3aaa4a'),
+    'drink-lemonade': glass('#e8e050','#f8f070',1),
+    'drink-pee':      glass('#d4c020','#e8d840',0),
+    'drink-coffee':   glass('#6b4520','#3a2010',0)
+  };
+
+  /* ============================================================
+     НОВЫЕ ТОВАРЫ
+     ============================================================ */
+  var NEW = [
+    { type:'pizza-hawaii',      cat:'Пицца · 30 см',  name:'Гавайская',
+      desc:'Курица, ананасы, моцарелла, сливочный соус.',
+      price:649, weight:'620 г' },
+    { type:'pizza-bbq',         cat:'Пицца · 30 см',  name:'BBQ Чикен',
+      desc:'Курица, бекон, красный лук, соус барбекю, моцарелла.',
+      price:699, weight:'640 г' },
+    { type:'pizza-four-cheese', cat:'Пицца · 30 см',  name:'Четыре сыра',
+      desc:'Моцарелла, пармезан, дорблю, чеддер, сливочный соус.',
+      price:749, weight:'560 г' },
+    { type:'pizza-veggie',      cat:'Пицца · 30 см',  name:'Вегетарианская',
+      desc:'Перец, грибы, черри, оливки, лук, моцарелла.',
+      price:549, weight:'520 г' },
+    { type:'drink-coffee',      cat:'Напиток · 0.3 л', name:'Кофе Латте',
+      desc:'Двойной эспрессо с горячим молоком.',
+      price:189, weight:'0.3 л' },
+    { type:'drink-orange',      cat:'Напиток · 0.4 л', name:'Свежий сок',
+      desc:'Свежевыжатый апельсиновый сок.',
+      price:219, weight:'0.4 л' },
+    { type:'drink-sprite',      cat:'Напиток · 0.5 л', name:'Спрайт Ледяной',
+      desc:'Освежающий лимон-лайм со льдом.',
+      price:159, weight:'0.5 л' },
+    { type:'drink-lemonade',    cat:'Напиток · 0.4 л', name:'Домашний Лимонад',
+      desc:'Лимонад с мятой и лаймом.',
+      price:189, weight:'0.4 л' }
+  ];
+
+  /* ============================================================
+     СОЗДАЁМ КАРТОЧКИ
+     ============================================================ */
+  function makeCard(item){
+    var icon = ICONS[item.type];
+    var art = document.createElement('article');
+    art.className = 'product';
+    art.setAttribute('data-type', item.type);
+    art.style.cssText =
+      'background:linear-gradient(160deg,#1a0f18,#0a0608);' +
+      'border:1px solid #2a1a26;border-radius:20px;overflow:hidden;' +
+      'display:flex;flex-direction:column;color:#fff;font-family:inherit;';
+
+    art.innerHTML =
+      '<div class="product-thumb" style="' +
+        'aspect-ratio:16/11;display:block;' +
+        'background:radial-gradient(circle at 50% 40%, #1a1a1a, #050505);' +
+        'background-image:' + icon + ';' +
+        'background-repeat:no-repeat;background-position:center;background-size:88%;' +
+      '"></div>' +
+      '<div class="product-body" style="padding:22px;display:flex;flex-direction:column;flex:1;">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ff7a1a;margin-bottom:8px;">' + item.cat + '</div>' +
+        '<h3 style="font-size:22px;font-weight:800;margin-bottom:8px;color:#fff;">' + item.name + '</h3>' +
+        '<p style="color:#8a7080;font-size:14px;line-height:1.55;margin-bottom:20px;flex:1;">' + item.desc + '</p>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #2a1a26;">' +
+          '<div style="font-size:28px;font-weight:900;color:#fff;">' + item.price + '<small style="font-size:14px;color:#ff7a1a;font-weight:700;margin-left:2px;">₽</small></div>' +
+          '<div style="font-size:12px;color:#8a7080;padding:5px 12px;background:rgba(255,255,255,.03);border-radius:100px;border:1px solid #2a1a26;">' + item.weight + '</div>' +
+        '</div>' +
+        '<button class="add-btn" type="button" ' +
+          'data-add data-id="' + item.type.replace(/^(pizza|drink)-/,'') + '" ' +
+          'data-name="' + item.name + '" data-price="' + item.price + '" data-type="' + item.type + '" ' +
+          'style="width:100%;padding:14px;border-radius:12px;border:1.5px solid #ff7a1a;background:transparent;color:#ff7a1a;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit;">' +
+          '+ В корзину</button>' +
+      '</div>';
+
+    return art;
+  }
+
+  /* ============================================================
+     КРАСИМ СУЩЕСТВУЮЩИЕ ТОВАРЫ
+     ============================================================ */
+  function paintExisting(){
+    document.querySelectorAll('[data-type]').forEach(function(card){
+      if (card.dataset.hp === '1') return;
+      var type = card.getAttribute('data-type');
+      var icon = ICONS[type];
+      if (!icon) return;
+
+      var thumb = card.querySelector('.product-thumb, .card-visual, .thumb, img');
+      if (thumb && thumb.tagName === 'IMG'){
+        var d = document.createElement('div');
+        d.className = 'product-thumb';
+        thumb.replaceWith(d);
+        thumb = d;
+      }
+      if (!thumb){
+        thumb = document.createElement('div');
+        thumb.className = 'product-thumb';
+        card.insertBefore(thumb, card.firstChild);
+      }
+      thumb.style.cssText =
+        'aspect-ratio:16/11;display:block;' +
+        'background:radial-gradient(circle at 50% 40%, #1a1a1a, #050505);' +
+        'background-image:' + icon + ';' +
+        'background-repeat:no-repeat;background-position:center;background-size:88%;' +
+        'border-radius:14px 14px 0 0;';
+      card.dataset.hp = '1';
+    });
+  }
+
+  /* ============================================================
+     ДОБАВЛЯЕМ НОВЫЕ
+     ============================================================ */
+  function addNew(){
+    var any = document.querySelector('[data-type]');
+    if (!any) return;
+    var grid = any.parentElement;
+
+    NEW.forEach(function(item){
+      if (!document.querySelector('[data-type="' + item.type + '"]')){
+        grid.appendChild(makeCard(item));
+      }
+    });
+  }
+
+  function run(){
+    try { paintExisting(); addNew(); } catch(e){ console.error('[HYDRA]', e); }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+  [100,400,1000,2500,5000].forEach(function(t){ setTimeout(run,t); });
+
+  window.addEventListener('load', function(){
+    var o = new MutationObserver(run);
+    o.observe(document.body,{childList:true,subtree:true});
+    setTimeout(function(){ o.disconnect(); },15000);
+  });
+})();
+</script>
