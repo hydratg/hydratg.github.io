@@ -7188,4 +7188,354 @@ footer{padding:40px 0;border-top:1px solid #3a2010;color:#8a5a30;font-size:13px;
   }, true);
 })();
 </script>
+  </body> <style>
+/* ============================================================
+   ПОЛНЫЙ РЕДИЗАЙН КАРТОЧЕК ТОВАРА
+   ============================================================ */
+
+/* 1. СЕТКА — крупная, с воздухом */
+.grid{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr)) !important;
+  gap:26px !important;
+}
+
+/* 2. САМА КАРТОЧКА — «тарелка» */
+.card{
+  all:unset !important;
+  display:flex !important;
+  flex-direction:column !important;
+  background:#1e1008 !important;
+  border:1px solid #3a2010 !important;
+  border-radius:28px !important;
+  overflow:hidden !important;
+  cursor:default !important;
+  transition:transform .4s cubic-bezier(.4,0,.2,1),
+             border-color .3s,
+             box-shadow .4s !important;
+  position:relative !important;
+  isolation:isolate !important;
+  font-family:system-ui,-apple-system,sans-serif !important;
+}
+
+.card:hover{
+  transform:translateY(-10px) !important;
+  border-color:rgba(255,140,26,.5) !important;
+  box-shadow:0 30px 60px -25px rgba(255,140,26,.5),
+             0 0 0 1px rgba(255,140,26,.15) inset !important;
+}
+
+/* 3. ФОТО ТОВАРА — сверху */
+.card .thumb{
+  aspect-ratio:1/1 !important;
+  width:100% !important;
+  background-color:#150a03 !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:78% !important;
+  position:relative !important;
+  border-radius:28px 28px 0 0 !important;
+  flex-shrink:0 !important;
+  transition:transform .5s cubic-bezier(.4,0,.2,1) !important;
+}
+
+.card:hover .thumb{
+  transform:scale(1.05) !important;
+}
+
+/* Плавный переход в тело карточки */
+.card .thumb::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  height:45% !important;
+  background:linear-gradient(180deg,transparent 0%,#1e1008 100%) !important;
+  pointer-events:none !important;
+}
+
+/* 4. БЕЙДЖ-КАТЕГОРИЯ сверху на фото */
+.card .cat{
+  position:absolute !important;
+  top:18px !important;
+  left:18px !important;
+  z-index:5 !important;
+  display:inline-block !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  letter-spacing:2.5px !important;
+  text-transform:uppercase !important;
+  color:#1e1008 !important;
+  background:linear-gradient(135deg,#ffb84d,#ff8c1a) !important;
+  padding:8px 16px !important;
+  border-radius:100px !important;
+  box-shadow:0 6px 16px rgba(255,140,26,.5) !important;
+  margin:0 !important;
+  font-family:system-ui,sans-serif !important;
+}
+
+/* 5. ТЕЛО КАРТОЧКИ */
+.card .body{
+  padding:24px 26px 26px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 !important;
+  gap:0 !important;
+  margin:0 !important;
+  position:relative !important;
+}
+
+/* 6. НАЗВАНИЕ — крупное, серифное */
+.card .body h3{
+  font-family:Georgia,'Times New Roman',serif !important;
+  font-size:26px !important;
+  font-weight:900 !important;
+  line-height:1.15 !important;
+  letter-spacing:-.5px !important;
+  color:#ffeedd !important;
+  margin:0 0 10px 0 !important;
+  padding:0 !important;
+}
+
+/* 7. ОПИСАНИЕ */
+.card .desc{
+  font-size:14px !important;
+  line-height:1.55 !important;
+  color:#a07860 !important;
+  margin:0 0 22px 0 !important;
+  padding:0 !important;
+  flex:1 !important;
+}
+
+/* 8. МЕТА-БЛОК с ценой и весом */
+.card .meta{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:14px !important;
+  margin:0 0 18px 0 !important;
+  padding:18px 0 0 0 !important;
+  border-top:1px solid #3a2010 !important;
+  border-bottom:none !important;
+}
+
+/* Цена — акцентная */
+.card .price{
+  font-family:system-ui,sans-serif !important;
+  font-size:32px !important;
+  font-weight:900 !important;
+  letter-spacing:-1.5px !important;
+  color:#ffb84d !important;
+  line-height:1 !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:baseline !important;
+}
+
+.card .price small{
+  font-size:14px !important;
+  color:#ff8c1a !important;
+  font-weight:800 !important;
+  margin-left:3px !important;
+  letter-spacing:0 !important;
+}
+
+/* Вес — пилюля */
+.card .weight{
+  font-size:11px !important;
+  font-weight:700 !important;
+  letter-spacing:.5px !important;
+  color:#c09070 !important;
+  background:rgba(255,140,26,.07) !important;
+  border:1px solid rgba(255,140,26,.25) !important;
+  padding:8px 14px !important;
+  border-radius:100px !important;
+  white-space:nowrap !important;
+}
+
+/* 9. КНОПКА «В КОРЗИНУ» — круглая, в стиле пиццерии */
+.card .add,
+.card [data-add],
+.card .add-btn,
+.card .btn-primary{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  width:100% !important;
+  padding:15px 24px !important;
+  border-radius:100px !important;
+  border:none !important;
+  background:
+    linear-gradient(#2a0a05,#2a0a05) padding-box,
+    linear-gradient(135deg,#e8a048 0%,#c87830 50%,#e8a048 100%) border-box !important;
+  border:2px solid transparent !important;
+  color:#ffb84d !important;
+  font-family:system-ui,sans-serif !important;
+  font-size:13px !important;
+  font-weight:900 !important;
+  letter-spacing:3px !important;
+  text-transform:uppercase !important;
+  cursor:pointer !important;
+  overflow:hidden !important;
+  transition:all .25s ease !important;
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.4),
+    inset 0 0 20px rgba(255,140,26,.08) !important;
+  margin:0 !important;
+}
+
+/* Мини-пицца слева от текста */
+.card .add::before,
+.card [data-add]::before,
+.card .add-btn::before,
+.card .btn-primary::before{
+  content:"" !important;
+  display:block !important;
+  width:32px !important;
+  height:32px !important;
+  flex-shrink:0 !important;
+  border-radius:50% !important;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='28' fill='%23c89858'/><circle cx='30' cy='30' r='24' fill='%23b8291a'/><path d='M30 8 L49 44 Q30 50 11 44 Z' fill='%23f5c542' stroke='%233a1a08' stroke-width='2' stroke-linejoin='round'/><circle cx='26' cy='26' r='3' fill='%23c8361e'/><circle cx='34' cy='30' r='3' fill='%23c8361e'/><circle cx='28' cy='38' r='2.5' fill='%23c8361e'/><circle cx='40' cy='40' r='2' fill='%233a8a2a'/><circle cx='22' cy='42' r='2' fill='%233a8a2a'/></svg>") !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:100% !important;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.5)) !important;
+  transition:transform .3s ease !important;
+}
+
+/* Ripple-полоса заливки */
+.card .add::after,
+.card [data-add]::after,
+.card .add-btn::after,
+.card .btn-primary::after{
+  content:"" !important;
+  position:absolute !important;
+  top:0 !important;
+  left:-100% !important;
+  width:100% !important;
+  height:100% !important;
+  background:linear-gradient(135deg,#ff8c1a,#ffb84d) !important;
+  transition:left .4s cubic-bezier(.4,0,.2,1) !important;
+  z-index:0 !important;
+  border-radius:100px !important;
+  pointer-events:none !important;
+}
+
+/* Текст кнопки — поверх заливки */
+.card .add,
+.card [data-add],
+.card .add-btn,
+.card .btn-primary{
+  z-index:1 !important;
+}
+
+/* Ховер — заливка + свечение */
+.card .add:hover,
+.card [data-add]:hover,
+.card .add-btn:hover,
+.card .btn-primary:hover{
+  color:#1e1008 !important;
+  transform:translateY(-3px) !important;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.5),
+    0 0 32px rgba(255,140,26,.6) !important;
+}
+
+.card .add:hover::after,
+.card [data-add]:hover::after,
+.card .add-btn:hover::after,
+.card .btn-primary:hover::after{
+  left:0 !important;
+}
+
+.card .add:hover::before,
+.card [data-add]:hover::before,
+.card .add-btn:hover::before,
+.card .btn-primary:hover::before{
+  transform:rotate(20deg) scale(1.12) !important;
+}
+
+/* Нажатие */
+.card .add:active,
+.card [data-add]:active,
+.card .add-btn:active,
+.card .btn-primary:active{
+  transform:scale(.97) !important;
+}
+
+/* 10. УБИРАЕМ ВСЁ ЛИШНЕЕ, ЧТО МОГЛО ОСТАТЬСЯ ОТ СТАРОГО ДИЗАЙНА */
+.card > *:not(.thumb):not(.body):not(.cat){ display:none !important; }
+.card .body > *:not(h3):not(.desc):not(.meta):not(.add):not([data-add]):not(.add-btn){
+  /* оставляем только нужное */
+}
+.card .body > br{ display:none !important; }
+.card img{ display:none !important; }
+
+/* 11. МОБИЛЬНАЯ ВЕРСИЯ */
+@media(max-width:640px){
+  .grid{ grid-template-columns:1fr !important; gap:20px !important; }
+  .card{ border-radius:22px !important; }
+  .card .thumb{ background-size:70% !important; border-radius:22px 22px 0 0 !important; }
+  .card .body{ padding:20px !important; }
+  .card .body h3{ font-size:22px !important; }
+  .card .price{ font-size:28px !important; }
+  .card .add,
+  .card [data-add],
+  .card .add-btn{ font-size:11px !important; letter-spacing:2px !important; padding:14px 18px !important; }
+  .card .add::before,
+  .card [data-add]::before{ width:26px !important; height:26px !important; }
+}
+
+/* 12. АНИМАЦИЯ ПОЯВЛЕНИЯ КАРТОЧЕК */
+@keyframes cardIn{
+  from{ opacity:0; transform:translateY(20px) scale(.96); }
+  to  { opacity:1; transform:translateY(0) scale(1); }
+}
+.card{ animation:cardIn .5s ease backwards !important; }
+.card:nth-child(1){ animation-delay:.05s !important; }
+.card:nth-child(2){ animation-delay:.1s !important; }
+.card:nth-child(3){ animation-delay:.15s !important; }
+.card:nth-child(4){ animation-delay:.2s !important; }
+.card:nth-child(5){ animation-delay:.25s !important; }
+.card:nth-child(6){ animation-delay:.3s !important; }
+</style>
+
+<script>
+/* Ripple-волна от курсора на кнопках */
+(function(){
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.card [data-add], .card .add, .card .add-btn, .card .btn-primary');
+    if (!btn) return;
+
+    var rect = btn.getBoundingClientRect();
+    var x = (e.clientX || (rect.left + rect.width/2)) - rect.left;
+    var y = (e.clientY || (rect.top + rect.height/2)) - rect.top;
+
+    var r = document.createElement('span');
+    r.style.cssText =
+      'position:absolute;left:' + x + 'px;top:' + y + 'px;' +
+      'width:10px;height:10px;border-radius:50%;' +
+      'background:rgba(255,200,80,.6);' +
+      'transform:translate(-50%,-50%) scale(1);' +
+      'pointer-events:none;z-index:2;' +
+      'animation:hydraPulse .55s ease-out forwards;';
+
+    if (!document.getElementById('hydraPulseStyle')){
+      var st = document.createElement('style');
+      st.id = 'hydraPulseStyle';
+      st.textContent = '@keyframes hydraPulse{to{transform:translate(-50%,-50%) scale(30);opacity:0}}';
+      document.head.appendChild(st);
+    }
+
+    btn.appendChild(r);
+    setTimeout(function(){ r.remove(); }, 600);
+  }, true);
+})();
+</script>
+  
   <html>
