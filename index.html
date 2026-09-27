@@ -780,3 +780,336 @@ footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 
 })();
 </script>
+</body> <script>
+(function(){
+
+  /* ============================================================
+     1. ВСТАВЛЯЕМ СТИЛИ (если их нет)
+     ============================================================ */
+  if (!document.getElementById('hydra-cards-style')) {
+    var style = document.createElement('style');
+    style.id = 'hydra-cards-style';
+    style.textContent = `
+      #pizzaGrid, #drinksGrid, .grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+        gap: 24px !important;
+      }
+      .card {
+        background: linear-gradient(160deg, #231108, #0d0603) !important;
+        border: 1px solid #3d1f10 !important;
+        border-radius: 24px !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transition: transform .3s, border-color .3s, box-shadow .3s !important;
+        position: relative !important;
+      }
+      .card:hover {
+        transform: translateY(-8px) !important;
+        border-color: #ff9f2e !important;
+        box-shadow: 0 30px 55px -25px rgba(255,159,46,.6) !important;
+      }
+      .card .thumb {
+        width: 100% !important;
+        height: 220px !important;
+        background-color: #150a03 !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-size: 74% !important;
+        border-radius: 24px 24px 0 0 !important;
+        flex-shrink: 0 !important;
+        position: relative !important;
+      }
+      .card .thumb::after {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: linear-gradient(180deg, transparent 50%, #231108 100%) !important;
+        pointer-events: none !important;
+        border-radius: 24px 24px 0 0 !important;
+      }
+      .card .cat {
+        position: absolute !important;
+        top: 16px !important;
+        left: 16px !important;
+        z-index: 5 !important;
+        background: linear-gradient(135deg, #ff9f2e, #e63a1f) !important;
+        color: #0d0603 !important;
+        font-size: 10px !important;
+        font-weight: 900 !important;
+        padding: 8px 15px !important;
+        border-radius: 100px !important;
+        letter-spacing: 1.5px !important;
+        text-transform: uppercase !important;
+      }
+      .card .body {
+        padding: 22px 24px 24px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 !important;
+      }
+      .card h3 {
+        font-family: Georgia, serif !important;
+        font-size: 23px !important;
+        font-weight: 900 !important;
+        margin: 0 0 10px 0 !important;
+        color: #ffe9d1 !important;
+        line-height: 1.15 !important;
+      }
+      .card .desc {
+        font-size: 13px !important;
+        line-height: 1.6 !important;
+        color: #b88a6a !important;
+        margin: 0 0 20px 0 !important;
+        flex: 1 !important;
+      }
+      .card .meta {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding-top: 16px !important;
+        margin-bottom: 18px !important;
+        border-top: 1px solid #3d1f10 !important;
+      }
+      .card .price {
+        font-size: 28px !important;
+        font-weight: 900 !important;
+        color: #ffd166 !important;
+        letter-spacing: -1px !important;
+        display: flex !important;
+        align-items: baseline !important;
+      }
+      .card .price small {
+        font-size: 14px !important;
+        color: #ff9f2e !important;
+        margin-left: 3px !important;
+        font-weight: 800 !important;
+      }
+      .card .weight {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: #b88a6a !important;
+        background: rgba(255,159,46,.1) !important;
+        border: 1px solid rgba(255,159,46,.28) !important;
+        padding: 7px 13px !important;
+        border-radius: 100px !important;
+      }
+      .card .add {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        width: 100% !important;
+        padding: 15px 20px !important;
+        border-radius: 100px !important;
+        border: none !important;
+        background: transparent !important;
+        color: #ff9f2e !important;
+        font-family: inherit !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase !important;
+        cursor: pointer !important;
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all .25s !important;
+        box-shadow: inset 0 0 0 2px #ff9f2e !important;
+      }
+      .card .add::before {
+        content: "🍕" !important;
+        font-size: 16px !important;
+        position: relative !important;
+        z-index: 1 !important;
+      }
+      .card .add::after {
+        content: "" !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(135deg, #ff9f2e, #ffb957) !important;
+        transition: left .4s !important;
+        z-index: 0 !important;
+        border-radius: 100px !important;
+      }
+      .card .add:hover {
+        color: #0d0603 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: inset 0 0 0 2px transparent, 0 12px 26px rgba(255,159,46,.6) !important;
+      }
+      .card .add:hover::after { left: 0 !important; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /* ============================================================
+     2. SVG-ИКОНКИ
+     ============================================================ */
+  function pizzaIcon(sauce, cheese, tops){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
+    s += '<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
+    s += '<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
+    s += '<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
+    cheese.forEach(function(c){
+      s += '<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.94"/>';
+      s += '<ellipse cx="'+(c[0]-c[2]*0.3)+'" cy="'+(c[1]-c[3]*0.3)+'" rx="'+(c[2]*0.4)+'" ry="'+(c[3]*0.4)+'" fill="#fff8d8" opacity="0.5"/>';
+    });
+    tops.forEach(function(t){
+      s += '<circle cx="'+t.x+'" cy="'+t.y+'" r="'+t.r+'" fill="'+t.c+'"/>';
+      s += '<circle cx="'+(t.x-2)+'" cy="'+(t.y-2)+'" r="'+(t.r*0.45)+'" fill="#fff" opacity="0.3"/>';
+    });
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  /* ============================================================
+     3. ТРИ ПИЦЦЫ
+     ============================================================ */
+  var PIZZAS = [
+    { type:'pizza-pepperoni', name:'Пеперонни', price:599, w:'570 г',
+      desc:'Острая пепперони, моцарелла, томатный соус, итальянские травы.',
+      icon: pizzaIcon('#8a1e10',
+        [[70,72,30,22],[132,82,28,20],[75,138,30,22],[138,132,26,18],[105,50,22,14]],
+        [{x:75,y:70,r:15,c:'#b0301a'},{x:130,y:80,r:14,c:'#b0301a'},
+         {x:70,y:135,r:14,c:'#b0301a'},{x:135,y:130,r:13,c:'#b0301a'},
+         {x:105,y:105,r:15,c:'#b0301a'},{x:110,y:48,r:12,c:'#b0301a'},
+         {x:55,y:100,r:11,c:'#b0301a'},{x:150,y:110,r:11,c:'#b0301a'}]) },
+
+    { type:'pizza-margherita', name:'Маргарита', price:499, w:'480 г',
+      desc:'Томаты, моцарелла, свежий базилик, оливковое масло, пармезан.',
+      icon: pizzaIcon('#a82814',
+        [[65,72,32,26],[140,82,30,24],[75,138,32,26],[140,140,28,22],[105,105,26,20],[105,45,22,14]],
+        [{x:55,y:65,r:8,c:'#3a8a2a'},{x:140,y:78,r:8,c:'#3a8a2a'},
+         {x:80,y:125,r:8,c:'#3a8a2a'},{x:135,y:135,r:8,c:'#3a8a2a'},
+         {x:108,y:105,r:8,c:'#3a8a2a'}]) },
+
+    { type:'pizza-cheese', name:'Сырная', price:599, w:'540 г',
+      desc:'Моцарелла, чеддер, пармезан, дорблю, сливочный соус.',
+      icon: pizzaIcon('#f0c050',
+        [[60,68,34,26],[140,80,32,24],[70,135,34,26],[140,135,30,22],[105,105,28,22],[105,45,24,16]],
+        [{x:55,y:70,r:5,c:'#fff8d8'},{x:140,y:85,r:5,c:'#f0e8c8'},
+         {x:75,y:135,r:5,c:'#fff8d8'},{x:140,y:140,r:4,c:'#e8d8b0'},
+         {x:105,y:105,r:4,c:'#fff8d8'}]) }
+  ];
+
+  /* ============================================================
+     4. СОЗДАЁМ КАРТОЧКУ
+     ============================================================ */
+  function makeCard(item){
+    var d = document.createElement('div');
+    d.className = 'card';
+    d.setAttribute('data-type', item.type);
+    d.innerHTML =
+      '<div class="cat">ПИЦЦА · 30 СМ</div>' +
+      '<div class="thumb" style="background-image:'+item.icon+'"></div>' +
+      '<div class="body">' +
+        '<h3>'+item.name+'</h3>' +
+        '<p class="desc">'+item.desc+'</p>' +
+        '<div class="meta">' +
+          '<div class="price">'+item.price+'<small>₽</small></div>' +
+          '<div class="weight">'+item.w+'</div>' +
+        '</div>' +
+        '<button class="add" data-add data-id="'+item.type+'" data-name="'+item.name+'" data-price="'+item.price+'" data-type="'+item.type+'">+ В корзину</button>' +
+      '</div>';
+    return d;
+  }
+
+  /* ============================================================
+     5. РИСУЕМ
+     ============================================================ */
+  function render(){
+    /* Ищем сетку пицц разными способами */
+    var pg = document.getElementById('pizzaGrid')
+          || document.querySelector('#pizza .grid')
+          || document.querySelector('[id*="pizza" i] .grid')
+          || document.querySelector('section .grid');
+
+    /* Если сетки нет — создаём секцию */
+    if (!pg) {
+      var sec = document.createElement('section');
+      sec.id = 'pizza';
+      sec.className = 'sec';
+      sec.style.cssText = 'padding:40px 0 60px;max-width:1320px;margin:0 auto;padding-left:24px;padding-right:24px;';
+      sec.innerHTML =
+        '<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;gap:20px;flex-wrap:wrap;">' +
+          '<h2 style="font-family:Georgia,serif;font-size:48px;font-weight:900;letter-spacing:-1.8px;display:flex;align-items:baseline;gap:14px;color:#ffe9d1;">' +
+            '<span style="color:#ff9f2e;font-family:system-ui;font-size:14px;font-weight:800;letter-spacing:3px;">01 //</span> ПИЦЦА' +
+          '</h2>' +
+        '</div>' +
+        '<div class="grid" id="pizzaGrid"></div>';
+
+      var main = document.querySelector('main') || document.body;
+      main.appendChild(sec);
+      pg = document.getElementById('pizzaGrid');
+    }
+
+    /* Очищаем сетку и добавляем 3 пиццы */
+    pg.innerHTML = '';
+    PIZZAS.forEach(function(item){
+      pg.appendChild(makeCard(item));
+    });
+
+    console.log('[HYDRA] Добавлено пицц:', PIZZAS.length);
+  }
+
+  /* ============================================================
+     6. КОРЗИНА — обработка кликов по кнопкам
+     ============================================================ */
+  var cart = [];
+
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-add]');
+    if (!btn) return;
+
+    var id    = btn.getAttribute('data-id');
+    var name  = btn.getAttribute('data-name');
+    var price = parseInt(btn.getAttribute('data-price'), 10);
+    var type  = btn.getAttribute('data-type');
+
+    var found = cart.find(function(x){ return x.id === id; });
+    if (found) { found.qty++; }
+    else { cart.push({ id: id, name: name, price: price, type: type, qty: 1 }); }
+
+    /* Обновляем счётчик в шапке */
+    var headerTotal = document.getElementById('headerTotal');
+    if (headerTotal) {
+      var sum = cart.reduce(function(s, i){ return s + i.price * i.qty; }, 0);
+      headerTotal.textContent = sum.toLocaleString('ru-RU');
+    }
+
+    /* Уведомление */
+    var toast = document.getElementById('toast');
+    if (toast) {
+      toast.textContent = '✓ Добавлено: ' + name;
+      toast.classList.add('show');
+      setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    } else {
+      alert('✓ Добавлено: ' + name);
+    }
+
+    console.log('[HYDRA] В корзину:', name, '×', found ? found.qty : 1);
+  }, true);
+
+  /* ============================================================
+     7. СТАРТ
+     ============================================================ */
+  function start(){
+    try { render(); }
+    catch(e){ console.error('[HYDRA] Ошибка:', e); }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+  setTimeout(start, 500);
+  setTimeout(start, 1500);
+
+})();
+</script>
