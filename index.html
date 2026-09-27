@@ -878,12 +878,14 @@ renderCart();
 html
 
 <script>
-/* ===== HYDRA BLACK — корзина, заказы, коды ===== */
+<script>
+/* ===== HYDRA BLACK — единый скрипт корзины и заказов ===== */
 (function(){
   const CART_KEY = 'hydra_cart_v1';
   const ORDERS_KEY = 'hydra_orders_v1';
 
-  /* ---------- Хранилище ---------- */
+  const $ = id => document.getElementById(id);
+
   function getCart(){
     try {
       const raw = localStorage.getItem(CART_KEY);
@@ -904,16 +906,11 @@ html
   function setOrders(arr){
     try { localStorage.setItem(ORDERS_KEY, JSON.stringify(arr)); } catch(e){}
   }
-
-  /* ---------- Код заказа ---------- */
   function genCode(){
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const b = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
     return 'HYDRA-' + b(4) + '-' + b(2);
   }
-
-  /* ---------- Утилиты ---------- */
-  const $ = id => document.getElementById(id);
   function toNum(v){ return parseInt(String(v).replace(/[^\d]/g, ''), 10) || 0; }
 
   /* ---------- Toast ---------- */
@@ -931,13 +928,13 @@ html
     toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
   }
 
-  /* ---------- Открыть/закрыть корзину ---------- */
+  /* ---------- Открытие/закрытие корзины ---------- */
   function openCart(){
     const panel = document.querySelector('.cart');
     const overlay = document.querySelector('.overlay');
     if (panel) panel.classList.add('open');
     if (overlay) overlay.classList.add('open');
-    renderCart(); // ВАЖНО: перерисовываем при каждом открытии
+    renderCart();
   }
   function closeCart(){
     const panel = document.querySelector('.cart');
@@ -1004,16 +1001,11 @@ html
     return Math.floor(h / 24) + ' дн назад';
   }
 
-  let lastIds = new Set();
-  let isFirst = true;
-
   function renderOrders(){
     const list = $('ordersList');
     if (!list) return;
 
     const orders = getOrders();
-
-    // Присваиваем коды старым заказам
     const used = new Set(orders.map(o => o.code).filter(Boolean));
     let changed = false;
     orders.forEach(o => {
@@ -1029,23 +1021,13 @@ html
 
     if (!orders.length){
       list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
-      lastIds = new Set();
       return;
     }
 
-    const currentIds = new Set(orders.map(o => o.id));
-    const freshIds = new Set();
-    if (!isFirst){
-      currentIds.forEach(id => { if (!lastIds.has(id)) freshIds.add(id); });
-    }
-    isFirst = false;
-    lastIds = currentIds;
-
     list.innerHTML = orders.map(o => {
       const total = o.items.reduce((s,i) => s + i.price * i.qty, 0);
-      const fresh = freshIds.has(o.id) ? ' fresh' : '';
       return `
-        <div class="order-card${fresh}">
+        <div class="order-card">
           <div class="order-top">
             <div class="order-name">
               <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
@@ -1070,9 +1052,9 @@ html
     }).join('');
   }
 
-  /* ---------- Клики ---------- */
+  /* ---------- Единый обработчик кликов ---------- */
   document.addEventListener('click', function(e){
-    /* Добавление товара */
+    // Добавить товар
     const addBtn = e.target.closest('.add-btn, [data-add]');
     if (addBtn){
       e.preventDefault();
@@ -1080,7 +1062,6 @@ html
       const name = addBtn.dataset.name || addBtn.getAttribute('data-name');
       const price = toNum(addBtn.dataset.price || addBtn.getAttribute('data-price'));
       const type = addBtn.dataset.type || addBtn.getAttribute('data-type') || '';
-
       if (!name) return;
 
       const cart = getCart();
@@ -1100,7 +1081,7 @@ html
       return;
     }
 
-    /* Удалить, плюс, минус */
+    // Удалить, плюс, минус
     const del = e.target.closest('[data-del]');
     if (del){
       const cart = getCart();
@@ -1128,17 +1109,11 @@ html
       return;
     }
 
-    /* Открыть корзину */
-    if (e.target.closest('#cartBtn')){
-      openCart();
-      return;
-    }
-    /* Закрыть корзину */
-    if (e.target.closest('#closeCart') || e.target.closest('.overlay')){
-      closeCart();
-      return;
-    }
-    /* Очистить корзину */
+    // Открыть корзину
+    if (e.target.closest('#cartBtn')){ openCart(); return; }
+    // Закрыть корзину
+    if (e.target.closest('#closeCart') || e.target.closest('.overlay')){ closeCart(); return; }
+    // Очистить
     if (e.target.closest('#clearCart')){
       if (!getCart().length) return;
       if (!confirm('Очистить корзину?')) return;
@@ -1147,7 +1122,7 @@ html
       showToast('Корзина очищена');
       return;
     }
-    /* Оформить заказ */
+    // Оформить
     if (e.target.closest('#checkoutBtn')){
       const cart = getCart();
       if (!cart.length) return;
@@ -1178,13 +1153,9 @@ html
     }
   });
 
-  /* ---------- Стили для fresh и кода ---------- */
+  /* ---------- Стили ---------- */
   const st = document.createElement('style');
   st.textContent = `
-    .order-card.fresh {
-      border-color: #00ffd5 !important;
-      box-shadow: 0 0 40px rgba(0,255,213,.45) !important;
-    }
     .order-code {
       margin-top: 12px;
       padding: 6px 12px;
@@ -1201,100 +1172,15 @@ html
   `;
   document.head.appendChild(st);
 
-  /* ---------- Первый рендер ---------- */
+  /* ---------- Старт ---------- */
   renderCart();
   renderOrders();
 
-  /* ---------- Обновляем «N мин назад» раз в 30 секунд ---------- */
   setInterval(renderOrders, 30000);
 
-  /* ---------- Синхронизация между вкладками ---------- */
   window.addEventListener('storage', function(e){
     if (e.key === CART_KEY) renderCart();
     if (e.key === ORDERS_KEY) renderOrders();
-  });
-})();
-</script>
-</body>
-html
-
-<script>
-/* ===== УБИРАЕМ ЛИШНИЕ КОРЗИНЫ — оставляем только одну ===== */
-(function(){
-  function dedupe(){
-    const carts = document.querySelectorAll('.cart');
-    const overlays = document.querySelectorAll('.overlay');
-
-    if (carts.length <= 1 && overlays.length <= 1) return;
-
-    console.log('[HYDRA] Найдено корзин:', carts.length, 'оверлеев:', overlays.length);
-
-    // Оставляем ту корзину, у которой внутри есть #cartList
-    let keepCart = null;
-    carts.forEach(c => {
-      if (!keepCart && c.querySelector('#cartList')) keepCart = c;
-    });
-    if (!keepCart) keepCart = carts[0];
-
-    // Удаляем остальные корзины
-    carts.forEach(c => {
-      if (c !== keepCart){
-        c.remove();
-        console.log('[HYDRA] Удалена лишняя корзина');
-      }
-    });
-
-    // Оставляем один overlay — первый
-    overlays.forEach((o, i) => {
-      if (i > 0){
-        o.remove();
-        console.log('[HYDRA] Удалён лишний overlay');
-      }
-    });
-
-    // Убираем дублирующиеся тосты
-    const toasts = document.querySelectorAll('.toast');
-    toasts.forEach((t, i) => { if (i > 0) t.remove(); });
-  }
-
-  // Запускаем несколько раз — чтобы поймать корзину, даже если её создаёт другой скрипт позже
-  function run(){
-    dedupe();
-    setTimeout(dedupe, 50);
-    setTimeout(dedupe, 200);
-    setTimeout(dedupe, 500);
-    setTimeout(dedupe, 1000);
-    setTimeout(dedupe, 2000);
-  }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
-    run();
-  }
-
-  // Также следим за DOM — если кто-то добавит ещё корзину, удалим её сразу
-  const observer = new MutationObserver(function(mutations){
-    let needCheck = false;
-    mutations.forEach(m => {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType === 1){
-          if (node.classList && (node.classList.contains('cart') || node.classList.contains('overlay') || node.classList.contains('toast'))){
-            needCheck = true;
-          }
-          if (node.querySelector && node.querySelector('.cart, .overlay, .toast')){
-            needCheck = true;
-          }
-        }
-      });
-    });
-    if (needCheck) dedupe();
-  });
-
-  window.addEventListener('load', function(){
-    observer.observe(document.body, { childList: true, subtree: true });
-    // Отключаем наблюдение через 10 секунд — чтобы не тратить ресурсы
-    setTimeout(() => observer.disconnect(), 10000);
   });
 })();
 </script>
