@@ -2373,4 +2373,194 @@ h1, h2, .section-title, .section-head h2, .about-title, .big-title{
 })();
 </script>
   <body> 
-  </body>
+  </body>html
+
+<style id="hydra-bg-and-images">
+/* ============ УНИКАЛЬНЫЙ ФОН С УЗОРОМ ПИЦЦЫ ============ */
+body{
+  background-color: #0a0608 !important;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,122,26,.14) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(255,45,149,.14) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(200,255,0,.05) 0%, transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><text x='20' y='65' font-size='44' opacity='0.07'>🍕</text><text x='130' y='120' font-size='36' opacity='0.06'>🍕</text><text x='60' y='185' font-size='40' opacity='0.07'>🍕</text><text x='160' y='35' font-size='30' opacity='0.06'>🍕</text><text x='100' y='50' font-size='24' opacity='0.05'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 220px 220px !important;
+  background-attachment: fixed !important;
+}
+
+/* ============ УНИКАЛЬНЫЕ КАРТИНКИ ДЛЯ НОВЫХ ТОВАРОВ ============ */
+/* Новые пиццы и кофе — рисуем фото-превью через SVG прямо в CSS */
+
+/* Гавайская пицца */
+.product[data-type="pizza-hawaii"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 40% 35%, #ffb84d 0%, #d9822b 30%, #a85a1a 60%, #4a2808 100%) !important;
+  position: relative;
+}
+.product[data-type="pizza-hawaii"] .product-thumb::before{
+  content:"" !important;
+  font-size: 0 !important;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 55% 45%, #ffd97a 4px, transparent 5px),
+    radial-gradient(circle at 40% 60%, #ffd97a 4px, transparent 5px),
+    radial-gradient(circle at 65% 65%, #ffd97a 4px, transparent 5px),
+    radial-gradient(circle at 30% 40%, #ffd97a 4px, transparent 5px),
+    radial-gradient(circle at 70% 35%, #ffd97a 4px, transparent 5px),
+    radial-gradient(circle at 50% 70%, #ffd97a 4px, transparent 5px),
+    radial-gradient(circle at 45% 30%, #f3a54a 5px, transparent 6px),
+    radial-gradient(circle at 60% 55%, #f3a54a 5px, transparent 6px);
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+/* BBQ Чикен */
+.product[data-type="pizza-bbq"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #8a3a12 0%, #5a2308 40%, #2a0a04 100%) !important;
+  position: relative;
+}
+.product[data-type="pizza-bbq"] .product-thumb::before{
+  content:"" !important;
+  font-size: 0 !important;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 50% 50%, #d94020 6px, transparent 7px),
+    radial-gradient(circle at 35% 40%, #b62e10 5px, transparent 6px),
+    radial-gradient(circle at 65% 55%, #d94020 5px, transparent 6px),
+    radial-gradient(circle at 45% 70%, #b62e10 4px, transparent 5px),
+    radial-gradient(circle at 70% 35%, #7a1a08 4px, transparent 5px);
+  border-radius: 50%;
+}
+
+/* Четыре сыра */
+.product[data-type="pizza-four-cheese"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #f5d878 0%, #c9a748 40%, #6b5518 80%, #2a2208 100%) !important;
+  position: relative;
+}
+.product[data-type="pizza-four-cheese"] .product-thumb::before{
+  content:"" !important;
+  font-size: 0 !important;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 40% 40%, rgba(255,240,180,.6) 12px, transparent 13px),
+    radial-gradient(circle at 65% 55%, rgba(255,240,180,.5) 10px, transparent 11px),
+    radial-gradient(circle at 55% 70%, rgba(255,240,180,.5) 8px, transparent 9px),
+    radial-gradient(circle at 30% 60%, rgba(255,240,180,.4) 9px, transparent 10px);
+  border-radius: 50%;
+}
+
+/* Вегетарианская */
+.product[data-type="pizza-veggie"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #4a8a3a 0%, #2a5a1a 40%, #122a08 100%) !important;
+  position: relative;
+}
+.product[data-type="pizza-veggie"] .product-thumb::before{
+  content:"" !important;
+  font-size: 0 !important;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 35% 40%, #d94a4a 5px, transparent 6px),
+    radial-gradient(circle at 60% 45%, #d94a4a 4px, transparent 5px),
+    radial-gradient(circle at 50% 65%, #e8e84a 4px, transparent 5px),
+    radial-gradient(circle at 70% 60%, #e8e84a 4px, transparent 5px),
+    radial-gradient(circle at 45% 30%, #8a5a2a 4px, transparent 5px),
+    radial-gradient(circle at 55% 55%, #f5f5f5 4px, transparent 5px),
+    radial-gradient(circle at 30% 60%, #f5f5f5 3px, transparent 4px);
+  border-radius: 50%;
+}
+
+/* Кофе Латте */
+.product[data-type="drink-coffee"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #a8754a 0%, #6b4520 40%, #2a1a0a 100%) !important;
+  position: relative;
+}
+.product[data-type="drink-coffee"] .product-thumb::before{
+  content:"" !important;
+  font-size: 0 !important;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 50% 45%, rgba(255,240,220,.5) 22px, transparent 24px),
+    radial-gradient(circle at 50% 45%, rgba(200,150,100,.35) 34px, transparent 36px);
+  border-radius: 50%;
+}
+
+/* Добавляем «фото»-эмодзи поверх как декор, но прозрачно */
+.product[data-type="pizza-hawaii"] .product-thumb::after,
+.product[data-type="pizza-bbq"] .product-thumb::after,
+.product[data-type="pizza-four-cheese"] .product-thumb::after,
+.product[data-type="pizza-veggie"] .product-thumb::after,
+.product[data-type="drink-coffee"] .product-thumb::after{
+  content:"" !important;
+  font-size: 0 !important;
+  background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,.5) 100%) !important;
+  pointer-events: none;
+}
+
+/* Эмодзи поверх — с иконкой каждого товара */
+.product[data-type="pizza-hawaii"] .product-thumb,
+.product[data-type="pizza-bbq"] .product-thumb,
+.product[data-type="pizza-four-cheese"] .product-thumb,
+.product[data-type="pizza-veggie"] .product-thumb,
+.product[data-type="drink-coffee"] .product-thumb{
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Чтобы эмодзи были видны поверх узора, добавим ::marker-трюк:
+   используем ::before с content уже занят паттерном, поэтому показываем иконку через доп. слой */
+.product[data-type="pizza-hawaii"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #ffb84d 0%, #d9822b 30%, #a85a1a 60%, #4a2808 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+  background-position: center, center !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+.product[data-type="pizza-bbq"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #8a3a12 0%, #5a2308 40%, #2a0a04 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+  background-position: center, center !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+.product[data-type="pizza-four-cheese"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #f5d878 0%, #c9a748 40%, #6b5518 80%, #2a2208 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+  background-position: center, center !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+.product[data-type="pizza-veggie"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #4a8a3a 0%, #2a5a1a 40%, #122a08 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+  background-position: center, center !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+.product[data-type="drink-coffee"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #a8754a 0%, #6b4520 40%, #2a1a0a 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>☕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+  background-position: center, center !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+</style>
+
+
