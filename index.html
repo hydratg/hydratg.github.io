@@ -59,11 +59,13 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
 .product[data-type="drink-orange"] .product-thumb{background:radial-gradient(circle at 50% 40%,#8a4d00,#2b1400)}
 .product[data-type="drink-sprite"] .product-thumb{background:radial-gradient(circle at 50% 40%,#1a5a2e,#04180a)}
 .product[data-type="drink-lemonade"] .product-thumb{background:radial-gradient(circle at 50% 40%,#8a8a0a,#2b2b00)}
+.product[data-type="drink-pee"] .product-thumb{background:radial-gradient(circle at 50% 40%,#b8a500,#4a4200)}
 .product[data-type="pizza-pepperoni"] .product-thumb::before,.product[data-type="pizza-margherita"] .product-thumb::before{content:"🍕"}
 .product[data-type="drink-cola"] .product-thumb::before{content:"🥤"}
 .product[data-type="drink-orange"] .product-thumb::before{content:"🧃"}
 .product[data-type="drink-sprite"] .product-thumb::before{content:"🥤"}
 .product[data-type="drink-lemonade"] .product-thumb::before{content:"🍋"}
+.product[data-type="drink-pee"] .product-thumb::before{content:"🧪"}
 .product-body{padding:22px 22px 24px;display:flex;flex-direction:column;flex:1}
 .product-cat{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px}
 .product h3{font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:-.5px}
@@ -117,11 +119,13 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
 .row[data-type="drink-orange"] .row-thumb{background:radial-gradient(circle at 50% 40%,#8a4d00,#2b1400)}
 .row[data-type="drink-sprite"] .row-thumb{background:radial-gradient(circle at 50% 40%,#1a5a2e,#04180a)}
 .row[data-type="drink-lemonade"] .row-thumb{background:radial-gradient(circle at 50% 40%,#8a8a0a,#2b2b00)}
+.row[data-type="drink-pee"] .row-thumb{background:radial-gradient(circle at 50% 40%,#b8a500,#4a4200)}
 .row[data-type="pizza-pepperoni"] .row-thumb::before,.row[data-type="pizza-margherita"] .row-thumb::before{content:"🍕"}
 .row[data-type="drink-cola"] .row-thumb::before{content:"🥤"}
 .row[data-type="drink-orange"] .row-thumb::before{content:"🧃"}
 .row[data-type="drink-sprite"] .row-thumb::before{content:"🥤"}
 .row[data-type="drink-lemonade"] .row-thumb::before{content:"🍋"}
+.row[data-type="drink-pee"] .row-thumb::before{content:"🧪"}
 .row-main{flex:1;min-width:0}
 .row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
 .row-head h4{font-size:15px;font-weight:700}
@@ -295,6 +299,20 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
             <button class="add-btn" type="button" data-add data-id="lemonade" data-name="Лимонад" data-price="179" data-type="drink-lemonade">+ В корзину</button>
           </div>
         </article>
+
+        <article class="product" data-type="drink-pee">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Напиток · 0.3 л</div>
+            <h3>Моча</h3>
+            <p class="product-desc">Оригинальный напиток с ярким вкусом. Не для слабонервных.</p>
+            <div class="product-meta">
+              <div class="product-price">99<small>₽</small></div>
+              <div class="product-weight">0.3 л</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="pee" data-name="Моча" data-price="99" data-type="drink-pee">+ В корзину</button>
+          </div>
+        </article>
       </div>
     </div>
   </section>
@@ -306,6 +324,184 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
           <span class="tag">// О НАС</span>
           <span class="big-title">HYDRA PIZZA IN SPB</span>
           <h2>Лучшая пицца в Санкт-Петербурге</h2>
-          <
+          <p>HYDRA BLACK — это не просто пиццерия. Это место, где <span class="accent-txt">классические рецепты</span> встречаются с тёмной эстетикой города.</p>
+          <p>Мы готовим на дровах, используем только свежие продукты и никогда не экономим на начинке. Наши гости говорят, что у нас <span class="accent-txt">лучшая пицца в городе</span> — и мы не спорим.</p>
+        </div>
+        <div class="badges">
+          <div class="badge">
+            <div class="badge-icon">🏆</div>
+            <div class="badge-text">
+              <h4>Лучшая пицца в городе</h4>
+              <p>Выбор наших гостей в СПб</p>
+            </div>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">🔥</div>
+            <div class="badge-text">
+              <h4>Дровяная печь</h4>
+              <p>Готовим при 450°C</p>
+            </div>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">🚀</div>
+            <div class="badge-text">
+              <h4>Доставка 30 минут</h4>
+              <p>Горячей к вашей двери</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-  
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div class="foot-links">
+      <a href="#pizza">Пицца</a>
+      <a href="#drinks">Напитки</a>
+      <a href="#about">О нас</a>
+    </div>
+    <div>© 2025 HYDRA BLACK — HYDRA PIZZA IN SPB · Лучшая пицца в городе</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var cart=[];
+  var overlay=document.createElement('div');
+  overlay.className='overlay';
+  document.body.appendChild(overlay);
+
+  var drawer=document.createElement('div');
+  drawer.className='cart';
+  drawer.innerHTML=
+    '<div class="cart-top">'+
+      '<h3><span class="neon">🛒</span> Корзина <span class="cart-count" id="cartCount">0</span></h3>'+
+      '<button class="close-x" id="closeCart" type="button">×</button>'+
+    '</div>'+
+    '<div class="cart-list" id="cartList"></div>'+
+    '<div class="cart-bottom">'+
+      '<div class="total-line"><span class="lbl">Итого</span><span class="sum" id="cartSum">0 ₽</span></div>'+
+      '<button class="checkout" id="checkoutBtn" type="button" disabled>Оформить заказ</button>'+
+      '<button class="clear" id="clearCart" type="button">Очистить корзину</button>'+
+    '</div>';
+  document.body.appendChild(drawer);
+
+  var toast=document.createElement('div');
+  toast.className='toast';
+  document.body.appendChild(toast);
+  var toastTimer;
+  function showToast(msg){
+    toast.textContent=msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){toast.classList.remove('show');},1800);
+  }
+
+  function openCart(){drawer.classList.add('open');overlay.classList.add('open');}
+  function closeCart(){drawer.classList.remove('open');overlay.classList.remove('open');}
+
+  function totalSum(){return cart.reduce(function(s,i){return s+i.price*i.qty;},0);}
+  function totalCount(){return cart.reduce(function(s,i){return s+i.qty;},0);}
+
+  function render(){
+    var list=document.getElementById('cartList');
+    var sum=totalSum(), cnt=totalCount();
+    document.getElementById('cartCount').textContent=cnt;
+    document.getElementById('cartSum').textContent=sum.toLocaleString('ru-RU')+' ₽';
+    document.getElementById('headerTotal').textContent=sum.toLocaleString('ru-RU');
+    document.getElementById('checkoutBtn').disabled=cart.length===0;
+
+    if(!cart.length){
+      list.innerHTML='<div class="empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
+      return;
+    }
+    list.innerHTML=cart.map(function(it,idx){
+      return '<div class="row" data-type="'+it.type+'">'+
+        '<div class="row-thumb"></div>'+
+        '<div class="row-main">'+
+          '<div class="row-head">'+
+            '<div><h4>'+it.name+'</h4><div class="unit">'+it.price+' ₽ / шт</div></div>'+
+            '<button class="del" type="button" data-del="'+idx+'" title="Удалить">×</button>'+
+          '</div>'+
+          '<div class="row-foot">'+
+            '<div class="counter">'+
+              '<button type="button" data-minus="'+idx+'">−</button>'+
+              '<span class="qty">'+it.qty+'</span>'+
+              '<button type="button" data-plus="'+idx+'">+</button>'+
+            '</div>'+
+            '<div class="line-total">'+(it.price*it.qty).toLocaleString('ru-RU')+' ₽</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  document.getElementById('cartBtn').addEventListener('click',openCart);
+  document.getElementById('closeCart').addEventListener('click',closeCart);
+  overlay.addEventListener('click',closeCart);
+
+  document.getElementById('clearCart').addEventListener('click',function(){
+    if(!cart.length)return;
+    cart=[];
+    render();
+    showToast('Корзина очищена');
+  });
+
+  document.getElementById('checkoutBtn').addEventListener('click',function(){
+    if(!cart.length)return;
+    showToast('Заказ оформлен! Спасибо 🙌');
+    cart=[];
+    render();
+    closeCart();
+  });
+
+  document.addEventListener('click',function(e){
+    var addBtn=e.target.closest('[data-add]');
+    if(addBtn){
+      var id=addBtn.getAttribute('data-id');
+      var name=addBtn.getAttribute('data-name');
+      var price=parseInt(addBtn.getAttribute('data-price'),10);
+      var type=addBtn.getAttribute('data-type');
+      var existing=cart.find(function(x){return x.id===id;});
+      if(existing){existing.qty++;}
+      else{cart.push({id:id,name:name,price:price,type:type,qty:1});}
+      render();
+      showToast('Добавлено: '+name);
+      var trigger=document.getElementById('cartBtn');
+      trigger.classList.remove('bump');
+      void trigger.offsetWidth;
+      trigger.classList.add('bump');
+      return;
+    }
+    var delBtn=e.target.closest('[data-del]');
+    if(delBtn){
+      var di=parseInt(delBtn.getAttribute('data-del'),10);
+      cart.splice(di,1);
+      render();
+      return;
+    }
+    var plus=e.target.closest('[data-plus]');
+    if(plus){
+      var pi=parseInt(plus.getAttribute('data-plus'),10);
+      cart[pi].qty++;
+      render();
+      return;
+    }
+    var minus=e.target.closest('[data-minus]');
+    if(minus){
+      var mi=parseInt(minus.getAttribute('data-minus'),10);
+      cart[mi].qty--;
+      if(cart[mi].qty<=0)cart.splice(mi,1);
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
+
