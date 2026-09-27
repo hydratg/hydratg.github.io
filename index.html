@@ -640,3 +640,185 @@ footer{
     { type:'pizza-margherita', name:'Маргарита', price:499, w:'480 г',
       desc:'Томаты, моцарелла, свежий базилик, оливковое масло, пармезан.',
       icon: pizzaIcon('#
+    <body><script>
+(function(){
+  /* ============================================================
+     НОВЫЕ БЛЮДА
+     ============================================================ */
+  const NEW_PIZZAS = [
+    { type:'pizza-hawaii',      name:'Гавайская',       price:649, w:'620 г', desc:'Курица, ананасы, моцарелла, сливочный соус.' },
+    { type:'pizza-bbq',         name:'BBQ Чикен',       price:699, w:'640 г', desc:'Курица, бекон, красный лук, соус барбекю.' },
+    { type:'pizza-four-cheese', name:'Четыре сыра',     price:749, w:'560 г', desc:'Моцарелла, пармезан, дорблю, чеддер.' },
+    { type:'pizza-veggie',      name:'Вегетарианская',  price:549, w:'520 г', desc:'Перец, грибы, черри, оливки, лук.' },
+    { type:'pizza-diablo',      name:'Дьябло',          price:699, w:'580 г', desc:'Острая пепперони, халапеньо, чили.' },
+    { type:'pizza-meat',        name:'Мясная',          price:799, w:'680 г', desc:'Пепперони, бекон, ветчина, курица.' },
+    { type:'pizza-carbonara',   name:'Карбонара',       price:729, w:'600 г', desc:'Бекон, сливочный соус, пармезан, яйцо.' },
+    { type:'pizza-cheese',      name:'Сырная',          price:599, w:'540 г', desc:'Моцарелла, чеддер, пармезан, сливки.' },
+    { type:'pizza-truffle',     name:'Трюфельная',      price:899, w:'560 г', desc:'Трюфельный соус, шампиньоны, пармезан.' },
+    { type:'pizza-salmon',      name:'С лососем',       price:949, w:'580 г', desc:'Лосось, сливочный сыр, шпинат, каперсы.' },
+    { type:'pizza-mushroom',    name:'Грибная',         price:649, w:'520 г', desc:'Шампиньоны, белые грибы, моцарелла.' },
+    { type:'pizza-signature',   name:'Фирменная',       price:999, w:'700 г', desc:'Авторский рецепт от шеф-повара.' }
+  ];
+
+  const NEW_DRINKS = [
+    { type:'drink-fanta',       name:'Фанта',            price:149, w:'0.5 л', desc:'Апельсиновая газировка.' },
+    { type:'drink-water',       name:'Вода',             price:99,  w:'0.5 л', desc:'Минеральная вода без газа.' },
+    { type:'drink-milkshake',   name:'Молочный коктейль',price:249, w:'0.4 л', desc:'Коктейль из мороженого и молока.' },
+    { type:'drink-smoothie',    name:'Смузи',            price:279, w:'0.4 л', desc:'Ягодный смузи с йогуртом.' },
+    { type:'drink-tea',         name:'Чай',              price:129, w:'0.3 л', desc:'Горячий чёрный чай с лимоном.' },
+    { type:'drink-green-tea',   name:'Зелёный чай',      price:139, w:'0.3 л', desc:'Зелёный чай с жасмином.' },
+    { type:'drink-mors',        name:'Морс',             price:149, w:'0.4 л', desc:'Ягодный морс из клюквы.' },
+    { type:'drink-kvass',       name:'Квас',             price:129, w:'0.5 л', desc:'Хлебный квас.' }
+  ];
+
+  /* ============ SVG-ИКОНКИ ============ */
+  function pizzaIcon(seed){
+    const sauces = ['#8a1e10','#a82814','#c8361e','#7a1a08','#d9822b','#5a2308','#e0c070'];
+    const tops   = ['#b0301a','#7a1008','#d94a4a','#3a8a2a','#8a5a2a','#f5f5f5','#d0201a'];
+    const sauce  = sauces[seed % sauces.length];
+    const top    = tops[seed % tops.length];
+    let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
+    s += '<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
+    s += '<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
+    s += '<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
+    s += '<ellipse cx="70" cy="72" rx="30" ry="22" fill="#f5d878" opacity="0.94"/>';
+    s += '<ellipse cx="132" cy="82" rx="28" ry="20" fill="#f5d878" opacity="0.94"/>';
+    s += '<ellipse cx="75" cy="138" rx="30" ry="22" fill="#f5d878" opacity="0.94"/>';
+    s += '<ellipse cx="138" cy="132" rx="26" ry="18" fill="#f5d878" opacity="0.94"/>';
+    [[75,70,13],[130,80,12],[70,135,12],[135,130,11],[105,105,13],[110,48,10],[55,100,10],[150,110,10]].forEach(function(p){
+      s += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+p[2]+'" fill="'+top+'"/>';
+      s += '<circle cx="'+(p[0]-2)+'" cy="'+(p[1]-2)+'" r="'+(p[2]*0.5)+'" fill="#fff" opacity="0.3"/>';
+    });
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  function bottleIcon(color, dark, label){
+    let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="190" rx="36" ry="6" fill="#000" opacity="0.4"/>';
+    s += '<rect x="76" y="8" width="48" height="18" rx="4" fill="'+label+'"/>';
+    s += '<path d="M78 26 L122 26 L128 60 L72 60 Z" fill="'+dark+'"/>';
+    s += '<path d="M70 60 Q60 70 60 90 L60 172 Q60 184 72 184 L128 184 Q140 184 140 172 L140 90 Q140 70 130 60 Z" fill="'+color+'"/>';
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 148 Q110 152 100 148 Q90 144 60 148 Z" fill="'+label+'"/>';
+    s += '<path d="M68 70 L68 176 Q72 179 74 176 L74 68 Z" fill="#fff" opacity="0.22"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  function glassIcon(fill, top, ice){
+    let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
+    s += '<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="'+fill+'"/>';
+    s += '<ellipse cx="100" cy="62" rx="42" ry="6" fill="'+top+'"/>';
+    if (ice) {
+      s += '<rect x="78" y="78" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 91 89)"/>';
+      s += '<rect x="104" y="108" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 116 118)"/>';
+    }
+    s += '<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  function iconFor(type, i){
+    if (type.indexOf('pizza') === 0) return pizzaIcon(i);
+    if (type === 'drink-water')  return bottleIcon('#a0c8e0','#80b0d0','#ffffff');
+    if (type === 'drink-fanta')  return bottleIcon('#e88010','#c86008','#ffa838');
+    if (type === 'drink-kvass')  return bottleIcon('#6b3a12','#4a2808','#c09040');
+    if (type === 'drink-smoothie') return glassIcon('#e850a0','#f080c0',0);
+    if (type === 'drink-mors')   return glassIcon('#a82040','#d04060',1);
+    if (type === 'drink-tea')    return glassIcon('#a86020','#c08040',0);
+    if (type === 'drink-green-tea') return glassIcon('#7a9a3a','#a8c060',0);
+    if (type === 'drink-milkshake') return glassIcon('#f0e8d8','#ffffff',0);
+    return bottleIcon('#555','#333','#aaa');
+  }
+
+  /* ============ СОЗДАЁМ КАРТОЧКУ ============ */
+  function makeCard(item, index, isPizza){
+    const icon = iconFor(item.type, index);
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.setAttribute('data-type', item.type);
+    d.innerHTML =
+      '<div class="thumb" style="background-image:'+icon+'"></div>' +
+      '<div class="body">' +
+        '<div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ff9f2e;margin-bottom:8px;">'+(isPizza?'Пицца · 30 см':'Напиток')+'</div>' +
+        '<h3>'+item.name+'</h3>' +
+        '<p class="desc">'+item.desc+'</p>' +
+        '<div class="meta">' +
+          '<div class="price">'+item.price+'<small>₽</small></div>' +
+          '<div class="weight">'+item.w+'</div>' +
+        '</div>' +
+        '<button class="add" data-add data-id="'+item.type+'" data-name="'+item.name+'" data-price="'+item.price+'" data-type="'+item.type+'">+ В корзину</button>' +
+      '</div>';
+    return d;
+  }
+
+  /* ============ ДОБАВЛЯЕМ ============ */
+  function add(){
+    const pizzaGrid = document.getElementById('pizzaGrid');
+    const drinksGrid = document.getElementById('drinksGrid');
+    if (!pizzaGrid || !drinksGrid) return;
+
+    let pi = 0, di = 100;
+
+    NEW_PIZZAS.forEach(function(item){
+      if (document.querySelector('[data-type="'+item.type+'"]')) return;
+      pizzaGrid.appendChild(makeCard(item, pi++, true));
+    });
+
+    NEW_DRINKS.forEach(function(item){
+      if (document.querySelector('[data-type="'+item.type+'"]')) return;
+      drinksGrid.appendChild(makeCard(item, di++, false));
+    });
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', add);
+  } else { add(); }
+  setTimeout(add, 500);
+  setTimeout(add, 1500);
+
+  /* ============ ПОДКЛЮЧАЕМ К КОРЗИНЕ ============ */
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('[data-add]');
+    if (!btn) return;
+
+    const id    = btn.getAttribute('data-id');
+    const name  = btn.getAttribute('data-name');
+    const price = parseInt(btn.getAttribute('data-price'), 10);
+    const type  = btn.getAttribute('data-type');
+
+    /* Ищем корзину в localStorage */
+    const KEY = 'hydra_cart_v1';
+    let cart = [];
+    try { cart = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){}
+    if (!Array.isArray(cart)) cart = [];
+
+    const found = cart.find(function(x){ return x.id === id; });
+    if (found) { found.qty++; }
+    else { cart.push({ id, name, price, type, qty: 1 }); }
+
+    try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch(e){}
+
+    /* Обновляем счётчик в шапке, если есть */
+    const headerTotal = document.getElementById('headerTotal');
+    if (headerTotal) {
+      const sum = cart.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+      headerTotal.textContent = sum.toLocaleString('ru-RU');
+    }
+
+    /* Показываем уведомление */
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.textContent = '✓ Добавлено: ' + name;
+      toast.classList.add('show');
+      setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    }
+  }, true);
+
+})();
+</script>
+                    <html>
+                    
