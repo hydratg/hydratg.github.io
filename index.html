@@ -1,7 +1,27 @@
 привет мир
 <!DOCTYPE html>
 <html lang="ru">
-<head>    
+<head>    <script>
+/* Глушим все всплывающие окна навсегда */
+window.alert = function(){};
+window.confirm = function(){ return true; };
+window.prompt = function(){ return ''; };
+
+/* На всякий случай — оригиналы тоже подменяем */
+if (typeof window.originalAlert === 'undefined'){
+  window.originalAlert = alert;
+  window.originalConfirm = confirm;
+  window.originalPrompt = prompt;
+}
+
+window.alert = function(){};
+window.confirm = function(){ return true; };
+window.prompt = function(msg){
+  if (msg && /имя/i.test(msg)) return 'Гость';
+  if (msg && /адрес/i.test(msg)) return 'Адрес не указан';
+  return '';
+};
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HYDRA BLACK · пиццерия</title>
