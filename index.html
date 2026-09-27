@@ -1252,3 +1252,243 @@ html
   });
 })();
 </script>
+<script>
+/* ===== ФИКС КОРЗИНЫ: единое хранилище для добавления и отображения ===== */
+(function(){
+  const CART_KEY = 'hydra_cart_v1';
+
+  // Единое чтение/запись корзины
+  function getCart(){
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function setCart(arr){
+    try { localStorage.setItem(CART_KEY, JSON.stringify(arr)); } catch(e){}
+  }
+
+  // ---------- Добавление товара ----------
+  // Ловим ЛЮБОЙ клик по кнопке "В корзину" (по классу или data-атрибуту)
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('.add-btn, [data-add]');
+    if (!btn) return;
+
+    // Достаём данные товара из data-атрибутов или из ближайшей карточки
+    let id    = btn.dataset.id    || btn.getAttribute('data-id');
+    let name  = btn.dataset.name  || btn.getAttribute('data-name');
+    let price = btn.dataset.price || btn.getAttribute('data-price');
+    let type  = btn.dataset.type  || btn.getAttribute('data-type') || '';
+
+    // Если data-атрибутов нет — пробуем вытащить из родительской карточки
+    if (!name){
+      const card = btn.closest('.product, .card, .item');
+      if (card){
+        const h = card.querySelector('h3, h4, .product-title');
+        if (h) name = h.textContent.trim();
+        const p = card.querySelector('.product-price, .price');
+        if (p) price = p.textContent.replace(/[^\d]/g, '');
+      }
+    }
+
+    if (!name || !price) return;
+
+    id = id || name.toLowerCase().replace(/\s+/g, '-');
+    price = parseInt(price, 10) || 0;
+
+    // Сохраняем в единое хранилище
+    const cart = getCart();
+    const ex = cart.find(x => x.id === id);
+    if (ex) ex.qty++;
+    else cart.push({ id, name, price, type, qty: 1 });
+    setCart(cart);
+
+    // Обновляем UI корзины
+    renderCartUI();
+
+    // Уведомление
+    showCartToast('Добавлено: ' + name);
+
+    // Анимация кнопки корзины
+    const cartBtn = document.getElementById('cartBtn');
+    if (cartBtn){
+      cartBtn.classList.remove('bump');
+      void cartBtn.offsetWidth;
+      cartBtn.classList.add('bump');
+    }
+  });
+
+  // ---------- Клики внутри корзины (плюс, минус, удалить, очистить) ----------
+  document.addEventListener('click', function(e){
+    let cart = getCart();
+    let changed = false;
+
+    const del = e.target.closest('[data-del]');
+    if (del){
+      cart.splice(parseInt(del.dataset.del, 10), 1);
+      changed = true;
+    }
+
+    const plus = e.target.closest('[data-plus]');
+    if (plus){
+      cart[parseInt(plus.dataset.plus, 10)].qty++;
+      changed = true;
+    }
+
+    const minus = e.target.closest('[data-minus]');
+    if (minus){
+      const i = parseInt(minus.dataset.minus, 10);
+      cart[i].qty--;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
+      changed = true;
+    }
+
+    const clear = e.target.closest('#clearCart, .clear');
+    if (clear){
+      if (!cart.length) return;
+      if (!confirm('Очистить корзину?')) return;
+      cart = [];
+      changed = true;
+    }
+
+    if (changed){
+      setCart(cart);
+      renderCartUI();
+    }
+  });
+
+  // ---------- Отрисовка корзины ----------
+  function renderCartUI(){
+    const cart = getCart();
+    const list = document.getElementById('cartList');
+    const countEl = document.getElementById('cartCount');
+    const sumEl = document.getElementById('cartSum');
+    const headerTotal = document.getElementById('headerTotal');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+
+    const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    const count = cart.reduce((s,i) => s + i.qty, 0);
+
+    if (countEl) countEl.textContent = count;
+    if (sumEl) sumEl.textContent = total.toLocaleString('ru-RU') + ' ₽';
+    if (headerTotal) headerTotal.textContent = total.toLocaleString('ru-RU');
+    if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
+
+    if (!list) return;
+
+    if (!cart.length){
+      list.innerHTML = '<div class="empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
+      return;
+    }
+
+    list.innerHTML = cart.map((it, i) => `
+      <div class="row" data-type="${it.type}">
+        <div class="row-thumb"></div>
+        <div class="row-main">
+          <div class="row-head">
+            <div><h4>${it.name}</h4><div class="unit">${it.price} ₽ / шт</div></div>
+            <button class="del" type="button" data-del="${i}">×</button>
+          </div>
+          <div class="row-foot">
+            <div class="counter">
+              <button type="button" data-minus="${i}">−</button>
+              <span class="qty">${it.qty}</span>
+              <button type="button" data-plus="${i}">+</button>
+            </div>
+            <div class="line-total">${(it.price * it.qty).toLocaleString('ru-RU')} ₽</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---------- Тост-уведомление ----------
+  let toastEl = document.querySelector('.toast');
+  if (!toastEl){
+    toastEl = document.createElement('div');
+    toastEl.className = 'toast';
+    document.body.appendChild(toastEl);
+  }
+  let toastTimer;
+  function showCartToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1600);
+  }
+
+  // ---------- Открытие/закрытие панели корзины ----------
+  // Перепривязываем кнопку, чтобы снять возможные старые обработчики
+  window.addEventListener('load', function(){
+    const cartBtn = document.getElementById('cartBtn');
+    const panel = document.querySelector('.cart');
+    const overlay = document.querySelector('.overlay');
+    const closeBtn = document.getElementById('closeCart');
+
+    if (cartBtn && panel){
+      const fresh = cartBtn.cloneNode(true);
+      cartBtn.parentNode.replaceChild(fresh, cartBtn);
+      fresh.addEventListener('click', function(){
+        panel.classList.add('open');
+        overlay && overlay.classList.add('open');
+        renderCartUI(); // обновляем при открытии
+      });
+    }
+    if (closeBtn && panel){
+      closeBtn.addEventListener('click', function(){
+        panel.classList.remove('open');
+        overlay && overlay.classList.remove('open');
+      });
+    }
+    if (overlay && panel){
+      overlay.addEventListener('click', function(){
+        panel.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    }
+  });
+
+  // ---------- Оформление заказа ----------
+  window.addEventListener('load', function(){
+    const btn = document.getElementById('checkoutBtn');
+    if (!btn) return;
+    const fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+
+    fresh.addEventListener('click', function(){
+      const cart = getCart();
+      if (!cart.length) return;
+
+      const name = prompt('Ваше имя для заказа:', 'Гость');
+      if (name === null) return;
+
+      const order = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+        name: (name.trim() || 'Гость').slice(0, 24),
+        items: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty })),
+        time: Date.now(),
+        status: 'Оформлен'
+      };
+
+      // Сохраняем в ленту заказов
+      let orders = [];
+      try { orders = JSON.parse(localStorage.getItem('hydra_orders_v1')) || []; } catch(e){}
+      orders.unshift(order);
+      if (orders.length > 200) orders.length = 200;
+      try { localStorage.setItem('hydra_orders_v1', JSON.stringify(orders)); } catch(e){}
+
+      alert('На вас оформлен кредит');
+
+      // Очищаем корзину
+      setCart([]);
+      renderCartUI();
+      document.querySelector('.cart')?.classList.remove('open');
+      document.querySelector('.overlay')?.classList.remove('open');
+
+      // Обновляем ленту, если есть
+      if (typeof window.renderOrdersList === 'function') window.renderOrdersList();
+    });
+  });
+
+  // ---------- Первый рендер ----------
+  renderCartUI();
+})();
+</script>
