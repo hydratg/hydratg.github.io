@@ -2992,4 +2992,179 @@ body{
 })();
 </script>
   </body>
-  
+  <script id="hydra-final-fix">
+(function(){
+  /* ============================================================
+     ЗАЩИТА ОТ ДУБЛЕЙ: убираем лишние товары, если их несколько
+     ============================================================ */
+  var TYPES = ['pizza-hawaii','pizza-bbq','pizza-four-cheese','pizza-veggie','drink-coffee'];
+
+  function dedupe(){
+    TYPES.forEach(function(t){
+      var all = document.querySelectorAll('[data-type="' + t + '"]');
+      for (var i = 1; i < all.length; i++){
+        all[i].remove();
+      }
+    });
+  }
+
+  /* ============================================================
+     ФОН БЕЗ ЭМОДЗИ
+     ============================================================ */
+  document.body.style.background = '#0a0608';
+  document.body.style.backgroundImage =
+    'radial-gradient(circle at 15% 10%, rgba(255,122,26,.14) 0%, transparent 40%),' +
+    'radial-gradient(circle at 85% 80%, rgba(255,45,149,.14) 0%, transparent 40%)';
+  document.body.style.backgroundSize = '100% 100%, 100% 100%';
+  document.body.style.backgroundAttachment = 'fixed';
+
+  /* ============================================================
+     НОВЫЕ ТОВАРЫ
+     ============================================================ */
+  var NEW = [
+    { type:'pizza-hawaii',      cat:'Пицца · 30 см',  name:'Гавайская',
+      desc:'Курица, ананасы, моцарелла, сливочный соус.',
+      price:649, weight:'620 г',
+      base:'#d9822b', accent:'#ffd97a' },
+    { type:'pizza-bbq',         cat:'Пицца · 30 см',  name:'BBQ Чикен',
+      desc:'Курица, бекон, красный лук, соус барбекю, моцарелла.',
+      price:699, weight:'640 г',
+      base:'#8a3a12', accent:'#d94020' },
+    { type:'pizza-four-cheese', cat:'Пицца · 30 см',  name:'Четыре сыра',
+      desc:'Моцарелла, пармезан, дорблю, чеддер, сливочный соус.',
+      price:749, weight:'560 г',
+      base:'#c9a748', accent:'#fff0b4' },
+    { type:'pizza-veggie',      cat:'Пицца · 30 см',  name:'Вегетарианская',
+      desc:'Перец, грибы, черри, оливки, лук, моцарелла.',
+      price:549, weight:'520 г',
+      base:'#4a8a3a', accent:'#d94a4a' },
+    { type:'drink-coffee',      cat:'Напиток · 0.3 л', name:'Кофе Латте',
+      desc:'Двойной эспрессо с горячим молоком.',
+      price:189, weight:'0.3 л',
+      base:'#6b4520', accent:'#f0d8b8' }
+  ];
+
+  /* SVG-пицца с точками-начинкой */
+  function pizzaSVG(base, accent){
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+        '<circle cx="50" cy="50" r="42" fill="' + base + '" stroke="#000" stroke-width="1" opacity="0.9"/>' +
+        '<circle cx="50" cy="50" r="34" fill="' + base + '" opacity="0.7"/>' +
+        '<circle cx="38" cy="40" r="5" fill="' + accent + '"/>' +
+        '<circle cx="62" cy="45" r="5" fill="' + accent + '"/>' +
+        '<circle cx="50" cy="65" r="5" fill="' + accent + '"/>' +
+        '<circle cx="66" cy="62" r="4" fill="' + accent + '"/>' +
+        '<circle cx="35" cy="60" r="4" fill="' + accent + '"/>' +
+        '<circle cx="50" cy="30" r="4" fill="' + accent + '"/>' +
+        '<circle cx="28" cy="48" r="3" fill="' + accent + '"/>' +
+        '<circle cx="72" cy="35" r="3" fill="' + accent + '"/>' +
+      '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
+  }
+
+  /* SVG-чашка кофе */
+  function coffeeSVG(){
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+        '<ellipse cx="50" cy="65" rx="30" ry="8" fill="#3a2410" opacity="0.6"/>' +
+        '<path d="M20 35 L80 35 L75 70 L25 70 Z" fill="#a8754a" stroke="#000" stroke-width="0.5"/>' +
+        '<ellipse cx="50" cy="35" rx="30" ry="7" fill="#f0d8b8"/>' +
+        '<ellipse cx="50" cy="35" rx="22" ry="5" fill="#8a5a2a" opacity="0.8"/>' +
+        '<circle cx="42" cy="34" r="2" fill="#f0d8b8" opacity="0.6"/>' +
+        '<circle cx="55" cy="35" r="2.5" fill="#f0d8b8" opacity="0.6"/>' +
+      '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
+  }
+
+  function cardStyle(){
+    return 'background:linear-gradient(160deg,#1a0f18,#0a0608);' +
+           'border:1px solid #2a1a26;border-radius:20px;overflow:hidden;' +
+           'display:flex;flex-direction:column;font-family:inherit;color:#fff;';
+  }
+
+  function makeCard(item){
+    var art = document.createElement('article');
+    art.className = 'product';
+    art.setAttribute('data-type', item.type);
+    art.style.cssText = cardStyle();
+
+    var iconURL = item.type === 'drink-coffee'
+      ? coffeeSVG()
+      : pizzaSVG(item.base, item.accent);
+
+    var thumb =
+      '<div class="product-thumb" style="' +
+        'aspect-ratio:16/11;display:block;' +
+        'background:linear-gradient(135deg,' + item.base + ',' + item.accent + ');' +
+        'background-image:' + iconURL + ';' +
+        'background-repeat:no-repeat;' +
+        'background-position:center;' +
+        'background-size:60%;' +
+      '"></div>';
+
+    art.innerHTML =
+      thumb +
+      '<div class="product-body" style="padding:22px;display:flex;flex-direction:column;flex:1;">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ff7a1a;margin-bottom:8px;">' + item.cat + '</div>' +
+        '<h3 style="font-size:22px;font-weight:800;margin-bottom:8px;color:#fff;">' + item.name + '</h3>' +
+        '<p style="color:#8a7080;font-size:14px;line-height:1.55;margin-bottom:20px;flex:1;">' + item.desc + '</p>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #2a1a26;">' +
+          '<div style="font-size:28px;font-weight:900;color:#fff;">' + item.price + '<small style="font-size:14px;color:#ff7a1a;font-weight:700;margin-left:2px;">₽</small></div>' +
+          '<div style="font-size:12px;color:#8a7080;padding:5px 12px;background:rgba(255,255,255,.03);border-radius:100px;border:1px solid #2a1a26;">' + item.weight + '</div>' +
+        '</div>' +
+        '<button class="add-btn" type="button" ' +
+          'data-add data-id="' + item.type.replace(/^(pizza|drink)-/,'') + '" ' +
+          'data-name="' + item.name + '" data-price="' + item.price + '" data-type="' + item.type + '" ' +
+          'style="width:100%;padding:14px;border-radius:12px;border:1.5px solid #ff7a1a;background:transparent;color:#ff7a1a;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit;">' +
+          '+ В корзину</button>' +
+      '</div>';
+
+    return art;
+  }
+
+  function findGrid(){
+    var any = document.querySelector('[data-type]');
+    if (!any) return null;
+    return any.parentElement;
+  }
+
+  function addAll(){
+    dedupe();  // сначала чистим дубли
+
+    var grid = findGrid();
+
+    if (!grid){
+      var section = document.getElementById('hydra-new-products');
+      if (!section){
+        section = document.createElement('section');
+        section.id = 'hydra-new-products';
+        section.style.cssText = 'max-width:1320px;margin:40px auto;padding:0 24px;';
+        section.innerHTML =
+          '<h2 style="font-size:42px;font-weight:900;letter-spacing:-1.5px;margin-bottom:30px;color:#fff;">' +
+            '<span style="color:#ff7a1a;">//</span> НОВИНКИ' +
+          '</h2>' +
+          '<div id="hydra-new-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;"></div>';
+        document.body.appendChild(section);
+      }
+      grid = document.getElementById('hydra-new-grid');
+    }
+
+    NEW.forEach(function(item){
+      if (!document.querySelector('[data-type="' + item.type + '"]')){
+        grid.appendChild(makeCard(item));
+      }
+    });
+  }
+
+  function start(){
+    try { addAll(); } catch(e){ console.error('[HYDRA]', e); }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+  [100, 400, 1000, 2500, 5000].forEach(function(t){ setTimeout(start, t); });
+})();
+</script>
