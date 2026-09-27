@@ -1,6 +1,5 @@
-пидорас TELEGRAM
-
-```html
+html
+<пидорас></пидорас>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -104,7 +103,6 @@
     }
 
     .cart-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
-
     .cart-btn.bump { animation: bump 0.3s ease; }
 
     @keyframes bump {
@@ -167,7 +165,7 @@
       margin-left: 8px;
     }
 
-    /* ---------- СЕТКА КАРТОЧЕК ---------- */
+    /* ---------- СЕТКА ---------- */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -208,18 +206,9 @@
     .card[data-type="drink-orange"] .card-visual { background: radial-gradient(circle at 30% 30%, #7a4a0a, #3b1e04); }
 
     .card[data-type="pizza-pepperoni"] .card-visual::before,
-    .card[data-type="pizza-margherita"] .card-visual::before {
-      content: "🍕";
-      filter: drop-shadow(0 8px 12px black);
-    }
-    .card[data-type="drink-cola"] .card-visual::before {
-      content: "🥤";
-      filter: drop-shadow(0 8px 12px black);
-    }
-    .card[data-type="drink-orange"] .card-visual::before {
-      content: "🧃";
-      filter: drop-shadow(0 8px 12px black);
-    }
+    .card[data-type="pizza-margherita"] .card-visual::before { content: "🍕"; filter: drop-shadow(0 8px 12px black); }
+    .card[data-type="drink-cola"] .card-visual::before { content: "🥤"; filter: drop-shadow(0 8px 12px black); }
+    .card[data-type="drink-orange"] .card-visual::before { content: "🧃"; filter: drop-shadow(0 8px 12px black); }
 
     .card h3 {
       font-size: 27px;
@@ -368,7 +357,7 @@
     .feature-icon { font-size: 26px; }
     .feature span { font-weight: 600; font-size: 16px; color: #ddd; }
 
-    /* ---------- ИНФО-ПАНЕЛЬ ---------- */
+    /* ---------- ИНФО ---------- */
     .info-bar {
       background-color: #0c0c0c;
       border-radius: 24px;
@@ -384,7 +373,6 @@
 
     .info-item { display: flex; align-items: center; gap: 16px; }
     .info-icon { font-size: 30px; }
-
     .info-text h4 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .info-text p { color: #818181; font-size: 14px; }
 
@@ -406,11 +394,10 @@
     }
 
     .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
-
     .footer-links a { color: #7a7a7a; text-decoration: none; transition: color 0.2s; }
     .footer-links a:hover { color: #c084fc; }
 
-    /* ========== КОРЗИНА (панель) ========== */
+    /* ========== КОРЗИНА ========== */
     .cart-overlay {
       position: fixed;
       inset: 0;
@@ -496,31 +483,12 @@
       font-family: inherit;
     }
 
-    .cart-close:hover {
-      background: #2a2a2a;
-      border-color: #444;
-      transform: rotate(90deg);
-    }
+    .cart-close:hover { background: #2a2a2a; border-color: #444; transform: rotate(90deg); }
 
-    .cart-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px 22px;
-    }
+    .cart-body { flex: 1; overflow-y: auto; padding: 12px 22px; }
 
-    .cart-empty {
-      text-align: center;
-      padding: 70px 20px;
-      color: #666;
-    }
-
-    .cart-empty-icon {
-      font-size: 68px;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 4px 8px black);
-      opacity: 0.6;
-    }
-
+    .cart-empty { text-align: center; padding: 70px 20px; color: #666; }
+    .cart-empty-icon { font-size: 68px; margin-bottom: 20px; opacity: 0.6; }
     .cart-empty p { font-size: 18px; color: #888; margin-bottom: 8px; }
     .cart-empty small { color: #555; font-size: 14px; }
 
@@ -569,17 +537,8 @@
       margin-bottom: 6px;
     }
 
-    .cart-item-info h4 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-
-    .cart-item-info .cart-item-price {
-      font-size: 13px;
-      color: #888;
-    }
+    .cart-item-info h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .cart-item-info .cart-item-price { font-size: 13px; color: #888; }
 
     .remove-btn {
       background: transparent;
@@ -634,13 +593,7 @@
     .qty-btn:hover { background: #2e2e2e; border-color: #4a4a4a; }
     .qty-btn:active { transform: scale(0.9); }
 
-    .qty-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      min-width: 24px;
-      text-align: center;
-    }
+    .qty-value { font-size: 16px; font-weight: 700; color: #fff; min-width: 24px; text-align: center; }
 
     .cart-item-total {
       font-size: 17px;
@@ -666,10 +619,7 @@
       margin-bottom: 18px;
     }
 
-    .cart-total-row span:first-child {
-      font-size: 16px;
-      color: #999;
-    }
+    .cart-total-row span:first-child { font-size: 16px; color: #999; }
 
     .cart-total-row .cart-total-value {
       font-size: 34px;
@@ -699,12 +649,7 @@
 
     .checkout-btn:hover:not(:disabled) { filter: brightness(1.15); }
     .checkout-btn:active:not(:disabled) { transform: scale(0.98); }
-
-    .checkout-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
+    .checkout-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
     .clear-cart-btn {
       width: 100%;
@@ -721,13 +666,9 @@
       font-family: inherit;
     }
 
-    .clear-cart-btn:hover {
-      background: #1a1a1a;
-      color: #ef4444;
-      border-color: #3a3a3a;
-    }
+    .clear-cart-btn:hover { background: #1a1a1a; color: #ef4444; border-color: #3a3a3a; }
 
-    /* ========== УВЕДОМЛЕНИЕ ========== */
+    /* ========== TOAST ========== */
     .toast {
       position: fixed;
       bottom: 30px;
@@ -750,10 +691,7 @@
       text-overflow: ellipsis;
     }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     /* ---------- АДАПТИВ ---------- */
     @media (max-width: 850px) {
@@ -815,9 +753,8 @@
       <section id="pizza" class="menu-section">
         <h2 class="section-title">Пицца <span>HYDRA</span></h2>
         <div class="grid">
-          <!-- Пеперонни -->
           <div class="card" data-type="pizza-pepperoni">
-            <div class="card-visual" aria-label="Пицца Пеперонни"></div>
+            <div class="card-visual"></div>
             <h3>Пеперонни</h3>
             <div class="card-desc">
               Острая пепперони, моцарелла, томатный соус, смесь итальянских трав. Для тех, кто любит поострее.
@@ -837,9 +774,8 @@
             </div>
           </div>
 
-          <!-- Маргарита -->
           <div class="card" data-type="pizza-margherita">
-            <div class="card-visual" aria-label="Пицца Маргарита"></div>
+            <div class="card-visual"></div>
             <h3>Маргарита</h3>
             <div class="card-desc">
               Томаты, моцарелла, свежий базилик, оливковое масло и немного пармезана. Нежная классика.
@@ -865,9 +801,8 @@
       <section id="drinks" class="menu-section">
         <h2 class="section-title">Напитки <span>к пицце</span></h2>
         <div class="grid">
-          <!-- Кока-Кола -->
           <div class="card" data-type="drink-cola">
-            <div class="card-visual" aria-label="Кока-Кола"></div>
+            <div class="card-visual"></div>
             <h3>Кока-Кола</h3>
             <div class="card-desc">
               Классическая ледяная Кока-Кола. Идеально подходит к острой пеперонни.
@@ -887,9 +822,8 @@
             </div>
           </div>
 
-          <!-- Апельсиновый сок -->
           <div class="card" data-type="drink-orange">
-            <div class="card-visual" aria-label="Апельсиновый сок"></div>
+            <div class="card-visual"></div>
             <h3>Апельсиновый сок</h3>
             <div class="card-desc">
               Свежевыжатый сок из спелых апельсинов. Яркий вкус и витамин C.
@@ -925,3 +859,14 @@
               Пеперонни и Маргариту так, как это должно быть. Заходите за своей порцией вкуса.
             </p>
           </div>
+          <div class="about-features">
+            <div class="feature"><div class="feature-icon">🏆</div><span>Лучшая пицца в городе</span></div>
+            <div class="feature"><div class="feature-icon">🔥</div><span>Дровяная печь</span></div>
+            <div class="feature"><div class="feature-icon">🖤</div><span>Чёрная коллекция</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="info-bar">
+        <div
+
