@@ -1120,80 +1120,16 @@ renderCart();
 })();
 </script>
 </html>
-
-
-
-
-</html>
-ыыыыыыыыыыы
-<script>
-/* ===== ОФОРМЛЕНИЕ ЗАКАЗА (через сервер) ===== */
-(function(){
-  window.checkout = async function(cart, closeCartFn){
-    if (!cart || !cart.length) return;
-
-    const name = prompt('Ваше имя для заказа:', 'Гость');
-    if (name === null) return;
-
-    const cleanName = (name.trim() || 'Гость').slice(0, 24);
-
-    const payload = {
-      name: cleanName,
-      items: cart.map(i => ({
-        name: i.name,
-        price: i.price,
-        qty: i.qty
-      }))
-    };
-
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-
-      if (!data.ok){
-        alert('Ошибка: ' + (data.error || 'не удалось оформить заказ'));
-        return;
-      }
-
-      alert('На вас оформлен кредит');
-
-      // Очищаем корзину
-      cart.length = 0;
-      if (typeof closeCartFn === 'function') closeCartFn();
-
-      // Если есть функция рендера корзины — обновляем
-      if (window.renderCart) window.renderCart();
-
-    } catch (err) {
-      console.error(err);
-      alert('Нет связи с сервером');
-    }
-  };
-})();
-</script>
-<body></body>
 html
 
 <script>
-<script>
-/* ===== ЕДИНЫЙ ФИКС: код заказа + подсветка + защита от мигания ===== */
+/* ===== ПРОСТАЯ ЛЕНТА ЗАКАЗОВ — без защиты, без мигания ===== */
 (function(){
   const LS_KEY = 'hydra_orders_v1';
   const CONTAINER_ID = 'ordersList';
+  let lastIds = new Set();
+  let isFirst = true;
 
-  /* ---------- Генерация кода ---------- */
-  function genCode(){
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const b = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
-    return 'HYDRA-' + b(4) + '-' + b(2);
-  }
-
-  /* ---------- Чтение/запись ---------- */
   function getOrders(){
     try {
       const raw = localStorage.getItem(LS_KEY);
@@ -1201,11 +1137,17 @@ html
       return Array.isArray(arr) ? arr : [];
     } catch(e){ return []; }
   }
+
   function saveOrders(arr){
     try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e){}
   }
 
-  /* ---------- Присваиваем коды ---------- */
+  function genCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const b = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return 'HYDRA-' + b(4) + '-' + b(2);
+  }
+
   function ensureCodes(){
     const orders = getOrders();
     const used = new Set(orders.map(o => o.code).filter(Boolean));
@@ -1223,7 +1165,6 @@ html
     return orders;
   }
 
-  /* ---------- Время ---------- */
   function timeAgo(t){
     const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
     if (m < 1) return 'только что';
@@ -1233,11 +1174,7 @@ html
     return Math.floor(h / 24) + ' дн назад';
   }
 
-  /* ---------- Рендер ленты ---------- */
-  let lastIds = new Set();
-  let isFirst = true;
-
-  function renderOrders(){
+  function render(){
     const list = document.getElementById(CONTAINER_ID);
     if (!list) return;
 
@@ -1286,9 +1223,9 @@ html
     }).join('');
   }
 
-  /* ---------- Стили ---------- */
-  const style = document.createElement('style');
-  style.textContent = `
+  // Стили для подсветки и кода
+  const st = document.createElement('style');
+  st.textContent = `
     .order-card.fresh {
       border-color: #00ffd5 !important;
       box-shadow: 0 0 40px rgba(0,255,213,.45) !important;
@@ -1307,88 +1244,24 @@ html
       display: inline-block;
     }
   `;
-  document.head.appendChild(style);
+  document.head.appendChild(st);
 
-  /* ---------- Отдаём наружу ---------- */
-  window.renderOrdersList = renderOrders;
+  window.renderOrdersList = render;
 
-  /* ============================================================
-     ГЛАВНОЕ: защищаем контейнер от чужих перезаписей
-     ============================================================ */
-  function lockContainer(){
-    const list = document.getElementById(CONTAINER_ID);
-    if (!list) return;
+  // Рисуем каждые 500 мс. Это не мигает, потому что HTML всегда один и тот же.
+  setInterval(render, 500);
 
-    // Замораживаем innerHTML — никто, кроме нашей renderOrders, не сможет его менять
-    const proto = Object.getPrototypeOf(list);
-    const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
-
-    let internalWrite = false;
-
-    Object.defineProperty(list, 'innerHTML', {
-      configurable: false,
-      get: function(){
-        return desc.get.call(this);
-      },
-      set: function(value){
-        // Разрешаем запись только нашей renderOrders
-        if (internalWrite){
-          desc.set.call(this, value);
-          return;
-        }
-        // Все остальные записи игнорируем
-        console.warn('[HYDRA] Заблокирована попытка перезаписи ленты заказов');
-      }
-    });
-
-    // Экспортируем флаг для renderOrders
-    window.__hydraLockInner = function(fn){
-      internalWrite = true;
-      try { fn(); } finally { internalWrite = false; }
-    };
-  }
-
-  /* Переписываем renderOrders, чтобы он писал через привилегированный канал */
-  const originalRender = renderOrders;
-  renderOrders = function(){
-    if (window.__hydraLockInner){
-      window.__hydraLockInner(originalRender);
-    } else {
-      originalRender();
-    }
-  };
-  window.renderOrdersList = renderOrders;
-
-  /* ---------- Отслеживание изменений в localStorage ---------- */
-  let lastRaw = null;
-  function tick(){
-    const raw = localStorage.getItem(LS_KEY) || '';
-    if (raw !== lastRaw){
-      lastRaw = raw;
-      renderOrders();
-    }
-  }
-
-  setInterval(tick, 500);
-
+  // Мгновенно реагируем на изменения в localStorage из других вкладок
   window.addEventListener('storage', e => {
-    if (e.key === LS_KEY){
-      lastRaw = e.newValue || '';
-      renderOrders();
-    }
+    if (e.key === LS_KEY) render();
   });
 
-  /* ---------- Старт ---------- */
-  function start(){
-    lockContainer();
-    lastRaw = localStorage.getItem(LS_KEY) || '';
-    renderOrders();
-  }
-
+  // Первый рендер
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', start);
+    document.addEventListener('DOMContentLoaded', render);
   } else {
-    start();
+    render();
   }
 })();
 </script>
+<body></body>
