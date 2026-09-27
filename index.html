@@ -4144,5 +4144,172 @@ body{
 </script>
     </body>
     
-    
+    tml
+
+<script id="hydra-cart-icons">
+(function(){
+  /* ============================================================
+     SVG-иконки для корзины
+     ============================================================ */
+  function pizza(sauce, cheese){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
+    s+='<circle cx="50" cy="50" r="46" fill="#7a4a1a"/>';
+    s+='<circle cx="50" cy="50" r="42" fill="#b8803a"/>';
+    s+='<circle cx="50" cy="50" r="38" fill="#e0b060"/>';
+    s+='<circle cx="50" cy="50" r="33" fill="'+sauce+'"/>';
+    cheese.forEach(function(c){
+      s+='<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.92"/>';
+    });
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+  function pizzaPep(){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
+    s+='<circle cx="50" cy="50" r="46" fill="#7a4a1a"/>';
+    s+='<circle cx="50" cy="50" r="42" fill="#b8803a"/>';
+    s+='<circle cx="50" cy="50" r="38" fill="#e0b060"/>';
+    s+='<circle cx="50" cy="50" r="33" fill="#8a1e10"/>';
+    s+='<ellipse cx="35" cy="40" rx="14" ry="10" fill="#f5d878" opacity="0.9"/>';
+    s+='<ellipse cx="65" cy="45" rx="13" ry="9" fill="#f5d878" opacity="0.9"/>';
+    s+='<ellipse cx="45" cy="68" rx="13" ry="9" fill="#f5d878" opacity="0.9"/>';
+    var p=[[38,42,7],[62,48,6],[40,66,6],[66,68,5],[50,52,7],[55,32,5],[28,55,5]];
+    p.forEach(function(x){
+      s+='<circle cx="'+x[0]+'" cy="'+x[1]+'" r="'+x[2]+'" fill="#b0301a"/>';
+      s+='<circle cx="'+x[0]+'" cy="'+x[1]+'" r="'+(x[2]-2)+'" fill="#7a1008" opacity="0.6"/>';
+    });
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+  function pizzaMar(){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
+    s+='<circle cx="50" cy="50" r="46" fill="#7a4a1a"/>';
+    s+='<circle cx="50" cy="50" r="42" fill="#b8803a"/>';
+    s+='<circle cx="50" cy="50" r="38" fill="#e0b060"/>';
+    s+='<circle cx="50" cy="50" r="33" fill="#a82814"/>';
+    s+='<ellipse cx="38" cy="42" rx="13" ry="10" fill="#f8f0d0"/>';
+    s+='<ellipse cx="62" cy="45" rx="12" ry="9" fill="#f5ecd0"/>';
+    s+='<ellipse cx="42" cy="62" rx="12" ry="10" fill="#f8f0d0"/>';
+    s+='<ellipse cx="62" cy="65" rx="10" ry="8" fill="#f2e8c8"/>';
+    // базилик
+    s+='<ellipse cx="35" cy="40" rx="4" ry="2" fill="#2a7a1a" transform="rotate(-30 35 40)"/>';
+    s+='<ellipse cx="65" cy="45" rx="4" ry="2" fill="#2a7a1a" transform="rotate(20 65 45)"/>';
+    s+='<ellipse cx="45" cy="65" rx="4" ry="2" fill="#2a7a1a" transform="rotate(-15 45 65)"/>';
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+  function bottle(color, label){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
+    s+='<ellipse cx="50" cy="94" rx="18" ry="3" fill="#000" opacity="0.4"/>';
+    s+='<rect x="42" y="8" width="16" height="10" rx="2" fill="'+label+'"/>';
+    s+='<rect x="44" y="18" width="12" height="12" fill="'+color+'"/>';
+    s+='<path d="M35 30 Q30 35 30 45 L30 85 Q30 91 36 91 L64 91 Q70 91 70 85 L70 45 Q70 35 65 30 Z" fill="'+color+'"/>';
+    s+='<rect x="30" y="50" width="40" height="22" rx="3" fill="'+label+'" opacity="0.9"/>';
+    s+='<rect x="36" y="36" width="3" height="50" fill="#fff" opacity="0.25"/>';
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+  function cup(fill, top){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
+    s+='<ellipse cx="50" cy="92" rx="23" ry="4" fill="#000" opacity="0.4"/>';
+    s+='<path d="M28 26 L72 26 L66 90 L34 90 Z" fill="'+fill+'"/>';
+    s+='<ellipse cx="50" cy="26" rx="22" ry="4" fill="'+top+'"/>';
+    s+='<rect x="40" y="42" width="13" height="10" rx="2" fill="#fff" opacity="0.4" transform="rotate(-15 46 47)"/>';
+    s+='<path d="M28 26 L72 26 L66 90 L34 90 Z" fill="none" stroke="#fff" stroke-width="1" opacity="0.5"/>';
+    s+='<path d="M35 32 L38 88" stroke="#fff" stroke-width="2" opacity="0.3"/>';
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  /* ============================================================
+     КАРТА
+     ============================================================ */
+  var ICONS = {
+    'pizza-pepperoni':   pizzaPep(),
+    'pizza-margherita':  pizzaMar(),
+    'pizza-hawaii':      pizza('#d9822b',[[40,42,10,7],[62,48,10,7]]),
+    'pizza-bbq':         pizza('#5a2308',[[40,42,10,7],[62,48,9,6]]),
+    'pizza-four-cheese': pizza('#e0c070',[[38,40,12,9],[62,42,11,8],[40,62,11,8]]),
+    'pizza-veggie':      pizza('#c8361e',[[40,42,10,7],[62,48,9,6]]),
+    'drink-cola':        bottle('#1a0505','#c8102e'),
+    'drink-orange':      bottle('#c05a10','#f0a838'),
+    'drink-sprite':      bottle('#1a5a2a','#3aaa4a'),
+    'drink-lemonade':    cup('#e8e050','#f8f070'),
+    'drink-pee':         cup('#d4c020','#e8d840'),
+    'drink-coffee':      cup('#6b4520','#3a2010')
+  };
+
+  var RULES = [
+    {k:['пеперони','пепперони','pepperoni'], id:'pizza-pepperoni'},
+    {k:['маргарита','margherita'], id:'pizza-margherita'},
+    {k:['гавайск','hawaii'], id:'pizza-hawaii'},
+    {k:['bbq','барбекю'], id:'pizza-bbq'},
+    {k:['четыре сыра','4 сыра','four'], id:'pizza-four-cheese'},
+    {k:['вегетарианск','veggie'], id:'pizza-veggie'},
+    {k:['кола','cola','кока'], id:'drink-cola'},
+    {k:['апельсин','orange'], id:'drink-orange'},
+    {k:['спрайт','sprite'], id:'drink-sprite'},
+    {k:['лимонад','lemonade'], id:'drink-lemonade'},
+    {k:['моча','pee'], id:'drink-pee'},
+    {k:['кофе','coffee','латте'], id:'drink-coffee'}
+  ];
+
+  function findUrl(text, type){
+    if(type && ICONS[type]) return ICONS[type];
+    var t = (text||'').toLowerCase();
+    for(var i=0;i<RULES.length;i++){
+      for(var j=0;j<RULES[i].k.length;j++){
+        if(t.indexOf(RULES[i].k[j]) !== -1) return ICONS[RULES[i].id];
+      }
+    }
+    return null;
+  }
+
+  /* ============================================================
+     КРАСИМ ИКОНКИ В КОРЗИНЕ
+     ============================================================ */
+  function paintCart(){
+    var rows = document.querySelectorAll('.cart-row, .row');
+    rows.forEach(function(row){
+      if(row.dataset.ci === '1') return;
+
+      // берём тип из data-type самой строки
+      var type = row.getAttribute('data-type');
+      var text = row.textContent || '';
+      var url = findUrl(text, type);
+      if(!url) return;
+
+      var thumb = row.querySelector('.cart-row-thumb, .row-thumb, [class*="thumb"]');
+      if(!thumb){
+        thumb = document.createElement('div');
+        thumb.className = 'cart-row-thumb';
+        row.insertBefore(thumb, row.firstChild);
+      }
+
+      thumb.style.cssText =
+        'width:68px;height:68px;border-radius:14px;flex-shrink:0;' +
+        'display:block;background:#0a0608;' +
+        'background-image:' + url + ';' +
+        'background-repeat:no-repeat;background-position:center;background-size:85%;' +
+        'border:1px solid #2a1a26;';
+
+      row.dataset.ci = '1';
+    });
+  }
+
+  function run(){ try { paintCart(); } catch(e){ console.error('[HYDRA]', e); } }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+  [100,400,1000,2000,4000].forEach(function(t){ setTimeout(run,t); });
+
+  /* Отслеживаем открытие корзины и добавление товаров */
+  document.addEventListener('click', function(){ setTimeout(run, 50); });
+  window.addEventListener('load',function(){
+    var o = new MutationObserver(run);
+    o.observe(document.body,{childList:true,subtree:true});
+    setTimeout(function(){ o.disconnect(); },20000);
+  });
+})();
+</script>
     
