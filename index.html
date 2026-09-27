@@ -169,10 +169,14 @@ body {
 .product[data-type="pizza-margherita"] .product-thumb { background: radial-gradient(circle at 50% 40%, #3f5a2e, #0f1e08); }
 .product[data-type="drink-cola"] .product-thumb { background: radial-gradient(circle at 50% 40%, #5a0808, #180202); }
 .product[data-type="drink-orange"] .product-thumb { background: radial-gradient(circle at 50% 40%, #8a4d00, #2b1400); }
+.product[data-type="drink-sprite"] .product-thumb { background: radial-gradient(circle at 50% 40%, #1a5a2e, #04180a); }
+.product[data-type="drink-lemonade"] .product-thumb { background: radial-gradient(circle at 50% 40%, #8a8a0a, #2b2b00); }
 .product[data-type="pizza-pepperoni"] .product-thumb::before,
 .product[data-type="pizza-margherita"] .product-thumb::before { content: "🍕"; }
 .product[data-type="drink-cola"] .product-thumb::before { content: "🥤"; }
 .product[data-type="drink-orange"] .product-thumb::before { content: "🧃"; }
+.product[data-type="drink-sprite"] .product-thumb::before { content: "🥤"; }
+.product[data-type="drink-lemonade"] .product-thumb::before { content: "🍋"; }
 .product-body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
 .product-cat {
   font-size: 11px; font-weight: 700; letter-spacing: 2px;
@@ -230,13 +234,9 @@ body {
   letter-spacing: 4px; text-transform: uppercase;
   color: var(--neon-2); font-weight: 700; margin-bottom: 18px;
 }
-.about-content h2 { font-size: 46px; font-weight: 900; letter-spacing: -2px; line-height: 1.05; margin-bottom: 22px; }
-.about-content h2 .hl { color: var(--neon); }
-.about-content h2 .pink-txt { color: var(--neon-2); }
-.about-content p { color: #b0b0c0; font-size: 16px; line-height: 1.7; margin-bottom: 14px; }
 .about-content .big-title {
   display: block;
-  font-size: 54px;
+  font-size: 56px;
   font-weight: 900;
   letter-spacing: -2px;
   line-height: 1;
@@ -244,9 +244,12 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 20px;
-  text-shadow: 0 0 40px rgba(0, 255, 213, 0.3);
+  margin-bottom: 22px;
+  filter: drop-shadow(0 0 30px rgba(0, 255, 213, 0.3));
 }
+.about-content h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 16px; color: #fff; }
+.about-content p { color: #b0b0c0; font-size: 16px; line-height: 1.7; margin-bottom: 14px; }
+.about-content .accent-txt { color: var(--neon); font-weight: 700; }
 .about-badges { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .badge-row {
   display: flex; align-items: center; gap: 16px;
@@ -346,10 +349,14 @@ body {
 .cart-row[data-type="pizza-margherita"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #3f5a2e, #0f1e08); }
 .cart-row[data-type="drink-cola"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #5a0808, #180202); }
 .cart-row[data-type="drink-orange"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #8a4d00, #2b1400); }
+.cart-row[data-type="drink-sprite"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #1a5a2e, #04180a); }
+.cart-row[data-type="drink-lemonade"] .cart-row-thumb { background: radial-gradient(circle at 50% 40%, #8a8a0a, #2b2b00); }
 .cart-row[data-type="pizza-pepperoni"] .cart-row-thumb::before,
 .cart-row[data-type="pizza-margherita"] .cart-row-thumb::before { content: "🍕"; }
 .cart-row[data-type="drink-cola"] .cart-row-thumb::before { content: "🥤"; }
 .cart-row[data-type="drink-orange"] .cart-row-thumb::before { content: "🧃"; }
+.cart-row[data-type="drink-sprite"] .cart-row-thumb::before { content: "🥤"; }
+.cart-row[data-type="drink-lemonade"] .cart-row-thumb::before { content: "🍋"; }
 .cart-row-main { flex: 1; min-width: 0; }
 .cart-row-head {
   display: flex; justify-content: space-between;
@@ -468,8 +475,7 @@ body {
   .hero-grid h1 { font-size: 48px; letter-spacing: -2px; }
   .hero-emoji { font-size: 140px; }
   .about-panel { grid-template-columns: 1fr; padding: 40px 30px; gap: 30px; }
-  .about-content h2 { font-size: 34px; }
-  .about-content .big-title { font-size: 40px; }
+  .about-content .big-title { font-size: 42px; }
   .section-head-new h2 { font-size: 32px; }
 }
 @media (max-width: 600px) {
@@ -519,7 +525,7 @@ body {
           Тёмная сторона <span class="n1">вкуса</span><br>
           с доставкой <span class="n2">30 мин</span>
         </h1>
-        <p>Пеперонни и Маргарита, ледяная Кока-Кола и свежевыжатый апельсиновый сок. Готовим на дровах — доставляем горячим.</p>
+        <p>Пеперонни и Маргарита, ледяные напитки и свежевыжатые соки. Готовим на дровах — доставляем горячим.</p>
         <div class="hero-cta-row">
           <a href="#pizza" class="pill-outline" style="text-decoration:none; color:#ddd;">
             <span class="dot"></span> Открыть меню
@@ -564,28 +570,5 @@ body {
         <article class="product" data-type="pizza-margherita">
           <div class="product-thumb"></div>
           <div class="product-body">
-            <div class="product-cat">Пицца · 30 см</div>
-            <h3>Маргарита</h3>
-            <p class="product-desc">Томаты, моцарелла, свежий базилик, оливковое масло и пармезан.</p>
-            <div class="product-meta">
-              <div class="product-price">499<small>₽</small></div>
-              <div class="product-weight">480 г</div>
-            </div>
-            <button class="add-btn" type="button"
-              data-add
-              data-id="margherita"
-              data-name="Маргарита"
-              data-price="499"
-              data-type="pizza-margherita">+ В корзину</button>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="products-section" id="drinks">
-    <div class="wrap">
-      <div class="section-head-new">
-        <h2><span class="slash">//</span> НАПИТКИ <span class="pink">К ПИЦЦЕ</span></h2>
-        <div class="hint">
+            <div class="product-cat">Пиц
 
