@@ -895,5 +895,52 @@ document.addEventListener('click', async function(e){
 
 console.log('[FIREBASE] Модуль синхронизации заказов загружен');
 </script>
+  <script>
+(function(){
+  /* ============================================================
+     ЗАЩИТА КОНТЕЙНЕРА #ordersList ОТ СТАРОГО СКРИПТА
+     Разрешаем писать только Firebase-скрипту
+     ============================================================ */
+  var allowWrite = false;
+
+  /* Даём «ключ» нашему Firebase-скрипту */
+  window.__hydraAllowOrdersWrite = function(fn){
+    allowWrite = true;
+    try { fn(); } finally { allowWrite = false; }
+  };
+
+  function lockContainer(){
+    var list = document.getElementById('ordersList');
+    if (!list || list.__locked) return;
+
+    var proto = Object.getPrototypeOf(list);
+    var desc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+
+    Object.defineProperty(list, 'innerHTML', {
+      configurable: false,
+      get: function(){ return desc.get.call(this); },
+      set: function(value){
+        if (allowWrite){
+          desc.set.call(this, value);
+        }
+        /* Иначе — тихо игнорируем попытку перезаписи */
+      }
+    });
+
+    list.__locked = true;
+    console.log('[HYDRA] Контейнер #ordersList защищён от старого скрипта');
+  }
+
+  /* Стартуем когда появится контейнер */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', lockContainer);
+  } else {
+    lockContainer();
+  }
+  setTimeout(lockContainer, 200);
+  setTimeout(lockContainer, 1000);
+
+})();
+</script>
 </body>
 </html>
