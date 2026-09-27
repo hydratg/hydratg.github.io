@@ -4423,5 +4423,30 @@ body{
 })();
 </script>
   <body>
-    
+   <script>
+(function(){
+  /* Убираем карточки новых товаров по data-type */
+  ['pizza-hawaii','pizza-bbq','pizza-four-cheese','pizza-veggie','drink-coffee']
+    .forEach(function(t){
+      document.querySelectorAll('[data-type="' + t + '"]').forEach(function(el){
+        el.remove();
+      });
+    });
+
+  /* На всякий случай — убираем по названию */
+  ['Гавайская','BBQ Чикен','Четыре сыра','Вегетарианская','Кофе Латте']
+    .forEach(function(name){
+      document.querySelectorAll('article, .card, .product, .item').forEach(function(c){
+        if ((c.textContent || '').indexOf(name) !== -1) c.remove();
+      });
+    });
+
+  /* Убираем все мои старые скрипты, которые их добавляли */
+  ['hydra-add-new-dishes','hydra-new-pizzas-fixed','hydra-final','hydra-final-fix','hydra-new-to-cart']
+    .forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.remove();
+    });
+})();
+</script> 
   </body>
