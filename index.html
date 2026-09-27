@@ -1,7 +1,7 @@
 привет мир
 <!DOCTYPE html>
 <html lang="ru">
-<head>
+<head>    
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HYDRA BLACK · пиццерия</title>
@@ -4490,4 +4490,21 @@ body{
   alert('Удалено элементов: ' + removed);
 })();
 </script>
-  <body></body>
+  <body>
+    <head>  <style>
+/* Убираем новые товары через CSS — это нельзя отменить скриптом */
+[data-type="pizza-hawaii"],
+[data-type="pizza-bbq"],
+[data-type="pizza-four-cheese"],
+[data-type="pizza-veggie"],
+[data-type="drink-coffee"],
+[data-type="hawaii"],
+[data-type="bbq"],
+[data-type="four-cheese"],
+[data-type="veggie"],
+[data-type="coffee"]{
+  display: none !important;
+}
+</style>
+      
+    </head>
