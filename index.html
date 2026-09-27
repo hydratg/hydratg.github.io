@@ -1184,3 +1184,73 @@ html
   });
 })();
 </script>
+
+  <body></body>
+  <script>
+/* ===== УДАЛЕНИЕ ВТОРОЙ КОРЗИНЫ ===== */
+(function(){
+  function fix(){
+    const carts = document.querySelectorAll('.cart');
+    const overlays = document.querySelectorAll('.overlay');
+
+    console.log('[HYDRA] Корзин:', carts.length, '| Оверлеев:', overlays.length);
+
+    // Оставляем ту корзину, у которой внутри есть #cartList
+    let keep = null;
+    carts.forEach(c => {
+      if (!keep && c.querySelector('#cartList')) keep = c;
+    });
+    // Если ни у одной нет #cartList — оставляем первую
+    if (!keep) keep = carts[0];
+
+    // Удаляем все остальные
+    carts.forEach(c => {
+      if (c !== keep) c.remove();
+    });
+
+    // Оверлеев оставляем ровно один
+    overlays.forEach((o, i) => {
+      if (i > 0) o.remove();
+    });
+
+    // Тост тоже только один
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach((t, i) => { if (i > 0) t.remove(); });
+
+    // ВАЖНО: переносим слушатели на оставшуюся корзину заново,
+    // чтобы клик по «Оформить заказ» и «Очистить» работал
+    const panel = document.querySelector('.cart');
+    const overlay = document.querySelector('.overlay');
+
+    if (panel && overlay){
+      // Пересобираем ссылки
+      window.__hydraCartPanel = panel;
+      window.__hydraCartOverlay = overlay;
+    }
+  }
+
+  // Запускаем несколько раз
+  fix();
+  setTimeout(fix, 100);
+  setTimeout(fix, 500);
+  setTimeout(fix, 1500);
+
+  // Следим за DOM — если кто-то добавит новую корзину, удаляем
+  const obs = new MutationObserver(function(){
+    const carts = document.querySelectorAll('.cart');
+    if (carts.length > 1){
+      let keep = document.querySelector('.cart #cartList')?.closest('.cart') || carts[0];
+      carts.forEach(c => { if (c !== keep) c.remove(); });
+    }
+    const overlays = document.querySelectorAll('.overlay');
+    if (overlays.length > 1){
+      overlays.forEach((o, i) => { if (i > 0) o.remove(); });
+    }
+  });
+
+  window.addEventListener('load', function(){
+    obs.observe(document.body, { childList: true, subtree: true });
+    setTimeout(() => obs.disconnect(), 15000);
+  });
+})();
+</script>
