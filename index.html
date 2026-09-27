@@ -5460,6 +5460,174 @@ body{
 
 })();
 </script>
-  <html>
+</body><style>
+/* Тёплая палитра пиццерии вместо неона */
+:root{
+  --pizza-red:#c8361e;
+  --pizza-orange:#e07a2a;
+  --pizza-yellow:#f5c542;
+  --pizza-cream:#f5ecd8;
+  --pizza-brown:#6b3a1a;
+  --pizza-dark:#1a0f0a;
+}
+
+/* Фон — тёплый тёмно-коричневый вместо чёрно-фиолетового */
+body, html{
+  background:#1a0f0a !important;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(200,54,30,.12) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(224,122,42,.10) 0%, transparent 45%) !important;
+  color:#f5ecd8 !important;
+}
+
+/* Шапка */
+header, .topbar{
+  background:rgba(26,15,10,.92) !important;
+  border-bottom:1px solid #3a2018 !important;
+}
+
+/* Логотип — красный с оранжевым, без розового неона */
+.brand-mark, .mark, .logo-mark{
+  background:linear-gradient(135deg,#c8361e,#e07a2a) !important;
+  box-shadow:0 0 20px rgba(200,54,30,.4) !important;
+  color:#f5ecd8 !important;
+}
+
+/* Кнопка корзины */
+#cartBtn, .cart-btn, .cart-trigger{
+  background:linear-gradient(135deg,#c8361e,#e07a2a) !important;
+  color:#f5ecd8 !important;
+  box-shadow:0 6px 20px rgba(200,54,30,.35) !important;
+}
+#cartBtn:hover, .cart-btn:hover{
+  box-shadow:0 8px 28px rgba(200,54,30,.55) !important;
+}
+
+/* Заголовки — без розового градиента */
+h1, h2, .hero, .section-title, .section-head h2{
+  color:#f5ecd8 !important;
+  background:none !important;
+  -webkit-text-fill-color:#f5ecd8 !important;
+}
+h1 em, .hero em{
+  color:#f5c542 !important;
+  background:none !important;
+  -webkit-text-fill-color:#f5c542 !important;
+}
+h2 span, .section-head h2 span{
+  color:#e07a2a !important;
+}
+
+/* Акцентные элементы */
+.accent, .cat, .product-cat{
+  color:#e07a2a !important;
+}
+
+/* Карточки — тёплый коричневый */
+.product, .card{
+  background:linear-gradient(160deg,#2a1810,#1a0f0a) !important;
+  border:1px solid #3a2018 !important;
+}
+.product:hover, .card:hover{
+  border-color:rgba(224,122,42,.6) !important;
+  box-shadow:0 20px 40px -20px rgba(200,54,30,.5) !important;
+}
+
+/* Кнопки «В корзину» */
+.add-btn, .add, .btn-primary{
+  border-color:#e07a2a !important;
+  color:#f5c542 !important;
+}
+.add-btn:hover, .add:hover, .btn-primary:hover{
+  background:#e07a2a !important;
+  color:#1a0f0a !important;
+}
+
+/* Цены */
+.price, .product-price{
+  color:#f5c542 !important;
+  background:none !important;
+  -webkit-text-fill-color:#f5c542 !important;
+}
+.price small, .product-price small{
+  color:#e07a2a !important;
+}
+
+/* Корзина — тёплые тона */
+.drawer, .cart-panel, .cart{
+  background:#1f120a !important;
+  border-left:1px solid #3a2018 !important;
+}
+.dtop, .cart-top{
+  border-bottom:1px solid #3a2018 !important;
+}
+.dbot, .cart-bottom{
+  background:#150b06 !important;
+  border-top:1px solid #3a2018 !important;
+}
+
+/* Кнопки +/- в корзине */
+.cnt button, .counter button, .qty-btn{
+  background:rgba(224,122,42,.15) !important;
+  border-color:rgba(224,122,42,.4) !important;
+  color:#f5c542 !important;
+}
+.cnt button:hover, .counter button:hover{
+  background:#e07a2a !important;
+  color:#1a0f0a !important;
+}
+
+/* Итог */
+.sum, .cart-total-value, .total-line .sum{
+  color:#f5c542 !important;
+  background:none !important;
+  -webkit-text-fill-color:#f5c542 !important;
+}
+
+/* Кнопка «Оформить» */
+.checkout, .checkout-btn, .co, .checkout-btn{
+  background:linear-gradient(135deg,#c8361e,#e07a2a) !important;
+  color:#f5ecd8 !important;
+  box-shadow:0 10px 30px rgba(200,54,30,.4) !important;
+}
+
+/* Ссылки в меню */
+nav a:hover{
+  color:#e07a2a !important;
+  background:rgba(224,122,42,.1) !important;
+}
+
+/* Все розовые акценты → оранжевые */
+[style*="ff2d95"], [style*="255,45,149"]{
+  /* ничего не делаем — переопределим ниже */
+}
+
+/* Иконки-эмодзи и SVG подкрутим по тону */
+.order-card, .order{
+  background:linear-gradient(160deg,#2a1810,#1a0f0a) !important;
+  border-color:#3a2018 !important;
+}
+.order-card::before, .order::before{
+  background:linear-gradient(90deg,#c8361e,#e07a2a,#f5c542,#e07a2a,#c8361e) !important;
+}
+
+/* Тосты и уведомления */
+.hydra-toast, #hydraToast, .toast{
+  background:linear-gradient(135deg,#c8361e,#e07a2a) !important;
+  color:#f5ecd8 !important;
+  box-shadow:0 15px 40px rgba(200,54,30,.5) !important;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#c8361e,#e07a2a) !important;
+}
+
+/* Футер */
+footer{
+  border-top:1px solid #3a2018 !important;
+  color:#7a5a48 !important;
+}
+</style>
     
   </html>
