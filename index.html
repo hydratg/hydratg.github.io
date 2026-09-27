@@ -629,6 +629,252 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
   render();
 })();
 </script>
+html
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, push, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+const firebaseConfig = {
+
+  apiKey: "AIzaSyAEg7bBrcHTPKztpdu239imUYIjQQkbfRU",
+
+  authDomain: "hydra-386cd.firebaseapp.com",
+
+  databaseURL: "https://hydra-386cd-default-rtdb.europe-west1.firebasedatabase.app",
+
+  projectId: "hydra-386cd",
+
+  storageBucket: "hydra-386cd.firebasestorage.app",
+
+  messagingSenderId: "935855682328",
+
+  appId: "1:935855682328:web:29d2871866b86ef5ac246d",
+
+  measurementId: "G-LY95R9B548"
+
+};
+// ====== ИНИЦИАЛИЗАЦИЯ ======
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const ordersRef = ref(db, 'orders');
+
+// ====== СОСТОЯНИЕ ======
+let cart = [];
+let ordersFeed = [];
+
+// ====== УВЕДОМЛЕНИЕ ======
+const toast = document.createElement('div');
+toast.className = 'toast';
+document.body.appendChild(toast);
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ====== КОРЗИНА (UI) ======
+const overlay = document.createElement('div');
+overlay.className = 'overlay';
+document.body.appendChild(overlay);
+
+const drawer = document.createElement('div');
+drawer.className = 'cart';
+drawer.innerHTML = `
+  <div class="cart-top">
+    <h3><span class="neon">🛒</span> Корзина <span class="cart-count" id="cartCount">0</span></h3>
+    <button class="close-x" id="closeCart" type="button">×</button>
+  </div>
+  <div class="cart-list" id="cartList"></div>
+  <div class="cart-bottom">
+    <div class="total-line"><span class="lbl">Итого</span><span class="sum" id="cartSum">0 ₽</span></div>
+    <button class="checkout" id="checkoutBtn" type="button" disabled>Оформить заказ</button>
+    <button class="clear" id="clearCart" type="button">Очистить корзину</button>
+  </div>
+`;
+document.body.appendChild(drawer);
+
+function openCart(){ drawer.classList.add('open'); overlay.classList.add('open'); }
+function closeCart(){ drawer.classList.remove('open'); overlay.classList.remove('open'); }
+
+function totalSum(){ return cart.reduce((s,i) => s + i.price * i.qty, 0); }
+function totalCount(){ return cart.reduce((s,i) => s + i.qty, 0); }
+
+function renderCart(){
+  const list = document.getElementById('cartList');
+  const sum = totalSum();
+  const cnt = totalCount();
+  document.getElementById('cartCount').textContent = cnt;
+  document.getElementById('cartSum').textContent = sum.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('headerTotal').textContent = sum.toLocaleString('ru-RU');
+  document.getElementById('checkoutBtn').disabled = cart.length === 0;
+
+  if (!cart.length){
+    list.innerHTML = '<div class="empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
+    return;
+  }
+  list.innerHTML = cart.map((it, idx) => `
+    <div class="row" data-type="${it.type}">
+      <div class="row-thumb"></div>
+      <div class="row-main">
+        <div class="row-head">
+          <div><h4>${it.name}</h4><div class="unit">${it.price} ₽ / шт</div></div>
+          <button class="del" type="button" data-del="${idx}" title="Удалить">×</button>
+        </div>
+        <div class="row-foot">
+          <div class="counter">
+            <button type="button" data-minus="${idx}">−</button>
+            <span class="qty">${it.qty}</span>
+            <button type="button" data-plus="${idx}">+</button>
+          </div>
+          <div class="line-total">${(it.price * it.qty).toLocaleString('ru-RU')} ₽</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ====== ЛЕНТА ЗАКАЗОВ ======
+function timeAgo(t){
+  const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
+  if (m < 1) return 'только что';
+  if (m < 60) return m + ' мин назад';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' ч назад';
+  return Math.floor(h / 24) + ' дн назад';
+}
+
+function renderOrders(isFresh){
+  const list = document.getElementById('ordersList');
+  if (!list) return;
+  if (!ordersFeed.length){
+    list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+    return;
+  }
+  list.innerHTML = ordersFeed.map((o, idx) => {
+    const sum = o.items.reduce((s,i) => s + i.price * i.qty, 0);
+    const fresh = (isFresh && idx === 0) ? ' fresh' : '';
+    return `
+      <div class="order-card${fresh}">
+        <div class="order-top">
+          <div class="order-name"><span class="avatar">${o.name.charAt(0).toUpperCase()}</span>${o.name}</div>
+          <div class="order-time">${timeAgo(o.time)}</div>
+        </div>
+        <div class="order-items">
+          ${o.items.map(i => `<div class="order-item"><span><span class="qty">${i.qty}×</span>${i.name}</span><span>${i.price * i.qty} ₽</span></div>`).join('')}
+        </div>
+        <div class="order-bottom">
+          <span class="order-status done">${o.status || 'Оформлен'}</span>
+          <span class="order-total">${sum.toLocaleString('ru-RU')} ₽</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ====== FIREBASE: подписка на заказы ======
+onValue(ordersRef, (snapshot) => {
+  const data = snapshot.val();
+  if (!data){
+    ordersFeed = [];
+    renderOrders();
+    return;
+  }
+  const arr = Object.entries(data).map(([id, o]) => ({
+    id,
+    name: o.name || 'Гость',
+    items: o.items || [],
+    time: o.time || Date.now(),
+    status: o.status || 'Оформлен'
+  })).sort((a, b) => b.time - a.time);
+
+  const prevLen = ordersFeed.length;
+  ordersFeed = arr;
+  renderOrders(arr.length > prevLen);
+});
+
+// ====== FIREBASE: отправка заказа ======
+async function sendOrderToFirebase(order){
+  try {
+    await push(ordersRef, {
+      name: order.name,
+      items: order.items,
+      time: Date.now(),
+      status: 'Оформлен'
+    });
+  } catch (e){
+    console.error('Firebase error:', e);
+    showToast('Ошибка связи с базой');
+  }
+}
+
+// ====== ОБРАБОТЧИКИ ======
+document.getElementById('cartBtn').addEventListener('click', openCart);
+document.getElementById('closeCart').addEventListener('click', closeCart);
+overlay.addEventListener('click', closeCart);
+
+document.getElementById('clearCart').addEventListener('click', () => {
+  if (!cart.length) return;
+  cart = [];
+  renderCart();
+  showToast('Корзина очищена');
+});
+
+document.getElementById('checkoutBtn').addEventListener('click', async () => {
+  if (!cart.length) return;
+  const name = prompt('Ваше имя для заказа:', 'Гость');
+  if (name === null) return;
+  const cleanName = (name.trim() || 'Гость').slice(0, 24);
+
+  showToast('На вас оформлен кредит');
+
+  await sendOrderToFirebase({
+    name: cleanName,
+    items: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty }))
+  });
+
+  cart = [];
+  renderCart();
+  closeCart();
+});
+
+document.addEventListener('click', (e) => {
+  const addBtn = e.target.closest('[data-add]');
+  if (addBtn){
+    const id = addBtn.dataset.id;
+    const name = addBtn.dataset.name;
+    const price = parseInt(addBtn.dataset.price, 10);
+    const type = addBtn.dataset.type;
+    const exists = cart.find(x => x.id === id);
+    if (exists) exists.qty++;
+    else cart.push({ id, name, price, type, qty: 1 });
+    renderCart();
+    showToast('Добавлено: ' + name);
+    const trigger = document.getElementById('cartBtn');
+    trigger.classList.remove('bump');
+    void trigger.offsetWidth;
+    trigger.classList.add('bump');
+    return;
+  }
+  const delBtn = e.target.closest('[data-del]');
+  if (delBtn){ cart.splice(parseInt(delBtn.dataset.del, 10), 1); renderCart(); return; }
+  const plus = e.target.closest('[data-plus]');
+  if (plus){ cart[parseInt(plus.dataset.plus, 10)].qty++; renderCart(); return; }
+  const minus = e.target.closest('[data-minus]');
+  if (minus){
+    const mi = parseInt(minus.dataset.minus, 10);
+    cart[mi].qty--;
+    if (cart[mi].qty <= 0) cart.splice(mi, 1);
+    renderCart();
+  }
+});
+
+// Обновляем «N минут назад»
+setInterval(() => { if (ordersFeed.length) renderOrders(); }, 30000);
+
+renderCart();
+</script>
 
 </body>
 </html>
