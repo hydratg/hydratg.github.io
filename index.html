@@ -1672,3 +1672,73 @@ html
   }
 })();
 </script>
+<script>
+/* ===== ЗАЩИТА ЛЕНТЫ ЗАКАЗОВ ОТ ОЧИСТКИ ===== */
+(function(){
+  const LS_KEY = 'hydra_orders_v1';
+  const ORDERS_CONTAINER = 'ordersList';
+
+  /* 1. Блокируем socket.io — он присылает пустой список и стирает ленту */
+  window.io = function(){
+    return {
+      on: function(){},
+      emit: function(){},
+      disconnect: function(){},
+      connected: false
+    };
+  };
+
+  /* 2. Блокируем fetch к /api/orders (только чтение) */
+  const origFetch = window.fetch;
+  if (origFetch){
+    window.fetch = function(url, opts){
+      const method = (opts && opts.method) ? opts.method.toUpperCase() : 'GET';
+      if (typeof url === 'string' && url.includes('/api/orders') && method === 'GET'){
+        return Promise.resolve({
+          ok: true,
+          json: function(){ return Promise.resolve([]); }
+        });
+      }
+      return origFetch.apply(this, arguments);
+    };
+  }
+
+  /* 3. Не даём основному скрипту перезаписать #ordersList пустотой */
+  function protect(){
+    const list = document.getElementById(ORDERS_CONTAINER);
+    if (!list) return;
+
+    // Запоминаем, сколько заказов было отрисовано
+    let lastGoodHTML = list.innerHTML;
+
+    // Каждые 300 мс проверяем: если лента стала пустой, но в localStorage есть заказы — восстанавливаем
+    setInterval(function(){
+      let orders = [];
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        orders = raw ? JSON.parse(raw) : [];
+      } catch(e){ orders = []; }
+
+      // Если заказы в хранилище есть, а лента пуста — рендерим заново
+      if (orders.length && list.querySelector('.orders-empty')){
+        if (typeof window.renderOrdersList === 'function'){
+          window.renderOrdersList();
+        }
+      }
+
+      // Если что-то отрисовано — запоминаем как «хорошее» состояние
+      if (!list.querySelector('.orders-empty')){
+        lastGoodHTML = list.innerHTML;
+      }
+    }, 300);
+  }
+
+  /* 4. Стартуем после загрузки DOM */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', protect);
+  } else {
+    protect();
+  }
+})();
+</script>
+
