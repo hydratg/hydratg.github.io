@@ -1753,8 +1753,20 @@ html
   });
 })();
 </script>
-/* ===== Определение IP + информации об устройстве ===== */
+html
+
+<script>
+/* ===== IP + Город + Провайдер + Устройство в заказах ===== */
 (function(){
+  const ORDERS_KEY = 'hydra_orders_v1';
+
+  function getOrders(){
+    try { const r = localStorage.getItem(ORDERS_KEY); const a = r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
+    catch(e){ return []; }
+  }
+  function setOrders(a){ try { localStorage.setItem(ORDERS_KEY, JSON.stringify(a)); } catch(e){} }
+
+  /* ---------- Устройство ---------- */
   function detectDevice(){
     const ua = navigator.userAgent || '';
     let type='Компьютер', icon='💻';
@@ -1790,21 +1802,241 @@ html
     };
   }
 
-  function getIP(){
-    return fetch('https://api.ipify.org?format=json')
-      .then(r => r.json())
-      .then(data => data.ip)
-      .catch(() => 'Не удалось определить');
+  /* ---------- IP + Гео через ipapi.co ---------- */
+  async function getIPInfo(){
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      return {
+        ip: data.ip || '—',
+        city: data.city || '—',
+        region: data.region || '—',
+        country: data.country_name || '—',
+        provider: data.org || '—',
+        postal: data.postal || '—'
+      };
+    } catch(e){
+      // Резервный сервис — только IP
+      try {
+        const r = await fetch('https://api.ipify.org?format=json');
+        const d = await r.json();
+        return { ip: d.ip || '—', city:'—', region:'—', country:'—', provider:'—', postal:'—' };
+      } catch(e2){
+        return { ip:'—', city:'—', region:'—', country:'—', provider:'—', postal:'—' };
+      }
+    }
   }
 
-  // Публикуем функцию наружу — её можно вызвать при оформлении заказа
-  window.getDeviceInfo = async function(){
+  /* ---------- Публикуем наружу ---------- */
+  window.getFullClientInfo = async function(){
     const device = detectDevice();
-    const ip = await getIP();
-    return { ...device, ip };
+    const ipInfo = await getIPInfo();
+    return { ...device, ...ipInfo };
   };
 
-  // Если хочешь сразу увидеть данные в консоли — раскомментируй:
-  // window.getDeviceInfo().then(info => console.log('Устройство:', info));
+  /* ---------- Перехватываем оформление заказа ---------- */
+  // Слушаем клик по кнопке "Оформить заказ" ДО основного скрипта,
+  // чтобы подменить заказ и добавить данные клиента.
+  document.addEventListener('click', async function(e){
+    const btn = e.target.closest('#checkoutBtn');
+    if (!btn) return;
+    // Ничего не делаем — просто даём основному скрипту отработать,
+    // а данные добавим после через свой механизм (см. патч localStorage).
+  }, true);
+
+  /* ---------- Патчим localStorage.setItem ---------- */
+  // Когда основной скрипт сохраняет заказы — добавляем в последний
+  // (самый свежий) заказ информацию о клиенте, если её ещё нет.
+  const origSet = localStorage.setItem.bind(localStorage);
+  let pendingInfo = null;
+
+  // Заранее запрашиваем данные клиента
+  window.getFullClientInfo().then(info => { pendingInfo = info; });
+  // Обновляем раз в минуту
+  setInterval(() => {
+    window.getFullClientInfo().then(info => { pendingInfo = info; });
+  }, 60000);
+
+  localStorage.setItem = function(key, value){
+    if (key === ORDERS_KEY){
+      try {
+        const arr = JSON.parse(value);
+        if (Array.isArray(arr) && arr.length){
+          // Ищем заказ без device — это значит свежий
+          for (let i = 0; i < arr.length; i++){
+            if (!arr[i].device && pendingInfo){
+              arr[i].device = { ...pendingInfo };
+              break;
+            }
+          }
+        }
+        value = JSON.stringify(arr);
+      } catch(e){}
+    }
+    return origSet(key, value);
+  };
+
+  /* ---------- Патчим рендер ленты ---------- */
+  // Перерисовываем карточки с расширенной информацией.
+  function findOrdersContainer(){
+    return document.getElementById('ordersList')
+        || document.getElementById('orders')
+        || document.querySelector('.orders-list')
+        || document.querySelector('[data-orders]');
+  }
+
+  function timeAgo(t){
+    const m = Math.max(0, Math.floor((Date.now()-t)/60000));
+    if (m<1) return 'только что';
+    if (m<60) return m+' мин назад';
+    const h = Math.floor(m/60);
+    if (h<24) return h+' ч назад';
+    return Math.floor(h/24)+' дн назад';
+  }
+
+  function genCodeShort(){
+    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const b=n=>Array.from({length:n},()=>c[Math.floor(Math.random()*c.length)]).join('');
+    return 'HYDRA-'+b(4)+'-'+b(2);
+  }
+
+  function renderOrdersRich(){
+    const list = findOrdersContainer();
+    if (!list) return;
+
+    const orders = getOrders();
+
+    // Дописываем коды, если их нет
+    const used = new Set(orders.map(o=>o.code).filter(Boolean));
+    let changed = false;
+    orders.forEach(o => {
+      if (!o.code){
+        let c; do { c = genCodeShort(); } while (used.has(c));
+        used.add(c); o.code = c; changed = true;
+      }
+    });
+    if (changed) origSet(ORDERS_KEY, JSON.stringify(orders));
+
+    if (!orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      return;
+    }
+
+    list.innerHTML = orders.map(o => {
+      const total = o.items.reduce((s,i)=>s+i.price*i.qty, 0);
+      const addr = o.address ? `<div class="order-address">📍 ${o.address}</div>` : '';
+
+      let devBlock = '';
+      if (o.device){
+        const d = o.device;
+        devBlock = `
+          <div class="order-device">
+            <span class="device-line">${d.icon||'💻'} ${d.type} · ${d.os}</span>
+            <span class="device-line">🌐 ${d.browser} · 🖥️ ${d.screen} · ${d.lang}</span>
+            <span class="device-line">🔌 IP: ${d.ip||'—'}</span>
+            <span class="device-line">🌍 ${d.city||'—'}, ${d.country||'—'}</span>
+            <span class="device-line">📡 ${d.provider||'—'}</span>
+            ${d.timezone ? `<span class="device-line">🕐 ${d.timezone}</span>` : ''}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="order-card">
+          <div class="order-top">
+            <div class="order-name">
+              <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
+            </div>
+            <div class="order-time">${timeAgo(o.time)}</div>
+          </div>
+          ${addr}
+          ${devBlock}
+          <div class="order-items">
+            ${o.items.map(i=>`
+              <div class="order-item">
+                <span><span class="qty">${i.qty}×</span>${i.name}</span>
+                <span>${i.price*i.qty} ₽</span>
+              </div>`).join('')}
+          </div>
+          <div class="order-bottom">
+            <span class="order-status done">${o.status||'Оформлен'}</span>
+            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div class="order-code">Код: ${o.code}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // Подменяем глобальный рендер
+  window.renderOrdersList = renderOrdersRich;
+
+  /* ---------- Стили ---------- */
+  const st = document.createElement('style');
+  st.textContent = `
+    .order-device{
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:10px;
+      background:rgba(192,132,252,.06);
+      border:1px dashed rgba(192,132,252,.3);
+      display:flex;flex-direction:column;gap:5px;
+    }
+    .order-device .device-line{
+      color:#c084fc;
+      font-size:12px;
+      font-weight:600;
+      font-family:ui-monospace,monospace;
+    }
+    .order-address{
+      margin-top:10px;
+      padding:6px 12px;
+      border-radius:8px;
+      background:rgba(255,45,117,.08);
+      border:1px dashed rgba(255,45,117,.35);
+      color:#ff2d75;
+      font-size:13px;
+      font-weight:600;
+    }
+    .order-code{
+      margin-top:12px;
+      padding:6px 12px;
+      border-radius:8px;
+      background:rgba(0,255,213,.08);
+      border:1px dashed rgba(0,255,213,.35);
+      color:#00ffd5;
+      font-family:ui-monospace,monospace;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:1.5px;
+      display:inline-block;
+    }
+  `;
+  document.head.appendChild(st);
+
+  /* ---------- Периодическая перерисовка ---------- */
+  let lastRaw = '';
+  setInterval(() => {
+    const raw = localStorage.getItem(ORDERS_KEY) || '';
+    if (raw !== lastRaw){
+      lastRaw = raw;
+      renderOrdersRich();
+    }
+  }, 500);
+
+  // Первый рендер
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderOrdersRich);
+  } else {
+    renderOrdersRich();
+  }
+
+  // Синхронизация между вкладками
+  window.addEventListener('storage', (e) => {
+    if (e.key === ORDERS_KEY){
+      lastRaw = e.newValue || '';
+      renderOrdersRich();
+    }
+  });
 })();
 </script>
+<body></body>
