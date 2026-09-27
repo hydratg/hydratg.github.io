@@ -3978,5 +3978,171 @@ body{
       'background-position:center;' +
       'background-size:88%;' +
       'border-radius:14px 14px 0 0;';
-       </body>
+      <script id="hydra-clean">
+(function(){
+  /* 1. Убираем все мои старые скрипты */
+  ['hydra-bg-and-images','hydra-add-new-dishes','hydra-img-fix','hydra-img-fix-js',
+   'hydra-all-icons','hydra-smart-icons','hydra-new-pizzas-fixed','hydra-bg-new',
+   'hydra-final-fix','hydra-final','hydra-realistic']
+    .forEach(function(id){ var e=document.getElementById(id); if(e) e.remove(); });
+
+  /* 2. Убираем новые пиццы */
+  ['pizza-hawaii','pizza-bbq','pizza-four-cheese','pizza-veggie'].forEach(function(t){
+    document.querySelectorAll('[data-type="'+t+'"]').forEach(function(e){ e.remove(); });
+  });
+  ['Гавайская','BBQ Чикен','Четыре сыра','Вегетарианская'].forEach(function(name){
+    document.querySelectorAll('article, .card, .product, .item').forEach(function(c){
+      if((c.textContent||'').indexOf(name) !== -1) c.remove();
+    });
+  });
+
+  /* 3. Сбрасываем старые покраски */
+  document.querySelectorAll('[data-hydra-painted]').forEach(function(e){ delete e.dataset.hydraPainted; });
+
+  /* 4. Фон */
+  document.body.style.background = '#0a0608';
+
+  /* 5. Реалистичные SVG */
+  function pizza(sauce, cheese, pep){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    // тень
+    s+='<ellipse cx="100" cy="190" rx="80" ry="8" fill="#000" opacity="0.4"/>';
+    // корка
+    s+='<circle cx="100" cy="100" r="92" fill="#7a4a1a"/>';
+    s+='<circle cx="100" cy="100" r="87" fill="#b8803a"/>';
+    s+='<circle cx="100" cy="100" r="82" fill="#e0b060"/>';
+    // соус
+    s+='<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
+    // сыр
+    cheese.forEach(function(c){
+      s+='<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.92"/>';
+    });
+    // пепперони / начинка
+    pep.forEach(function(p){
+      s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+p.r+'" fill="'+p.c+'"/>';
+      s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(p.r-2)+'" fill="'+p.c2+'" opacity="0.6"/>';
+    });
+    // зелень
+    s+='<ellipse cx="50" cy="90" rx="3" ry="1.5" fill="#2a5a1a" transform="rotate(30 50 90)"/>';
+    s+='<ellipse cx="150" cy="110" rx="3" ry="1.5" fill="#2a5a1a" transform="rotate(-20 150 110)"/>';
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+  function bottle(color, label){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<ellipse cx="100" cy="188" rx="36" ry="6" fill="#000" opacity="0.4"/>';
+    s+='<path d="M70 60 Q60 70 60 90 L60 170 Q60 182 72 182 L128 182 Q140 182 140 170 L140 90 Q140 70 130 60 Z" fill="'+color+'"/>';
+    s+='<path d="M78 25 L122 25 L128 60 L72 60 Z" fill="'+color+'"/>';
+    s+='<rect x="76" y="10" width="48" height="18" rx="4" fill="'+label+'"/>';
+    s+='<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 145 Q110 149 100 145 Q90 141 60 145 Z" fill="'+label+'"/>';
+    s+='<path d="M68 70 L68 175 Q72 178 74 175 L74 68 Z" fill="#fff" opacity="0.2"/>';
+    for(var i=0;i<10;i++){ s+='<circle cx="'+(75+Math.random()*50)+'" cy="'+(95+Math.random()*70)+'" r="1.2" fill="#fff" opacity="0.35"/>'; }
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+  function cup(fill, top){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<ellipse cx="100" cy="182" rx="46" ry="8" fill="#000" opacity="0.4"/>';
+    s+='<path d="M55 50 L145 50 L132 178 L68 178 Z" fill="'+fill+'"/>';
+    s+='<ellipse cx="100" cy="50" rx="45" ry="7" fill="'+top+'"/>';
+    s+='<ellipse cx="100" cy="52" rx="38" ry="5" fill="'+fill+'" opacity="0.5"/>';
+    s+='<rect x="80" y="80" width="26" height="22" rx="3" fill="#fff" opacity="0.35" transform="rotate(-15 93 91)"/>';
+    s+='<rect x="105" y="110" width="22" height="18" rx="3" fill="#fff" opacity="0.3" transform="rotate(20 116 119)"/>';
+    s+='<path d="M55 50 L145 50 L132 178 L68 178 Z" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.5"/>';
+    s+='<path d="M68 60 L74 172" stroke="#fff" stroke-width="3" opacity="0.3"/>';
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  var ICONS = {
+    'pizza-pepperoni':  pizza('#8a1e10',
+      [[70,75,30,22],[135,85,28,20],[75,140,30,22],[140,135,26,18],[105,55,22,14]],
+      [{x:75,y:70,r:15,c:'#b0301a',c2:'#7a1008'},{x:130,y:80,r:14,c:'#b0301a',c2:'#7a1008'},
+       {x:70,y:135,r:14,c:'#b0301a',c2:'#7a1008'},{x:135,y:130,r:13,c:'#b0301a',c2:'#7a1008'},
+       {x:105,y:105,r:15,c:'#b0301a',c2:'#7a1008'},{x:110,y:50,r:12,c:'#b0301a',c2:'#7a1008'},
+       {x:55,y:100,r:11,c:'#b0301a',c2:'#7a1008'},{x:150,y:110,r:11,c:'#b0301a',c2:'#7a1008'}]),
+
+    'pizza-margherita': pizza('#a82814',
+      [[65,75,32,26],[140,85,30,24],[75,135,32,26],[140,140,28,22],[105,105,26,20],[105,45,22,14]],
+      []),
+
+    'drink-cola':       bottle('#1a0505','#c8102e'),
+    'drink-orange':     bottle('#c05a10','#f0a838'),
+    'drink-sprite':     bottle('#1a5a2a','#3aaa4a'),
+    'drink-lemonade':   cup('#e8e050','#f8f070'),
+    'drink-pee':        cup('#d4c020','#e8d840'),
+    'drink-coffee':     cup('#6b4520','#3a2010')
+  };
+
+  var RULES = [
+    {k:['пеперони','пепперони','pepperoni'], id:'pizza-pepperoni'},
+    {k:['маргарита','margherita'], id:'pizza-margherita'},
+    {k:['кола','cola','кока'], id:'drink-cola'},
+    {k:['апельсин','orange'], id:'drink-orange'},
+    {k:['спрайт','sprite'], id:'drink-sprite'},
+    {k:['лимонад','lemonade'], id:'drink-lemonade'},
+    {k:['моча','pee'], id:'drink-pee'},
+    {k:['кофе','coffee','латте'], id:'drink-coffee'}
+  ];
+
+  function find(card){
+    var t = card.getAttribute && card.getAttribute('data-type');
+    if(t && ICONS[t]) return ICONS[t];
+    var txt = (card.textContent||'').toLowerCase();
+    for(var i=0;i<RULES.length;i++){
+      for(var j=0;j<RULES[i].k.length;j++){
+        if(txt.indexOf(RULES[i].k[j]) !== -1) return ICONS[RULES[i].id];
+      }
+    }
+    return null;
+  }
+
+  function paint(card){
+    if(card.dataset.hp === '1') return;
+    var url = find(card);
+    if(!url) return;
+
+    var thumb = card.querySelector('img, .product-thumb, .card-visual, .product-visual, .thumb');
+    if(thumb && thumb.tagName === 'IMG'){
+      var d = document.createElement('div');
+      d.className = 'product-thumb';
+      thumb.replaceWith(d);
+      thumb = d;
+    }
+    if(!thumb){
+      thumb = document.createElement('div');
+      thumb.className = 'product-thumb';
+      card.insertBefore(thumb, card.firstChild);
+    }
+
+    thumb.style.cssText =
+      'aspect-ratio:16/11;display:block;'+
+      'background:#0a0608;'+
+      'background-image:'+url+';'+
+      'background-repeat:no-repeat;'+
+      'background-position:center;'+
+      'background-size:88%;'+
+      'border-radius:14px 14px 0 0;';
+
+    card.dataset.hp = '1';
+  }
+
+  function run(){
+    document.querySelectorAll('[data-type], article, .card, .product, .item').forEach(paint);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+  [100,400,1000,2500,5000].forEach(function(t){ setTimeout(run,t); });
+  window.addEventListener('load',function(){
+    var o = new MutationObserver(run);
+    o.observe(document.body,{childList:true,subtree:true});
+    setTimeout(function(){ o.disconnect(); },15000);
+  });
+})();
+</script>
+    </body>
+    
+    
     
