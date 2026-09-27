@@ -6826,4 +6826,189 @@ footer{padding:40px 0;border-top:1px solid #3a2010;color:#8a5a30;font-size:13px;
   background-image:none !important;
 }
 </style>
+   </body><style>
+/* ====== ИНТЕРАКТИВНАЯ КНОПКА «В КОРЗИНУ» ====== */
+
+.add,
+.add-btn,
+.btn-primary,
+.card .add,
+.product .add-btn,
+[data-add]{
+  position:relative !important;
+  overflow:hidden !important;
+  display:block !important;
+  width:100% !important;
+  padding:16px 20px !important;
+  border-radius:100px !important;
+  border:1.5px solid #ff8c1a !important;
+  background:transparent !important;
+  color:#ff8c1a !important;
+  font-weight:900 !important;
+  font-size:13px !important;
+  letter-spacing:3px !important;
+  text-transform:uppercase !important;
+  cursor:pointer !important;
+  font-family:system-ui,-apple-system,sans-serif !important;
+  text-align:center !important;
+  transition:
+    background-color .35s ease,
+    color .35s ease,
+    box-shadow .35s ease,
+    transform .15s ease,
+    letter-spacing .35s ease !important;
+  box-shadow:0 0 0 0 rgba(255,140,26,0) !important;
+  outline:none !important;
+}
+
+/* Пульсирующее свечение вокруг кнопки */
+.add::before,
+.add-btn::before,
+.card .add::before,
+.product .add-btn::before,
+[data-add]::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:-2px !important;
+  border-radius:100px !important;
+  background:linear-gradient(135deg,#ff8c1a,#ffb84d,#ff8c1a) !important;
+  opacity:0 !important;
+  z-index:-1 !important;
+  filter:blur(10px) !important;
+  transition:opacity .35s ease !important;
+}
+
+/* Скользящая полоса заливки слева-направо */
+.add::after,
+.add-btn::after,
+.card .add::after,
+.product .add-btn::after,
+[data-add]::after{
+  content:"" !important;
+  position:absolute !important;
+  top:0 !important;
+  left:-100% !important;
+  width:100% !important;
+  height:100% !important;
+  background:linear-gradient(135deg,#ff8c1a,#ffb84d) !important;
+  transition:left .4s cubic-bezier(.4,0,.2,1) !important;
+  z-index:-1 !important;
+  border-radius:100px !important;
+}
+
+/* ХОВЕР — заливка + свечение + разрядка */
+.add:hover,
+.add-btn:hover,
+.btn-primary:hover,
+.card .add:hover,
+.product .add-btn:hover,
+[data-add]:hover{
+  color:#1a0d05 !important;
+  border-color:#ffb84d !important;
+  letter-spacing:4px !important;
+  box-shadow:
+    0 10px 30px rgba(255,140,26,.5),
+    0 0 40px rgba(255,140,26,.35) !important;
+  transform:translateY(-3px) !important;
+}
+.add:hover::after,
+.add-btn:hover::after,
+.card .add:hover::after,
+.product .add-btn:hover::after,
+[data-add]:hover::after{
+  left:0 !important;
+}
+.add:hover::before,
+.add-btn:hover::before,
+.card .add:hover::before,
+.product .add-btn:hover::before,
+[data-add]:hover::before{
+  opacity:1 !important;
+}
+
+/* НАЖАТИЕ — кнопка сжимается */
+.add:active,
+.add-btn:active,
+.btn-primary:active,
+.card .add:active,
+.product .add-btn:active,
+[data-add]:active{
+  transform:scale(.96) !important;
+  box-shadow:0 4px 14px rgba(255,140,26,.4) !important;
+}
+
+/* RIPPLE-эффект — волна от курсора */
+.add:focus-visible,
+.add-btn:focus-visible{
+  outline:2px solid #ffb84d !important;
+  outline-offset:3px !important;
+}
+
+/* Появление кнопки при загрузке */
+@keyframes btnIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.add,
+.add-btn,
+.card .add,
+.product .add-btn{
+  animation:btnIn .4s ease backwards !important;
+}
+
+/* Пульс точки-огонька на карточке — синхронизируем */
+.card:hover .add{
+  border-color:#ffb84d !important;
+}
+</style>
+
+<script>
+/* ====== RIPPLE-ЭФФЕКТ ПРИ КЛИКЕ ====== */
+(function(){
+  function addRipple(e){
+    var btn = e.target.closest('[data-add], .add, .add-btn, .btn-primary');
+    if (!btn) return;
+
+    var rect = btn.getBoundingClientRect();
+    var x = (e.clientX || (rect.left + rect.width/2)) - rect.left;
+    var y = (e.clientY || (rect.top + rect.height/2)) - rect.top;
+
+    var ripple = document.createElement('span');
+    ripple.style.cssText =
+      'position:absolute;' +
+      'left:' + x + 'px;' +
+      'top:' + y + 'px;' +
+      'width:10px;height:10px;' +
+      'border-radius:50%;' +
+      'background:rgba(255,140,26,.5);' +
+      'transform:translate(-50%,-50%) scale(1);' +
+      'pointer-events:none;' +
+      'animation:rippleAnim .6s ease-out forwards;';
+
+    var style = document.getElementById('hydraRippleStyle');
+    if (!style){
+      style = document.createElement('style');
+      style.id = 'hydraRippleStyle';
+      style.textContent = '@keyframes rippleAnim{to{transform:translate(-50%,-50%) scale(28);opacity:0}}';
+      document.head.appendChild(style);
+    }
+
+    btn.style.overflow = 'hidden';
+    btn.appendChild(ripple);
+
+    setTimeout(function(){ ripple.remove(); }, 700);
+
+    /* Лёгкое «дрожание» кнопки — отклик */
+    btn.style.transition = 'transform .1s';
+    btn.style.transform = 'scale(.96)';
+    setTimeout(function(){
+      btn.style.transform = '';
+      btn.style.transition = '';
+    }, 120);
+  }
+
+  document.addEventListener('click', addRipple, true);
+  document.addEventListener('mousedown', addRipple, true);
+})();
+</script>
   <html>
