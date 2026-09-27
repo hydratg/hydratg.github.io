@@ -7,478 +7,177 @@
 <title>HYDRA BLACK · пиццерия на дровах</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
 :root{
-  --bg:#120804;
-  --bg2:#1f0f06;
-  --card:#2a150a;
-  --line:#4a2818;
-  --orange:#ff9f2e;
-  --orange2:#ffb957;
-  --red:#e63a1f;
-  --cream:#ffe9d1;
-  --muted:#b88a6a;
-  --gold:#ffd166;
+  --bg:#0d0603; --bg2:#1a0c05; --card:#231108; --line:#3d1f10;
+  --orange:#ff9f2e; --orange2:#ffb957; --red:#e63a1f;
+  --cream:#ffe9d1; --muted:#b88a6a; --gold:#ffd166;
 }
-
 body{
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
-  background:var(--bg);
-  color:var(--cream);
-  line-height:1.5;
-  min-height:100vh;
+  font-family:system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--cream); line-height:1.5; min-height:100vh;
   background-image:
-    radial-gradient(circle at 12% 8%, rgba(255,159,46,.13) 0%, transparent 45%),
-    radial-gradient(circle at 88% 92%, rgba(230,58,31,.10) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(255,209,102,.05) 0%, transparent 60%);
+    radial-gradient(circle at 10% 6%, rgba(255,159,46,.15) 0%, transparent 45%),
+    radial-gradient(circle at 90% 94%, rgba(230,58,31,.12) 0%, transparent 45%);
   background-attachment:fixed;
 }
-
 .wrap{max-width:1320px;margin:0 auto;padding:0 24px}
 
 /* ============ ШАПКА ============ */
-header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(18,8,4,.94);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
-  padding:16px 0;
-}
+header{position:sticky;top:0;z-index:100;background:rgba(13,6,3,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:16px 0}
 .hd{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
-
 .logo{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:900;letter-spacing:3px;text-transform:uppercase}
-.mark{
-  width:46px;height:46px;border-radius:14px;
-  background:linear-gradient(135deg,var(--orange),var(--red));
-  display:grid;place-items:center;
-  color:var(--bg);font-size:26px;font-weight:900;
-  box-shadow:0 0 24px rgba(255,159,46,.6),inset 0 0 12px rgba(255,255,255,.2);
-}
+.mark{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--orange),var(--red));display:grid;place-items:center;color:var(--bg);font-size:26px;font-weight:900;box-shadow:0 0 26px rgba(255,159,46,.7)}
 .acc{color:var(--orange)}
 .thin{font-weight:300;color:var(--cream)}
-
-.geo{
-  display:flex;align-items:center;gap:8px;
-  padding:9px 18px;border-radius:100px;
-  border:1px solid var(--line);background:var(--bg2);
-  font-size:13px;color:var(--muted);font-weight:600;
-}
-
+.geo{padding:9px 18px;border-radius:100px;border:1px solid var(--line);background:var(--bg2);font-size:13px;color:var(--muted);font-weight:600}
 nav{display:flex;gap:4px;background:var(--bg2);padding:5px;border-radius:14px;border:1px solid var(--line)}
-nav a{
-  color:var(--muted);text-decoration:none;
-  padding:9px 18px;border-radius:10px;
-  font-size:13px;font-weight:700;
-  letter-spacing:.6px;text-transform:uppercase;
-  transition:all .2s;
-}
-nav a:hover{color:var(--orange);background:rgba(255,159,46,.12)}
-
-.cart-btn{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 22px;border-radius:100px;border:none;
-  background:linear-gradient(135deg,var(--orange),var(--red));
-  color:var(--bg);font-weight:900;font-size:13px;
-  cursor:pointer;letter-spacing:1.2px;text-transform:uppercase;
-  font-family:inherit;
-  box-shadow:0 8px 24px rgba(255,159,46,.4);
-  transition:all .2s;
-}
-.cart-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,159,46,.6)}
+nav a{color:var(--muted);text-decoration:none;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;transition:all .2s}
+nav a:hover{color:var(--orange);background:rgba(255,159,46,.14)}
+.cart-btn{display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:100px;border:none;background:linear-gradient(135deg,var(--orange),var(--red));color:var(--bg);font-weight:900;font-size:13px;cursor:pointer;letter-spacing:1.2px;text-transform:uppercase;font-family:inherit;box-shadow:0 8px 24px rgba(255,159,46,.5);transition:all .2s}
+.cart-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,159,46,.7)}
 
 /* ============ ГЕРОЙ ============ */
-.hero{padding:60px 0 50px;text-align:center;position:relative}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:10px;
-  background:rgba(255,159,46,.14);
-  border:1px solid rgba(255,159,46,.45);
-  color:var(--orange2);
-  padding:10px 24px;border-radius:100px;
-  font-size:12px;font-weight:800;
-  letter-spacing:2.5px;text-transform:uppercase;
-  margin-bottom:28px;
-}
-.hero h1{
-  font-family:Georgia,'Times New Roman',serif;
-  font-size:64px;font-weight:900;
-  line-height:1.02;letter-spacing:-2px;
-  margin-bottom:22px;color:var(--cream);
-}
-.hero h1 .accent{
-  background:linear-gradient(135deg,var(--orange),var(--gold),var(--red));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 0 30px rgba(255,159,46,.5));
-}
-.hero p{color:var(--muted);font-size:18px;max-width:660px;margin:0 auto 32px;line-height:1.6}
-
-.hero-stats{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:24px}
-.stat{
-  background:var(--bg2);border:1px solid var(--line);
-  padding:12px 22px;border-radius:100px;
-  font-size:13px;font-weight:700;color:var(--muted);
-}
+.hero{padding:80px 0 60px;text-align:center;position:relative}
+.hero-badge{display:inline-flex;gap:10px;background:rgba(255,159,46,.15);border:1px solid rgba(255,159,46,.5);color:var(--orange2);padding:10px 24px;border-radius:100px;font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:30px}
+.hero h1{font-family:Georgia,serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-2.5px;margin-bottom:26px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--orange),var(--gold),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 34px rgba(255,159,46,.6))}
+.hero p{color:var(--muted);font-size:19px;max-width:720px;margin:0 auto 36px;line-height:1.7}
+.hero-stats{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.stat{background:var(--bg2);border:1px solid var(--line);padding:12px 22px;border-radius:100px;font-size:13px;font-weight:700;color:var(--muted)}
 .stat b{color:var(--orange);font-weight:900;margin-right:6px}
 
+/* ============ О НАС ============ */
+.about{background:linear-gradient(160deg,var(--card),var(--bg));border:1px solid var(--line);border-radius:32px;padding:56px 48px;margin:50px 0;display:grid;grid-template-columns:1.3fr 1fr;gap:56px;align-items:center;position:relative;overflow:hidden}
+.about::before{content:"";position:absolute;top:-120px;right:-120px;width:440px;height:440px;background:radial-gradient(circle,rgba(255,159,46,.16),transparent 70%);border-radius:50%}
+.about::after{content:"";position:absolute;bottom:-120px;left:-120px;width:380px;height:380px;background:radial-gradient(circle,rgba(230,58,31,.14),transparent 70%);border-radius:50%}
+.about-text{position:relative;z-index:1}
+.about-text .tag{display:inline-block;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--red);font-weight:800;margin-bottom:20px}
+.about-text h2{font-family:Georgia,serif;font-size:48px;font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin-bottom:24px}
+.about-text h2 em{font-style:normal;background:linear-gradient(135deg,var(--orange),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.about-text p{color:var(--muted);font-size:16px;line-height:1.75;margin-bottom:16px}
+.about-features{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
+.feat{display:flex;align-items:center;gap:16px;padding:18px 22px;border-radius:18px;background:rgba(13,6,3,.7);border:1px solid var(--line);transition:all .25s}
+.feat:hover{border-color:var(--orange);transform:translateX(8px)}
+.feat-icon{width:52px;height:52px;border-radius:14px;background:rgba(255,159,46,.14);border:1px solid rgba(255,159,46,.4);display:grid;place-items:center;font-size:26px;flex-shrink:0}
+.feat-text h4{font-size:15px;font-weight:800;margin-bottom:3px}
+.feat-text p{font-size:13px;color:var(--muted)}
+
 /* ============ СЕКЦИИ ============ */
-.sec{padding:40px 0 60px}
-.sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:34px;gap:20px;flex-wrap:wrap}
-.sec-head h2{
-  font-family:Georgia,serif;
-  font-size:44px;font-weight:900;
-  letter-spacing:-1.5px;display:flex;align-items:baseline;gap:14px;
-}
+.sec{padding:40px 0 60px;scroll-margin-top:90px}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;gap:20px;flex-wrap:wrap}
+.sec-head h2{font-family:Georgia,serif;font-size:48px;font-weight:900;letter-spacing:-1.8px;display:flex;align-items:baseline;gap:14px}
 .sec-head h2 .num{color:var(--orange);font-family:system-ui;font-size:14px;font-weight:800;letter-spacing:3px}
 .sec-head h2 .red{color:var(--red)}
-.sec-head p{color:var(--muted);font-size:14px;max-width:340px;text-align:right}
+.sec-head p{color:var(--muted);font-size:14px;max-width:360px;text-align:right}
 
 /* ============ СЕТКА ============ */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
-
-.card{
-  background:linear-gradient(160deg,var(--card),var(--bg));
-  border:1px solid var(--line);
-  border-radius:22px;
-  overflow:hidden;
-  display:flex;flex-direction:column;
-  transition:transform .3s cubic-bezier(.4,0,.2,1),border-color .3s,box-shadow .3s;
-  position:relative;
-}
-.card:hover{
-  transform:translateY(-8px);
-  border-color:var(--orange);
-  box-shadow:0 30px 55px -25px rgba(255,159,46,.55),0 0 0 1px rgba(255,159,46,.2) inset;
-}
-
-/* Фото */
-.card .thumb{
-  width:100%;height:210px;
-  background-color:#150a03;
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:72%;
-  border-radius:22px 22px 0 0;
-  flex-shrink:0;
-  position:relative;
-  transition:transform .5s cubic-bezier(.4,0,.2,1);
-}
-.card:hover .thumb{transform:scale(1.06)}
-.card .thumb::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 45%,var(--card) 100%);
-  pointer-events:none;border-radius:22px 22px 0 0;
-}
-
-/* Бейдж */
-.card .badge{
-  position:absolute;top:14px;left:14px;z-index:5;
-  background:linear-gradient(135deg,var(--orange),var(--red));
-  color:var(--bg);
-  font-size:10px;font-weight:900;
-  padding:7px 14px;border-radius:100px;
-  letter-spacing:1.5px;text-transform:uppercase;
-  box-shadow:0 6px 16px rgba(255,159,46,.5);
-}
-
-/* Тело */
-.card .body{
-  padding:20px 22px 22px;
-  display:flex;flex-direction:column;flex:1;
-  position:relative;
-}
-
-.card h3{
-  font-family:Georgia,serif;
-  font-size:22px;font-weight:900;
-  margin:0 0 8px 0;
-  letter-spacing:-.4px;
-  color:var(--cream);
-  line-height:1.15;
-}
-
-.card .desc{
-  font-size:13px;line-height:1.55;
-  color:var(--muted);
-  margin:0 0 18px 0;
-  flex:1;
-}
-
-.card .meta{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;
-  padding-top:14px;margin-bottom:16px;
-  border-top:1px solid var(--line);
-}
-
-.card .price{
-  font-size:26px;font-weight:900;
-  color:var(--gold);letter-spacing:-1px;
-  line-height:1;
-  display:flex;align-items:baseline;
-}
-.card .price small{font-size:13px;color:var(--orange);margin-left:3px;font-weight:800}
-
-.card .weight{
-  font-size:11px;font-weight:700;
-  color:var(--muted);
-  background:rgba(255,159,46,.08);
-  border:1px solid rgba(255,159,46,.25);
-  padding:6px 12px;border-radius:100px;
-  white-space:nowrap;
-}
-
-/* Кнопка */
-.card .add{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  width:100%;padding:14px 18px;
-  border-radius:100px;border:none;
-  background:transparent;
-  color:var(--orange);
-  font-family:inherit;
-  font-size:12px;font-weight:900;
-  letter-spacing:2px;text-transform:uppercase;
-  cursor:pointer;
-  position:relative;overflow:hidden;
-  transition:all .25s;
-  box-shadow:inset 0 0 0 2px var(--orange);
-}
-.card .add::before{
-  content:"🍕";
-  font-size:16px;
-  filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));
-}
-.card .add::after{
-  content:"";position:absolute;
-  top:0;left:-100%;width:100%;height:100%;
-  background:linear-gradient(135deg,var(--orange),var(--orange2));
-  transition:left .4s cubic-bezier(.4,0,.2,1);
-  z-index:-1;border-radius:100px;
-}
-.card .add:hover{color:var(--bg);transform:translateY(-2px);box-shadow:inset 0 0 0 2px transparent,0 10px 24px rgba(255,159,46,.55)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
+.card{background:linear-gradient(160deg,var(--card),var(--bg));border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.4,0,.2,1),border-color .3s,box-shadow .35s;position:relative}
+.card:hover{transform:translateY(-10px);border-color:var(--orange);box-shadow:0 34px 60px -28px rgba(255,159,46,.6)}
+.card .thumb{width:100%;height:220px;background-color:#150a03;background-repeat:no-repeat;background-position:center;background-size:74%;border-radius:24px 24px 0 0;flex-shrink:0;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.card:hover .thumb{transform:scale(1.05)}
+.card .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,var(--card) 100%);pointer-events:none;border-radius:24px 24px 0 0}
+.card .cat{position:absolute;top:16px;left:16px;z-index:5;background:linear-gradient(135deg,var(--orange),var(--red));color:var(--bg);font-size:10px;font-weight:900;padding:8px 15px;border-radius:100px;letter-spacing:1.5px;text-transform:uppercase;box-shadow:0 6px 18px rgba(255,159,46,.55)}
+.card .body{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1}
+.card h3{font-family:Georgia,serif;font-size:23px;font-weight:900;margin-bottom:10px;color:var(--cream);letter-spacing:-.4px;line-height:1.15}
+.card .desc{font-size:13px;line-height:1.6;color:var(--muted);margin-bottom:20px;flex:1}
+.card .meta{display:flex;align-items:center;justify-content:space-between;padding-top:16px;margin-bottom:18px;border-top:1px solid var(--line)}
+.card .price{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:-1px;display:flex;align-items:baseline}
+.card .price small{font-size:14px;color:var(--orange);margin-left:3px;font-weight:800}
+.card .weight{font-size:11px;font-weight:700;color:var(--muted);background:rgba(255,159,46,.1);border:1px solid rgba(255,159,46,.28);padding:7px 13px;border-radius:100px}
+.card .add{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px 20px;border-radius:100px;border:none;background:transparent;color:var(--orange);font-family:inherit;font-size:12px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:all .25s;box-shadow:inset 0 0 0 2px var(--orange)}
+.card .add::before{content:"🍕";font-size:16px;position:relative;z-index:1}
+.card .add::after{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(135deg,var(--orange),var(--orange2));transition:left .45s cubic-bezier(.4,0,.2,1);z-index:0;border-radius:100px}
+.card .add:hover{color:var(--bg);transform:translateY(-2px);box-shadow:inset 0 0 0 2px transparent,0 12px 26px rgba(255,159,46,.6)}
 .card .add:hover::after{left:0}
-.card .add:active{transform:scale(.97)}
 
 /* ============ КОРЗИНА ============ */
-.overlay{
-  position:fixed;inset:0;
-  background:rgba(10,5,2,.8);backdrop-filter:blur(6px);
-  z-index:200;opacity:0;visibility:hidden;transition:.3s;
-}
+.overlay{position:fixed;inset:0;background:rgba(8,4,2,.85);backdrop-filter:blur(8px);z-index:200;opacity:0;visibility:hidden;transition:.3s}
 .overlay.open{opacity:1;visibility:visible}
-
-.drawer{
-  position:fixed;top:0;right:0;height:100%;width:100%;max-width:480px;
-  background:#1a0d05;
-  border-left:1px solid var(--line);
-  z-index:210;
-  transform:translateX(100%);
-  transition:transform .4s cubic-bezier(.4,0,.2,1);
-  display:flex;flex-direction:column;
-  box-shadow:-40px 0 90px rgba(0,0,0,.7);
-}
+.drawer{position:fixed;top:0;right:0;height:100%;width:100%;max-width:480px;background:#180c05;border-left:1px solid var(--line);z-index:210;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-50px 0 100px rgba(0,0,0,.8)}
 .drawer.open{transform:translateX(0)}
-
-.dtop{
-  padding:26px 28px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;
-}
+.dtop{padding:26px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
 .dtop h3{font-size:22px;font-weight:900;display:flex;align-items:center;gap:12px;font-family:Georgia,serif}
 .dtop h3 .n{color:var(--orange)}
-.dcount{
-  font-size:12px;background:rgba(255,159,46,.18);
-  border:1px solid rgba(255,159,46,.5);
-  color:var(--orange2);
-  padding:5px 14px;border-radius:100px;font-weight:900;
-}
-.xbtn{
-  width:42px;height:42px;border-radius:50%;
-  background:rgba(255,159,46,.1);
-  border:1px solid rgba(255,159,46,.3);
-  color:var(--orange2);font-size:22px;
-  cursor:pointer;font-family:inherit;
-  display:grid;place-items:center;line-height:1;
-  transition:all .25s;
-}
-.xbtn:hover{background:rgba(255,159,46,.25);transform:rotate(90deg)}
-
+.dcount{font-size:12px;background:rgba(255,159,46,.2);border:1px solid rgba(255,159,46,.55);color:var(--orange2);padding:5px 14px;border-radius:100px;font-weight:900}
+.xbtn{width:42px;height:42px;border-radius:50%;background:rgba(255,159,46,.12);border:1px solid rgba(255,159,46,.35);color:var(--orange2);font-size:22px;cursor:pointer;font-family:inherit;display:grid;place-items:center;transition:all .25s}
+.xbtn:hover{background:rgba(255,159,46,.28);transform:rotate(90deg)}
 .dlist{flex:1;overflow-y:auto;padding:14px 28px}
-
 .empty{text-align:center;padding:80px 20px;color:var(--muted)}
 .empty .ic{font-size:70px;opacity:.45;margin-bottom:20px}
-.empty p{font-size:16px;font-weight:700}
-
-.row{
-  display:flex;gap:16px;padding:20px 0;
-  border-bottom:1px solid rgba(255,159,46,.08);
-}
-.row-thumb{
-  width:74px;height:74px;border-radius:16px;flex-shrink:0;
-  display:grid;place-items:center;
-  background:#150a03;
-  background-repeat:no-repeat;background-position:center;background-size:85%;
-  border:1px solid var(--line);
-}
+.row{display:flex;gap:16px;padding:20px 0;border-bottom:1px solid rgba(255,159,46,.1)}
+.row-thumb{width:74px;height:74px;border-radius:16px;flex-shrink:0;background:#150a03;background-repeat:no-repeat;background-position:center;background-size:86%;border:1px solid var(--line)}
 .row-main{flex:1;min-width:0}
-.row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+.row-head{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px}
 .row-head h4{font-size:15px;font-weight:800;color:var(--cream)}
 .row-head .u{font-size:12px;color:var(--muted);margin-top:3px}
-.del{
-  background:transparent;border:none;
-  color:var(--muted);font-size:22px;
-  cursor:pointer;padding:0 4px;line-height:1;
-  font-family:inherit;transition:color .15s;
-}
+.del{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;font-family:inherit;padding:0 4px}
 .del:hover{color:var(--red)}
 .row-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
-.cnt{
-  display:flex;align-items:center;gap:6px;
-  background:rgba(255,159,46,.08);
-  border:1px solid rgba(255,159,46,.22);
-  border-radius:100px;padding:5px;
-}
-.cnt button{
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(255,159,46,.15);
-  border:1px solid rgba(255,159,46,.4);
-  color:var(--orange2);font-size:16px;font-weight:900;
-  cursor:pointer;font-family:inherit;
-  display:grid;place-items:center;line-height:1;
-  transition:all .15s;
-}
+.cnt{display:flex;align-items:center;gap:6px;background:rgba(255,159,46,.1);border:1px solid rgba(255,159,46,.25);border-radius:100px;padding:5px}
+.cnt button{width:32px;height:32px;border-radius:50%;background:rgba(255,159,46,.18);border:1px solid rgba(255,159,46,.45);color:var(--orange2);font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;display:grid;place-items:center;transition:all .15s}
 .cnt button:hover{background:var(--orange);color:var(--bg)}
 .cnt .q{min-width:26px;text-align:center;font-size:15px;font-weight:900;color:var(--cream)}
 .lt{font-size:17px;font-weight:900;color:var(--gold);white-space:nowrap}
-
-.dbot{
-  padding:24px 28px 28px;
-  border-top:1px solid var(--line);
-  background:#150a03;flex-shrink:0;
-}
+.dbot{padding:24px 28px 28px;border-top:1px solid var(--line);background:#100703}
 .tline{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px}
 .tline .l{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:3px;font-weight:800}
-.tline .s{font-family:Georgia,serif;font-size:36px;font-weight:900;color:var(--gold);letter-spacing:-1.5px}
-
-.co{
-  width:100%;padding:18px;border-radius:100px;border:none;
-  background:linear-gradient(135deg,var(--orange),var(--red));
-  color:var(--bg);font-weight:900;font-size:14px;
-  letter-spacing:1.5px;text-transform:uppercase;
-  cursor:pointer;font-family:inherit;
-  box-shadow:0 10px 30px rgba(255,159,46,.5);
-  transition:all .2s;
-}
-.co:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,159,46,.7)}
+.tline .s{font-family:Georgia,serif;font-size:38px;font-weight:900;color:var(--gold);letter-spacing:-1.5px}
+.co{width:100%;padding:18px;border-radius:100px;border:none;background:linear-gradient(135deg,var(--orange),var(--red));color:var(--bg);font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 12px 32px rgba(255,159,46,.55);transition:all .2s}
+.co:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 16px 42px rgba(255,159,46,.75)}
 .co:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-
-.cl{
-  width:100%;padding:12px;border-radius:100px;
-  border:1px solid var(--line);
-  background:transparent;color:var(--muted);
-  font-size:13px;font-weight:700;cursor:pointer;
-  margin-top:10px;font-family:inherit;
-  letter-spacing:1px;text-transform:uppercase;
-  transition:all .2s;
-}
+.cl{width:100%;padding:12px;border-radius:100px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;letter-spacing:1px;text-transform:uppercase;transition:all .2s}
 .cl:hover{color:var(--red);border-color:var(--red);background:rgba(230,58,31,.08)}
 
 /* ============ ЗАКАЗЫ ============ */
 .orders{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
-.orders-empty{
-  grid-column:1/-1;text-align:center;
-  padding:70px 20px;color:var(--muted);
-  border:1px dashed var(--line);
-  border-radius:22px;background:var(--bg2);
-  font-size:15px;
-}
-.ord{
-  background:linear-gradient(160deg,var(--card),var(--bg));
-  border:1px solid var(--line);
-  border-radius:22px;padding:24px;
-  position:relative;overflow:hidden;
-}
-.ord::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--orange),var(--gold),var(--red),var(--orange));
-  opacity:.9;
-}
-.ord-top{
-  display:flex;justify-content:space-between;align-items:center;
-  padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:14px;
-}
+.orders-empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted);border:1px dashed var(--line);border-radius:24px;background:var(--bg2);font-size:15px}
+.ord{background:linear-gradient(160deg,var(--card),var(--bg));border:1px solid var(--line);border-radius:24px;padding:26px;position:relative;overflow:hidden;animation:ordIn .5s ease}
+@keyframes ordIn{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+.ord::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--gold),var(--red),var(--orange))}
+.ord-top{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:14px}
 .ord-name{font-size:16px;font-weight:900;color:var(--cream);display:flex;align-items:center;gap:12px}
-.av{
-  width:38px;height:38px;border-radius:50%;
-  background:linear-gradient(135deg,var(--orange),var(--red));
-  display:grid;place-items:center;
-  color:var(--bg);font-weight:900;font-size:16px;
-}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--red));display:grid;place-items:center;color:var(--bg);font-weight:900;font-size:16px}
 .ord-time{font-size:12px;color:var(--muted);font-weight:700}
 .ord-addr{font-size:13px;color:var(--orange2);margin-bottom:12px;font-weight:700}
 .ord-items{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
 .ord-item{display:flex;justify-content:space-between;font-size:13px;color:#d0a088}
 .ord-item .q{color:var(--orange);font-weight:900;margin-right:6px}
-.ord-bot{
-  display:flex;justify-content:space-between;align-items:center;
-  padding-top:14px;border-top:1px dashed var(--line);
-}
-.ord-code{
-  font-size:11px;color:var(--orange);
-  font-family:ui-monospace,monospace;font-weight:900;
-  letter-spacing:1.5px;
-  background:rgba(255,159,46,.12);
-  padding:6px 14px;border-radius:100px;
-  border:1px solid rgba(255,159,46,.35);
-}
-.ord-total{font-family:Georgia,serif;font-size:22px;font-weight:900;color:var(--gold)}
+.ord-bot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px dashed var(--line)}
+.ord-code{font-size:11px;color:var(--orange);font-family:ui-monospace,monospace;font-weight:900;letter-spacing:1.5px;background:rgba(255,159,46,.14);padding:7px 15px;border-radius:100px;border:1px solid rgba(255,159,46,.4)}
+.ord-total{font-family:Georgia,serif;font-size:23px;font-weight:900;color:var(--gold)}
 
 /* ============ ФУТЕР ============ */
-footer{
-  padding:50px 0;
-  border-top:1px solid var(--line);
-  color:var(--muted);font-size:13px;
-  margin-top:50px;
-}
+footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;margin-top:50px}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;align-items:center}
 .foot-links{display:flex;gap:26px;flex-wrap:wrap}
 .foot-links a{color:var(--muted);text-decoration:none;font-weight:600;transition:color .2s}
 .foot-links a:hover{color:var(--orange)}
 
 /* ============ УВЕДОМЛЕНИЕ ============ */
-.toast{
-  position:fixed;bottom:30px;left:50%;
-  transform:translateX(-50%) translateY(140px);
-  background:linear-gradient(135deg,var(--orange),var(--red));
-  color:var(--bg);
-  padding:16px 34px;border-radius:100px;
-  font-weight:900;font-size:14px;
-  letter-spacing:.5px;
-  z-index:9999;opacity:0;
-  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s;
-  box-shadow:0 18px 40px rgba(255,159,46,.6);
-  pointer-events:none;white-space:nowrap;
-}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(140px);background:linear-gradient(135deg,var(--orange),var(--red));color:var(--bg);padding:16px 34px;border-radius:100px;font-weight:900;font-size:14px;z-index:9999;opacity:0;transition:transform .35s,opacity .3s;box-shadow:0 20px 44px rgba(255,159,46,.7);pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
 /* ============ АДАПТИВ ============ */
 @media(max-width:840px){
-  .hero h1{font-size:42px;letter-spacing:-1px}
-  .sec-head h2{font-size:32px}
+  .hero h1{font-size:44px;letter-spacing:-1.5px}
+  .sec-head h2{font-size:34px}
   .sec-head p{text-align:left}
   nav{width:100%;justify-content:center;order:3}
   .hd{justify-content:center}
+  .about{grid-template-columns:1fr;padding:40px 30px;gap:32px}
+  .about-text h2{font-size:34px}
 }
 @media(max-width:600px){
-  .hero h1{font-size:32px}
-  .grid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .card .thumb{height:150px}
+  .hero h1{font-size:34px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .card .thumb{height:160px}
   .card .body{padding:14px}
-  .card h3{font-size:15px}
+  .card h3{font-size:16px}
   .card .desc{font-size:11px;margin-bottom:12px}
-  .card .price{font-size:18px}
-  .card .price small{font-size:11px}
-  .card .weight{font-size:9px;padding:4px 8px}
-  .card .add{font-size:10px;padding:10px 12px;letter-spacing:1px}
-  .card .add::before{font-size:14px}
+  .card .price{font-size:20px}
+  .card .weight{font-size:9px;padding:5px 9px}
+  .card .add{font-size:10px;padding:11px 12px;letter-spacing:1px}
   .drawer{max-width:100%}
   .foot{flex-direction:column;align-items:flex-start}
 }
@@ -488,10 +187,7 @@ footer{
 
 <header>
   <div class="wrap hd">
-    <div class="logo">
-      <div class="mark">H</div>
-      <div><span class="acc">HYDRA</span> <span class="thin">BLACK</span></div>
-    </div>
+    <div class="logo"><div class="mark">H</div><div><span class="acc">HYDRA</span> <span class="thin">BLACK</span></div></div>
     <div class="geo">📍 Санкт-Петербург</div>
     <nav>
       <a href="#pizza">Пицца</a>
@@ -506,22 +202,40 @@ footer{
 
   <section class="hero">
     <div class="wrap">
-      <span class="hero-badge">🔥 Настоящая итальянская пицца на дровах</span>
-      <h1>Тёмная сторона <span class="accent">вкуса</span><br>прямо из печи</h1>
-      <p>Мы печём пиццу на дровах при 450°C. Тонкое тесто, щедрая начинка, живые ингредиенты — и всё это за 30 минут до вашей двери.</p>
+      <span class="hero-badge">🔥 Дровяная печь · 450°C · Доставка 30 минут</span>
+      <h1>Пицца, которая <span class="accent">согревает</span><br>даже в Питере</h1>
+      <p>Мы — команда HYDRA BLACK. Наша пиццерия стоит в центре Санкт-Петербурга, а наша печь топится дровами каждый день с 11 утра до полуночи. Мы делаем тесто вручную, кладём начинку от души и печём пиццу так, чтобы корочка хрустела, а сыр тянулся. Заказывайте — привезём горячей.</p>
       <div class="hero-stats">
-        <div class="stat"><b>30</b>минут доставка</div>
-        <div class="stat"><b>450°</b>дровяная печь</div>
-        <div class="stat"><b>25</b>видов пиццы</div>
+        <div class="stat"><b>450°C</b>дровяная печь</div>
+        <div class="stat"><b>30 мин</b>доставка по городу</div>
+        <div class="stat"><b>18</b>видов пиццы</div>
+        <div class="stat"><b>10</b>напитков</div>
       </div>
     </div>
   </section>
+
+  <div class="wrap">
+    <div class="about">
+      <div class="about-text">
+        <span class="tag">// О НАС</span>
+        <h2>Пиццерия, в которой <em>живёт огонь</em></h2>
+        <p>HYDRA BLACK родилась из простой идеи: настоящая пицца должна печься на дровах, а не в конвейере. Мы не экономим на продуктах, не разбавляем соусы и всегда кладём столько начинки, сколько положено по рецепту.</p>
+        <p>Наши гости говорят, что у нас лучшая пицца в городе. Мы гордимся этим — и продолжаем работать так, чтобы это было правдой каждый день.</p>
+      </div>
+      <div class="about-features">
+        <div class="feat"><div class="feat-icon">🏆</div><div class="feat-text"><h4>Лучшая пицца в СПб</h4><p>Выбор наших постоянных гостей</p></div></div>
+        <div class="feat"><div class="feat-icon">🔥</div><div class="feat-text"><h4>Только дрова</h4><p>Печём при 450°C — как в Неаполе</p></div></div>
+        <div class="feat"><div class="feat-icon">🚀</div><div class="feat-text"><h4>Доставка 30 минут</h4><p>Или пицца в подарок</p></div></div>
+        <div class="feat"><div class="feat-icon">🧀</div><div class="feat-text"><h4>Свежая моцарелла</h4><p>Привозим каждое утро</p></div></div>
+      </div>
+    </div>
+  </div>
 
   <section class="sec" id="pizza">
     <div class="wrap">
       <div class="sec-head">
         <h2><span class="num">01 //</span> ПИЦЦА <span class="red">HYDRA</span></h2>
-        <p>Классические и авторские рецепты — от пеперонни до трюфельной</p>
+        <p>18 рецептов — от классики до авторских</p>
       </div>
       <div class="grid" id="pizzaGrid"></div>
     </div>
@@ -531,7 +245,7 @@ footer{
     <div class="wrap">
       <div class="sec-head">
         <h2><span class="num">02 //</span> НАПИТКИ</h2>
-        <p>Холодные и горячие — чтобы подчеркнуть вкус пиццы</p>
+        <p>Холодные и горячие — чтобы подчеркнуть вкус</p>
       </div>
       <div class="grid" id="drinksGrid"></div>
     </div>
@@ -541,7 +255,7 @@ footer{
     <div class="wrap">
       <div class="sec-head">
         <h2><span class="num">03 //</span> ЗАКАЗЫ <span class="red">ГОСТЕЙ</span></h2>
-        <p>Живая лента — последние заказы наших гостей</p>
+        <p>Заказы, оформленные на этом устройстве</p>
       </div>
       <div class="orders" id="ordersList">
         <div class="orders-empty">Пока заказов нет. Будьте первым!</div>
@@ -581,115 +295,22 @@ footer{
 <script>
 (function(){
 
-  /* ============ SVG-ИКОНКИ ============ */
-  function pizzaIcon(sauce, cheese, tops){
-    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
-    s+='<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
-    s+='<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
-    s+='<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
-    s+='<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
-    s+='<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
-    cheese.forEach(function(c){
-      s+='<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.94"/>';
-    });
-    tops.forEach(function(t){
-      s+='<circle cx="'+t.x+'" cy="'+t.y+'" r="'+t.r+'" fill="'+t.c+'"/>';
-      s+='<circle cx="'+(t.x-2)+'" cy="'+(t.y-2)+'" r="'+(t.r*0.45)+'" fill="#fff" opacity="0.3"/>';
-    });
-    s+='</svg>';
-    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
-  }
-
-  function bottleIcon(color, dark, label){
-    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
-    s+='<ellipse cx="100" cy="190" rx="36" ry="6" fill="#000" opacity="0.4"/>';
-    s+='<rect x="76" y="8" width="48" height="18" rx="4" fill="'+label+'"/>';
-    s+='<path d="M78 26 L122 26 L128 60 L72 60 Z" fill="'+dark+'"/>';
-    s+='<path d="M70 60 Q60 70 60 90 L60 172 Q60 184 72 184 L128 184 Q140 184 140 172 L140 90 Q140 70 130 60 Z" fill="'+color+'"/>';
-    s+='<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 148 Q110 152 100 148 Q90 144 60 148 Z" fill="'+label+'"/>';
-    s+='<path d="M68 70 L68 176 Q72 179 74 176 L74 68 Z" fill="#fff" opacity="0.22"/>';
-    s+='</svg>';
-    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
-  }
-
-  function glassIcon(fill, top, ice){
-    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
-    s+='<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
-    s+='<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="'+fill+'"/>';
-    s+='<ellipse cx="100" cy="62" rx="42" ry="6" fill="'+top+'"/>';
-    if(ice){
-      s+='<rect x="78" y="78" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 91 89)"/>';
-      s+='<rect x="104" y="108" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 116 118)"/>';
-    }
-    s+='<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
-    s+='</svg>';
-    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
-  }
-
-  /* ============ ТОВАРЫ ============ */
-  var PIZZAS = [
-    { type:'pizza-pepperoni', name:'Пеперонни', price:599, w:'570 г',
-      desc:'Острая пепперони, моцарелла, томатный соус, итальянские травы.',
-      icon: pizzaIcon('#8a1e10',
-        [[70,72,30,22],[132,82,28,20],[75,138,30,22],[138,132,26,18],[105,50,22,14]],
-        [{x:75,y:70,r:15,c:'#b0301a'},{x:130,y:80,r:14,c:'#b0301a'},
-         {x:70,y:135,r:14,c:'#b0301a'},{x:135,y:130,r:13,c:'#b0301a'},
-         {x:105,y:105,r:15,c:'#b0301a'},{x:110,y:48,r:12,c:'#b0301a'},
-         {x:55,y:100,r:11,c:'#b0301a'},{x:150,y:110,r:11,c:'#b0301a'}]) },
-
-    { type:'pizza-margherita', name:'Маргарита', price:499, w:'480 г',
-      desc:'Томаты, моцарелла, свежий базилик, оливковое масло, пармезан.',
-      icon: pizzaIcon('#
-    <body><script>
-(function(){
   /* ============================================================
-     НОВЫЕ БЛЮДА
+     SVG-ИКОНКИ
      ============================================================ */
-  const NEW_PIZZAS = [
-    { type:'pizza-hawaii',      name:'Гавайская',       price:649, w:'620 г', desc:'Курица, ананасы, моцарелла, сливочный соус.' },
-    { type:'pizza-bbq',         name:'BBQ Чикен',       price:699, w:'640 г', desc:'Курица, бекон, красный лук, соус барбекю.' },
-    { type:'pizza-four-cheese', name:'Четыре сыра',     price:749, w:'560 г', desc:'Моцарелла, пармезан, дорблю, чеддер.' },
-    { type:'pizza-veggie',      name:'Вегетарианская',  price:549, w:'520 г', desc:'Перец, грибы, черри, оливки, лук.' },
-    { type:'pizza-diablo',      name:'Дьябло',          price:699, w:'580 г', desc:'Острая пепперони, халапеньо, чили.' },
-    { type:'pizza-meat',        name:'Мясная',          price:799, w:'680 г', desc:'Пепперони, бекон, ветчина, курица.' },
-    { type:'pizza-carbonara',   name:'Карбонара',       price:729, w:'600 г', desc:'Бекон, сливочный соус, пармезан, яйцо.' },
-    { type:'pizza-cheese',      name:'Сырная',          price:599, w:'540 г', desc:'Моцарелла, чеддер, пармезан, сливки.' },
-    { type:'pizza-truffle',     name:'Трюфельная',      price:899, w:'560 г', desc:'Трюфельный соус, шампиньоны, пармезан.' },
-    { type:'pizza-salmon',      name:'С лососем',       price:949, w:'580 г', desc:'Лосось, сливочный сыр, шпинат, каперсы.' },
-    { type:'pizza-mushroom',    name:'Грибная',         price:649, w:'520 г', desc:'Шампиньоны, белые грибы, моцарелла.' },
-    { type:'pizza-signature',   name:'Фирменная',       price:999, w:'700 г', desc:'Авторский рецепт от шеф-повара.' }
-  ];
-
-  const NEW_DRINKS = [
-    { type:'drink-fanta',       name:'Фанта',            price:149, w:'0.5 л', desc:'Апельсиновая газировка.' },
-    { type:'drink-water',       name:'Вода',             price:99,  w:'0.5 л', desc:'Минеральная вода без газа.' },
-    { type:'drink-milkshake',   name:'Молочный коктейль',price:249, w:'0.4 л', desc:'Коктейль из мороженого и молока.' },
-    { type:'drink-smoothie',    name:'Смузи',            price:279, w:'0.4 л', desc:'Ягодный смузи с йогуртом.' },
-    { type:'drink-tea',         name:'Чай',              price:129, w:'0.3 л', desc:'Горячий чёрный чай с лимоном.' },
-    { type:'drink-green-tea',   name:'Зелёный чай',      price:139, w:'0.3 л', desc:'Зелёный чай с жасмином.' },
-    { type:'drink-mors',        name:'Морс',             price:149, w:'0.4 л', desc:'Ягодный морс из клюквы.' },
-    { type:'drink-kvass',       name:'Квас',             price:129, w:'0.5 л', desc:'Хлебный квас.' }
-  ];
-
-  /* ============ SVG-ИКОНКИ ============ */
-  function pizzaIcon(seed){
-    const sauces = ['#8a1e10','#a82814','#c8361e','#7a1a08','#d9822b','#5a2308','#e0c070'];
-    const tops   = ['#b0301a','#7a1008','#d94a4a','#3a8a2a','#8a5a2a','#f5f5f5','#d0201a'];
-    const sauce  = sauces[seed % sauces.length];
-    const top    = tops[seed % tops.length];
+  function pizzaIcon(sauce, cheese, tops){
     let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
     s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
     s += '<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
     s += '<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
     s += '<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
     s += '<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
-    s += '<ellipse cx="70" cy="72" rx="30" ry="22" fill="#f5d878" opacity="0.94"/>';
-    s += '<ellipse cx="132" cy="82" rx="28" ry="20" fill="#f5d878" opacity="0.94"/>';
-    s += '<ellipse cx="75" cy="138" rx="30" ry="22" fill="#f5d878" opacity="0.94"/>';
-    s += '<ellipse cx="138" cy="132" rx="26" ry="18" fill="#f5d878" opacity="0.94"/>';
-    [[75,70,13],[130,80,12],[70,135,12],[135,130,11],[105,105,13],[110,48,10],[55,100,10],[150,110,10]].forEach(function(p){
-      s += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+p[2]+'" fill="'+top+'"/>';
-      s += '<circle cx="'+(p[0]-2)+'" cy="'+(p[1]-2)+'" r="'+(p[2]*0.5)+'" fill="#fff" opacity="0.3"/>';
+    cheese.forEach(function(c){
+      s += '<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.94"/>';
+    });
+    tops.forEach(function(t){
+      s += '<circle cx="'+t.x+'" cy="'+t.y+'" r="'+t.r+'" fill="'+t.c+'"/>';
+      s += '<circle cx="'+(t.x-2)+'" cy="'+(t.y-2)+'" r="'+(t.r*0.45)+'" fill="#fff" opacity="0.3"/>';
     });
     s += '</svg>';
     return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
@@ -710,115 +331,3 @@ footer{
   function glassIcon(fill, top, ice){
     let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
     s += '<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
-    s += '<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="'+fill+'"/>';
-    s += '<ellipse cx="100" cy="62" rx="42" ry="6" fill="'+top+'"/>';
-    if (ice) {
-      s += '<rect x="78" y="78" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 91 89)"/>';
-      s += '<rect x="104" y="108" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 116 118)"/>';
-    }
-    s += '<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
-    s += '</svg>';
-    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
-  }
-
-  function iconFor(type, i){
-    if (type.indexOf('pizza') === 0) return pizzaIcon(i);
-    if (type === 'drink-water')  return bottleIcon('#a0c8e0','#80b0d0','#ffffff');
-    if (type === 'drink-fanta')  return bottleIcon('#e88010','#c86008','#ffa838');
-    if (type === 'drink-kvass')  return bottleIcon('#6b3a12','#4a2808','#c09040');
-    if (type === 'drink-smoothie') return glassIcon('#e850a0','#f080c0',0);
-    if (type === 'drink-mors')   return glassIcon('#a82040','#d04060',1);
-    if (type === 'drink-tea')    return glassIcon('#a86020','#c08040',0);
-    if (type === 'drink-green-tea') return glassIcon('#7a9a3a','#a8c060',0);
-    if (type === 'drink-milkshake') return glassIcon('#f0e8d8','#ffffff',0);
-    return bottleIcon('#555','#333','#aaa');
-  }
-
-  /* ============ СОЗДАЁМ КАРТОЧКУ ============ */
-  function makeCard(item, index, isPizza){
-    const icon = iconFor(item.type, index);
-    const d = document.createElement('div');
-    d.className = 'card';
-    d.setAttribute('data-type', item.type);
-    d.innerHTML =
-      '<div class="thumb" style="background-image:'+icon+'"></div>' +
-      '<div class="body">' +
-        '<div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ff9f2e;margin-bottom:8px;">'+(isPizza?'Пицца · 30 см':'Напиток')+'</div>' +
-        '<h3>'+item.name+'</h3>' +
-        '<p class="desc">'+item.desc+'</p>' +
-        '<div class="meta">' +
-          '<div class="price">'+item.price+'<small>₽</small></div>' +
-          '<div class="weight">'+item.w+'</div>' +
-        '</div>' +
-        '<button class="add" data-add data-id="'+item.type+'" data-name="'+item.name+'" data-price="'+item.price+'" data-type="'+item.type+'">+ В корзину</button>' +
-      '</div>';
-    return d;
-  }
-
-  /* ============ ДОБАВЛЯЕМ ============ */
-  function add(){
-    const pizzaGrid = document.getElementById('pizzaGrid');
-    const drinksGrid = document.getElementById('drinksGrid');
-    if (!pizzaGrid || !drinksGrid) return;
-
-    let pi = 0, di = 100;
-
-    NEW_PIZZAS.forEach(function(item){
-      if (document.querySelector('[data-type="'+item.type+'"]')) return;
-      pizzaGrid.appendChild(makeCard(item, pi++, true));
-    });
-
-    NEW_DRINKS.forEach(function(item){
-      if (document.querySelector('[data-type="'+item.type+'"]')) return;
-      drinksGrid.appendChild(makeCard(item, di++, false));
-    });
-  }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', add);
-  } else { add(); }
-  setTimeout(add, 500);
-  setTimeout(add, 1500);
-
-  /* ============ ПОДКЛЮЧАЕМ К КОРЗИНЕ ============ */
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('[data-add]');
-    if (!btn) return;
-
-    const id    = btn.getAttribute('data-id');
-    const name  = btn.getAttribute('data-name');
-    const price = parseInt(btn.getAttribute('data-price'), 10);
-    const type  = btn.getAttribute('data-type');
-
-    /* Ищем корзину в localStorage */
-    const KEY = 'hydra_cart_v1';
-    let cart = [];
-    try { cart = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){}
-    if (!Array.isArray(cart)) cart = [];
-
-    const found = cart.find(function(x){ return x.id === id; });
-    if (found) { found.qty++; }
-    else { cart.push({ id, name, price, type, qty: 1 }); }
-
-    try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch(e){}
-
-    /* Обновляем счётчик в шапке, если есть */
-    const headerTotal = document.getElementById('headerTotal');
-    if (headerTotal) {
-      const sum = cart.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
-      headerTotal.textContent = sum.toLocaleString('ru-RU');
-    }
-
-    /* Показываем уведомление */
-    const toast = document.getElementById('toast');
-    if (toast) {
-      toast.textContent = '✓ Добавлено: ' + name;
-      toast.classList.add('show');
-      setTimeout(function(){ toast.classList.remove('show'); }, 1500);
-    }
-  }, true);
-
-})();
-</script>
-                    <html>
-                    
