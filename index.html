@@ -875,7 +875,346 @@ setInterval(() => { if (ordersFeed.length) renderOrders(); }, 30000);
 
 renderCart();
 </script>
+html
 
+<script>
+/* ===== HYDRA BLACK — корзина, заказы, коды ===== */
+(function(){
+  const CART_KEY = 'hydra_cart_v1';
+  const ORDERS_KEY = 'hydra_orders_v1';
+
+  /* ---------- Хранилище ---------- */
+  function getCart(){
+    try {
+      const raw = localStorage.getItem(CART_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch(e){ return []; }
+  }
+  function setCart(arr){
+    try { localStorage.setItem(CART_KEY, JSON.stringify(arr)); } catch(e){}
+  }
+  function getOrders(){
+    try {
+      const raw = localStorage.getItem(ORDERS_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch(e){ return []; }
+  }
+  function setOrders(arr){
+    try { localStorage.setItem(ORDERS_KEY, JSON.stringify(arr)); } catch(e){}
+  }
+
+  /* ---------- Код заказа ---------- */
+  function genCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const b = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return 'HYDRA-' + b(4) + '-' + b(2);
+  }
+
+  /* ---------- Утилиты ---------- */
+  const $ = id => document.getElementById(id);
+  function toNum(v){ return parseInt(String(v).replace(/[^\d]/g, ''), 10) || 0; }
+
+  /* ---------- Toast ---------- */
+  let toast = document.querySelector('.toast');
+  if (!toast){
+    toast = document.createElement('div');
+    toast.className = 'toast';
+    document.body.appendChild(toast);
+  }
+  let toastTimer;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
+  }
+
+  /* ---------- Открыть/закрыть корзину ---------- */
+  function openCart(){
+    const panel = document.querySelector('.cart');
+    const overlay = document.querySelector('.overlay');
+    if (panel) panel.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    renderCart(); // ВАЖНО: перерисовываем при каждом открытии
+  }
+  function closeCart(){
+    const panel = document.querySelector('.cart');
+    const overlay = document.querySelector('.overlay');
+    if (panel) panel.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  /* ---------- Рендер корзины ---------- */
+  function renderCart(){
+    const cart = getCart();
+    const list = $('cartList');
+    const countEl = $('cartCount');
+    const sumEl = $('cartSum');
+    const headerTotal = $('headerTotal');
+    const checkoutBtn = $('checkoutBtn');
+
+    const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    const count = cart.reduce((s,i) => s + i.qty, 0);
+
+    if (countEl) countEl.textContent = count;
+    if (sumEl) sumEl.textContent = total.toLocaleString('ru-RU') + ' ₽';
+    if (headerTotal) headerTotal.textContent = total.toLocaleString('ru-RU');
+    if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
+
+    if (!list) return;
+
+    if (!cart.length){
+      list.innerHTML = '<div class="empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
+      return;
+    }
+
+    list.innerHTML = cart.map((it, i) => `
+      <div class="row" data-type="${it.type || ''}">
+        <div class="row-thumb"></div>
+        <div class="row-main">
+          <div class="row-head">
+            <div>
+              <h4>${it.name}</h4>
+              <div class="unit">${it.price} ₽ / шт</div>
+            </div>
+            <button class="del" type="button" data-del="${i}">×</button>
+          </div>
+          <div class="row-foot">
+            <div class="counter">
+              <button type="button" data-minus="${i}">−</button>
+              <span class="qty">${it.qty}</span>
+              <button type="button" data-plus="${i}">+</button>
+            </div>
+            <div class="line-total">${(it.price * it.qty).toLocaleString('ru-RU')} ₽</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /* ---------- Рендер заказов ---------- */
+  function timeAgo(t){
+    const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
+    if (m < 1) return 'только что';
+    if (m < 60) return m + ' мин назад';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + ' ч назад';
+    return Math.floor(h / 24) + ' дн назад';
+  }
+
+  let lastIds = new Set();
+  let isFirst = true;
+
+  function renderOrders(){
+    const list = $('ordersList');
+    if (!list) return;
+
+    const orders = getOrders();
+
+    // Присваиваем коды старым заказам
+    const used = new Set(orders.map(o => o.code).filter(Boolean));
+    let changed = false;
+    orders.forEach(o => {
+      if (!o.code){
+        let c;
+        do { c = genCode(); } while (used.has(c));
+        used.add(c);
+        o.code = c;
+        changed = true;
+      }
+    });
+    if (changed) setOrders(orders);
+
+    if (!orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      lastIds = new Set();
+      return;
+    }
+
+    const currentIds = new Set(orders.map(o => o.id));
+    const freshIds = new Set();
+    if (!isFirst){
+      currentIds.forEach(id => { if (!lastIds.has(id)) freshIds.add(id); });
+    }
+    isFirst = false;
+    lastIds = currentIds;
+
+    list.innerHTML = orders.map(o => {
+      const total = o.items.reduce((s,i) => s + i.price * i.qty, 0);
+      const fresh = freshIds.has(o.id) ? ' fresh' : '';
+      return `
+        <div class="order-card${fresh}">
+          <div class="order-top">
+            <div class="order-name">
+              <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
+            </div>
+            <div class="order-time">${timeAgo(o.time)}</div>
+          </div>
+          <div class="order-items">
+            ${o.items.map(i => `
+              <div class="order-item">
+                <span><span class="qty">${i.qty}×</span>${i.name}</span>
+                <span>${i.price * i.qty} ₽</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="order-bottom">
+            <span class="order-status done">${o.status || 'Оформлен'}</span>
+            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div class="order-code">Код: ${o.code}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ---------- Клики ---------- */
+  document.addEventListener('click', function(e){
+    /* Добавление товара */
+    const addBtn = e.target.closest('.add-btn, [data-add]');
+    if (addBtn){
+      e.preventDefault();
+      const id = addBtn.dataset.id || addBtn.getAttribute('data-id');
+      const name = addBtn.dataset.name || addBtn.getAttribute('data-name');
+      const price = toNum(addBtn.dataset.price || addBtn.getAttribute('data-price'));
+      const type = addBtn.dataset.type || addBtn.getAttribute('data-type') || '';
+
+      if (!name) return;
+
+      const cart = getCart();
+      const ex = cart.find(x => x.id === id);
+      if (ex) ex.qty++;
+      else cart.push({ id: id || name, name, price, type, qty: 1 });
+      setCart(cart);
+      renderCart();
+      showToast('Добавлено: ' + name);
+
+      const cartBtn = $('cartBtn');
+      if (cartBtn){
+        cartBtn.classList.remove('bump');
+        void cartBtn.offsetWidth;
+        cartBtn.classList.add('bump');
+      }
+      return;
+    }
+
+    /* Удалить, плюс, минус */
+    const del = e.target.closest('[data-del]');
+    if (del){
+      const cart = getCart();
+      cart.splice(toNum(del.dataset.del), 1);
+      setCart(cart);
+      renderCart();
+      return;
+    }
+    const plus = e.target.closest('[data-plus]');
+    if (plus){
+      const cart = getCart();
+      cart[toNum(plus.dataset.plus)].qty++;
+      setCart(cart);
+      renderCart();
+      return;
+    }
+    const minus = e.target.closest('[data-minus]');
+    if (minus){
+      const cart = getCart();
+      const i = toNum(minus.dataset.minus);
+      cart[i].qty--;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
+      setCart(cart);
+      renderCart();
+      return;
+    }
+
+    /* Открыть корзину */
+    if (e.target.closest('#cartBtn')){
+      openCart();
+      return;
+    }
+    /* Закрыть корзину */
+    if (e.target.closest('#closeCart') || e.target.closest('.overlay')){
+      closeCart();
+      return;
+    }
+    /* Очистить корзину */
+    if (e.target.closest('#clearCart')){
+      if (!getCart().length) return;
+      if (!confirm('Очистить корзину?')) return;
+      setCart([]);
+      renderCart();
+      showToast('Корзина очищена');
+      return;
+    }
+    /* Оформить заказ */
+    if (e.target.closest('#checkoutBtn')){
+      const cart = getCart();
+      if (!cart.length) return;
+
+      const name = prompt('Ваше имя для заказа:', 'Гость');
+      if (name === null) return;
+
+      const order = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        name: (name.trim() || 'Гость').slice(0, 24),
+        items: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty })),
+        time: Date.now(),
+        status: 'Оформлен',
+        code: genCode()
+      };
+
+      const orders = getOrders();
+      orders.unshift(order);
+      if (orders.length > 200) orders.length = 200;
+      setOrders(orders);
+
+      setCart([]);
+      renderCart();
+      renderOrders();
+      showToast('На вас оформлен кредит');
+      closeCart();
+      return;
+    }
+  });
+
+  /* ---------- Стили для fresh и кода ---------- */
+  const st = document.createElement('style');
+  st.textContent = `
+    .order-card.fresh {
+      border-color: #00ffd5 !important;
+      box-shadow: 0 0 40px rgba(0,255,213,.45) !important;
+    }
+    .order-code {
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(0,255,213,.08);
+      border: 1px dashed rgba(0,255,213,.35);
+      color: #00ffd5;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      display: inline-block;
+    }
+  `;
+  document.head.appendChild(st);
+
+  /* ---------- Первый рендер ---------- */
+  renderCart();
+  renderOrders();
+
+  /* ---------- Обновляем «N мин назад» раз в 30 секунд ---------- */
+  setInterval(renderOrders, 30000);
+
+  /* ---------- Синхронизация между вкладками ---------- */
+  window.addEventListener('storage', function(e){
+    if (e.key === CART_KEY) renderCart();
+    if (e.key === ORDERS_KEY) renderOrders();
+  });
+})();
+</script>
 </body>
   html
 
