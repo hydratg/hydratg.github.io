@@ -3561,4 +3561,422 @@ body{
   });
 })();
 </script>
-</body>
+<script id="hydra-realistic">
+(function(){
+
+  /* ============================================================
+     1. УБИРАЕМ ВСЕ МОИ ПРЕДЫДУЩИЕ СКРИПТЫ
+     ============================================================ */
+  [
+    'hydra-bg-and-images','hydra-add-new-dishes','hydra-img-fix','hydra-img-fix-js',
+    'hydra-all-icons','hydra-smart-icons','hydra-new-pizzas-fixed','hydra-bg-new',
+    'hydra-final-fix','hydra-final'
+  ].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.remove();
+  });
+
+  /* ============================================================
+     2. УДАЛЯЕМ НОВЫЕ ПИЦЦЫ, КОТОРЫЕ МЫ ДОБАВЛЯЛИ
+     ============================================================ */
+  ['pizza-hawaii','pizza-bbq','pizza-four-cheese','pizza-veggie']
+    .forEach(function(t){
+      document.querySelectorAll('[data-type="' + t + '"]').forEach(function(el){
+        el.remove();
+      });
+    });
+
+  // Также удаляем по названию — если были без data-type
+  var removeNames = ['Гавайская','BBQ Чикен','Четыре сыра','Вегетарианская'];
+  document.querySelectorAll('article, .card, .product, .item').forEach(function(card){
+    var txt = card.textContent || '';
+    for (var i = 0; i < removeNames.length; i++){
+      if (txt.indexOf(removeNames[i]) !== -1 && !card.querySelector('[data-type="pizza-pepperoni"], [data-type="pizza-margherita"]')){
+        card.remove();
+        return;
+      }
+    }
+  });
+
+  /* ============================================================
+     3. СБРАСЫВАЕМ СТАРЫЕ ПОКРАСКИ
+     ============================================================ */
+  document.querySelectorAll('[data-hydra-painted]').forEach(function(el){
+    delete el.dataset.hydraPainted;
+  });
+
+  /* ============================================================
+     4. ФОН
+     ============================================================ */
+  document.body.style.background = '#0a0608';
+  document.body.style.backgroundImage =
+    'radial-gradient(circle at 15% 10%, rgba(255,122,26,.14) 0%, transparent 40%),' +
+    'radial-gradient(circle at 85% 80%, rgba(255,45,149,.14) 0%, transparent 40%)';
+  document.body.style.backgroundSize = '100% 100%, 100% 100%';
+  document.body.style.backgroundAttachment = 'fixed';
+
+  /* ============================================================
+     5. РЕАЛИСТИЧНЫЕ SVG-ИКОНКИ
+     ============================================================ */
+
+  /* ----- ПИЦЦА ПЕПЕРОНИ (реалистичная, вид сверху) ----- */
+  function pizzaPepperoni(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+
+    // тень под пиццей
+    s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.35"/>';
+
+    // корка — тёмное тесто
+    s += '<circle cx="100" cy="100" r="92" fill="#8a5a2a"/>';
+    s += '<circle cx="100" cy="100" r="88" fill="#b8803a"/>';
+
+    // верхний слой — золотистое тесто
+    s += '<circle cx="100" cy="100" r="84" fill="#e8b060"/>';
+
+    // томатный соус
+    s += '<circle cx="100" cy="100" r="76" fill="#8a1e10"/>';
+    s += '<circle cx="100" cy="100" r="74" fill="#a82814"/>';
+
+    // растёкшийся сыр (несколько слоёв)
+    s += '<ellipse cx="70" cy="80" rx="34" ry="28" fill="#f5d878" opacity="0.9"/>';
+    s += '<ellipse cx="135" cy="90" rx="32" ry="26" fill="#f0cf68" opacity="0.85"/>';
+    s += '<ellipse cx="85" cy="130" rx="36" ry="28" fill="#f8dc80" opacity="0.85"/>';
+    s += '<ellipse cx="140" cy="140" rx="28" ry="22" fill="#ecd070" opacity="0.8"/>';
+    s += '<ellipse cx="60" cy="140" rx="26" ry="20" fill="#f5d878" opacity="0.8"/>';
+    s += '<ellipse cx="120" cy="55" rx="26" ry="18" fill="#f8dc80" opacity="0.85"/>';
+
+    // пеперони — кружки с обжаренной кромкой и потемнением
+    var pep = [
+      {x:70,y:60,r:14},{x:130,y:72,r:15},{x:55,y:110,r:13},
+      {x:100,y:135,r:15},{x:150,y:120,r:13},{x:105,y:80,r:16},
+      {x:85,y:155,r:12},{x:145,y:160,r:11},{x:55,y:70,r:12}
+    ];
+    pep.forEach(function(p){
+      // тень
+      s += '<circle cx="' + (p.x+1) + '" cy="' + (p.y+1) + '" r="' + p.r + '" fill="#3a0806" opacity="0.5"/>';
+      // основа
+      s += '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + p.r + '" fill="#b0301a"/>';
+      // тёмная кромка
+      s += '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + (p.r-1) + '" fill="none" stroke="#5a1008" stroke-width="1.5" opacity="0.7"/>';
+      // прожилки
+      s += '<circle cx="' + (p.x-2) + '" cy="' + (p.y-2) + '" r="' + (p.r*0.55) + '" fill="#c84020" opacity="0.7"/>';
+      s += '<circle cx="' + (p.x+3) + '" cy="' + (p.y+2) + '" r="' + (p.r*0.35) + '" fill="#7a1508" opacity="0.6"/>';
+      s += '<circle cx="' + (p.x-3) + '" cy="' + (p.y+3) + '" r="2" fill="#4a0a04" opacity="0.6"/>';
+      s += '<circle cx="' + (p.x+4) + '" cy="' + (p.y-3) + '" r="1.5" fill="#4a0a04" opacity="0.5"/>';
+    });
+
+    // зелень (орегано)
+    var herbs = [
+      {x:40,y:90},{x:165,y:90},{x:120,y:170},{x:80,y:40},{x:160,y:150}
+    ];
+    herbs.forEach(function(h){
+      s += '<ellipse cx="' + h.x + '" cy="' + h.y + '" rx="3" ry="1.5" fill="#2a5a1a" opacity="0.85" transform="rotate(30 ' + h.x + ' ' + h.y + ')"/>';
+      s += '<ellipse cx="' + (h.x+4) + '" cy="' + (h.y+2) + '" rx="2.5" ry="1.3" fill="#2a5a1a" opacity="0.8" transform="rotate(-20 ' + h.x + ' ' + h.y + ')"/>';
+    });
+
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- ПИЦЦА МАРГАРИТА (реалистичная) ----- */
+  function pizzaMargherita(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+
+    s += '<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.35"/>';
+
+    // корка
+    s += '<circle cx="100" cy="100" r="92" fill="#8a5a2a"/>';
+    s += '<circle cx="100" cy="100" r="88" fill="#b8803a"/>';
+    s += '<circle cx="100" cy="100" r="84" fill="#e8b060"/>';
+
+    // соус
+    s += '<circle cx="100" cy="100" r="76" fill="#8a1e10"/>';
+    s += '<circle cx="100" cy="100" r="74" fill="#a82814"/>';
+
+    // большие пятна расплавленной моцареллы
+    s += '<ellipse cx="65" cy="75" rx="32" ry="26" fill="#f8f0d0"/>';
+    s += '<ellipse cx="140" cy="85" rx="30" ry="24" fill="#f5ecd0"/>';
+    s += '<ellipse cx="75" cy="135" rx="32" ry="26" fill="#f8f0d0"/>';
+    s += '<ellipse cx="140" cy="140" rx="28" ry="22" fill="#f2e8c8"/>';
+    s += '<ellipse cx="105" cy="105" rx="26" ry="20" fill="#fbf5dc"/>';
+    s += '<ellipse cx="105" cy="40" rx="22" ry="14" fill="#f8f0d0"/>';
+
+    // блики на сыре
+    s += '<ellipse cx="60" cy="70" rx="10" ry="6" fill="#fff" opacity="0.4"/>';
+    s += '<ellipse cx="135" cy="80" rx="9" ry="5" fill="#fff" opacity="0.35"/>';
+    s += '<ellipse cx="70" cy="130" rx="10" ry="6" fill="#fff" opacity="0.4"/>';
+
+    // листья базилика
+    var basil = [
+      {x:60,y:60,rot:-30,size:1.0},
+      {x:140,y:75,rot:20,size:1.1},
+      {x:80,y:120,rot:-15,size:0.95},
+      {x:135,y:135,rot:35,size:1.0},
+      {x:110,y:100,rot:0,size:0.85},
+      {x:75,y:30,rot:-25,size:0.8}
+    ];
+    basil.forEach(function(b){
+      var sx = 10 * b.size;
+      var sy = 6 * b.size;
+      s += '<g transform="rotate(' + b.rot + ' ' + b.x + ' ' + b.y + ')">';
+      // тень листа
+      s += '<ellipse cx="' + (b.x+1) + '" cy="' + (b.y+1) + '" rx="' + sx + '" ry="' + sy + '" fill="#0a2a08" opacity="0.5"/>';
+      // лист
+      s += '<ellipse cx="' + b.x + '" cy="' + b.y + '" rx="' + sx + '" ry="' + sy + '" fill="#2a7a1a"/>';
+      // жилка
+      s += '<line x1="' + (b.x - sx) + '" y1="' + b.y + '" x2="' + (b.x + sx) + '" y2="' + b.y + '" stroke="#0a3a08" stroke-width="1" opacity="0.7"/>';
+      // блик
+      s += '<ellipse cx="' + (b.x - sx*0.3) + '" cy="' + (b.y - sy*0.4) + '" rx="' + (sx*0.35) + '" ry="' + (sy*0.35) + '" fill="#7ad05a" opacity="0.5"/>';
+      s += '</g>';
+    });
+
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- БУТЫЛКА КОКА-КОЛЫ ----- */
+  function bottleCola(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    // тень
+    s += '<ellipse cx="100" cy="188" rx="34" ry="6" fill="#000" opacity="0.4"/>';
+    // корпус
+    s += '<path d="M70 60 Q60 70 60 90 L60 170 Q60 182 72 182 L128 182 Q140 182 140 170 L140 90 Q140 70 130 60 Z" fill="#1a0505"/>';
+    // горлышко
+    s += '<path d="M78 25 L122 25 L128 60 L72 60 Z" fill="#2a0808"/>';
+    // крышка
+    s += '<rect x="76" y="10" width="48" height="18" rx="4" fill="#c8102e"/>';
+    s += '<rect x="76" y="10" width="48" height="6" rx="3" fill="#e02040" opacity="0.7"/>';
+    // этикетка
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 145 Q110 149 100 145 Q90 141 60 145 Z" fill="#c8102e"/>';
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 108 Q110 112 100 108 Q90 104 60 108 Z" fill="#fff" opacity="0.15"/>';
+    // логотип-росчерк
+    s += '<path d="M75 122 Q85 118 100 122 Q115 126 125 122 Q120 130 100 128 Q80 126 75 122 Z" fill="#fff"/>';
+    // блики
+    s += '<path d="M68 70 L68 175 Q72 178 74 175 L74 68 Z" fill="#fff" opacity="0.18"/>';
+    s += '<path d="M130 72 L130 172 Q134 174 136 172 L136 72 Z" fill="#fff" opacity="0.08"/>';
+    // пузырьки газа внутри
+    for (var i=0;i<12;i++){
+      s += '<circle cx="' + (75+Math.random()*50) + '" cy="' + (95+Math.random()*70) + '" r="1.2" fill="#fff" opacity="0.35"/>';
+    }
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- БУТЫЛКА/ПАКЕТ АПЕЛЬСИНОВОГО СОКА ----- */
+  function bottleOrange(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="188" rx="34" ry="6" fill="#000" opacity="0.4"/>';
+    // корпус
+    s += '<path d="M68 55 Q58 65 58 85 L58 170 Q58 182 70 182 L130 182 Q142 182 142 170 L142 85 Q142 65 132 55 Z" fill="#c05a10"/>';
+    // оттенок жидкости
+    s += '<path d="M62 90 L62 170 Q62 178 70 178 L130 178 Q138 178 138 170 L138 90 Z" fill="#e07a20"/>';
+    // горлышко
+    s += '<rect x="80" y="25" width="40" height="35" fill="#a84a0a"/>';
+    // крышка
+    s += '<rect x="76" y="12" width="48" height="16" rx="3" fill="#f0a838"/>';
+    // этикетка
+    s += '<rect x="58" y="95" width="84" height="55" rx="6" fill="#f8e0a0"/>';
+    s += '<circle cx="100" cy="115" r="14" fill="#e08a20"/>';
+    // дольки апельсина на картинке
+    for (var i=0;i<8;i++){
+      var a = (i/8)*Math.PI*2;
+      var x = 100 + Math.cos(a)*9;
+      var y = 115 + Math.sin(a)*9;
+      s += '<circle cx="' + x + '" cy="' + y + '" r="4" fill="#ffb040" opacity="0.9"/>';
+    }
+    s += '<circle cx="100" cy="115" r="4" fill="#fff" opacity="0.8"/>';
+    // надпись-полоски
+    s += '<rect x="72" y="138" width="56" height="3" fill="#a84a0a" opacity="0.7"/>';
+    s += '<rect x="80" y="144" width="40" height="2" fill="#a84a0a" opacity="0.5"/>';
+    // блик
+    s += '<rect x="66" y="90" width="4" height="82" rx="2" fill="#fff" opacity="0.25"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- БУТЫЛКА СПРАЙТА ----- */
+  function bottleSprite(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="188" rx="34" ry="6" fill="#000" opacity="0.4"/>';
+    s += '<path d="M70 60 Q60 70 60 90 L60 170 Q60 182 72 182 L128 182 Q140 182 140 170 L140 90 Q140 70 130 60 Z" fill="#1a5a2a"/>';
+    s += '<path d="M78 25 L122 25 L128 60 L72 60 Z" fill="#1a6a2a"/>';
+    s += '<rect x="76" y="10" width="48" height="18" rx="4" fill="#3aaa4a"/>';
+    // этикетка
+    s += '<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 145 Q110 149 100 145 Q90 141 60 145 Z" fill="#3aaa4a"/>';
+    // логотип
+    s += '<path d="M78 118 Q90 112 100 118 Q110 124 122 118 Q118 132 100 130 Q82 128 78 118 Z" fill="#fff"/>';
+    s += '<circle cx="112" cy="120" r="3" fill="#3aaa4a"/>';
+    // блики
+    s += '<path d="M68 70 L68 175 Q72 178 74 175 L74 68 Z" fill="#fff" opacity="0.18"/>';
+    // пузырьки
+    for (var i=0;i<14;i++){
+      s += '<circle cx="' + (72+Math.random()*56) + '" cy="' + (95+Math.random()*70) + '" r="1.3" fill="#fff" opacity="0.4"/>';
+    }
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- СТАКАН ЛИМОНАДА (прозрачный, с трубочкой) ----- */
+  function cupLemonade(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="182" rx="46" ry="8" fill="#000" opacity="0.4"/>';
+    // тело стакана (сужается книзу)
+    s += '<path d="M55 50 L145 50 L132 178 L68 178 Z" fill="#f0e880" opacity="0.5"/>';
+    // жидкость
+    s += '<path d="M62 65 L138 65 L127 174 L73 174 Z" fill="#e8e050"/>';
+    // лёд
+    s += '<rect x="80" y="80" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 93 91)"/>';
+    s += '<rect x="105" y="100" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 117 110)"/>';
+    s += '<rect x="76" y="120" width="22" height="18" rx="3" fill="#fff" opacity="0.5" transform="rotate(-8 87 129)"/>';
+    // лимонная долька (сбоку)
+    s += '<g transform="rotate(-20 135 60)">';
+    s += '<circle cx="135" cy="60" r="14" fill="#f8e020"/>';
+    s += '<circle cx="135" cy="60" r="11" fill="#ffe850"/>';
+    for (var i=0;i<6;i++){
+      var a = (i/6)*Math.PI*2;
+      s += '<line x1="135" y1="60" x2="' + (135+Math.cos(a)*10) + '" y2="' + (60+Math.sin(a)*10) + '" stroke="#c8a800" stroke-width="1"/>';
+    }
+    s += '</g>';
+    // трубочка
+    s += '<rect x="118" y="15" width="7" height="70" rx="3" fill="#d02040" transform="rotate(-12 121 50)"/>';
+    s += '<rect x="118" y="15" width="7" height="15" rx="3" fill="#fff" opacity="0.6" transform="rotate(-12 121 50)"/>';
+    // мята
+    s += '<ellipse cx="86" cy="66" rx="8" ry="4" fill="#2a7a1a" transform="rotate(-25 86 66)"/>';
+    s += '<ellipse cx="94" cy="64" rx="6" ry="3" fill="#3a8a2a" transform="rotate(15 94 64)"/>';
+    // контур стакана
+    s += '<path d="M55 50 L145 50 L132 178 L68 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.6"/>';
+    s += '<ellipse cx="100" cy="50" rx="45" ry="7" fill="none" stroke="#fff" stroke-width="2" opacity="0.6"/>';
+    // блик
+    s += '<path d="M68 60 L74 172" stroke="#fff" stroke-width="3" opacity="0.35"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- СТАКАН МОЧИ (реалистичный, но деликатный) ----- */
+  function cupPee(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="182" rx="46" ry="8" fill="#000" opacity="0.4"/>';
+    // тело медицинского стакана
+    s += '<path d="M60 55 L140 55 L132 178 L68 178 Z" fill="#e8e0a0" opacity="0.6"/>';
+    // жидкость
+    s += '<path d="M66 70 L134 70 L127 174 L73 174 Z" fill="#d4c020"/>';
+    s += '<path d="M66 70 L134 70 L132 82 L68 82 Z" fill="#e8d840" opacity="0.7"/>';
+    // лёгкий пар (стерильность намёк)
+    s += '<path d="M85 45 Q88 35 85 25" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.35"/>';
+    s += '<path d="M100 42 Q103 30 100 18" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.35"/>';
+    s += '<path d="M115 45 Q118 35 115 25" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.35"/>';
+    // мерные деления
+    s += '<line x1="66" y1="100" x2="72" y2="100" stroke="#333" stroke-width="1.5"/>';
+    s += '<line x1="66" y1="120" x2="72" y2="120" stroke="#333" stroke-width="1.5"/>';
+    s += '<line x1="66" y1="140" x2="72" y2="140" stroke="#333" stroke-width="1.5"/>';
+    s += '<line x1="66" y1="160" x2="72" y2="160" stroke="#333" stroke-width="1.5"/>';
+    // блик
+    s += '<path d="M70 65 L76 172" stroke="#fff" stroke-width="3" opacity="0.35"/>';
+    // контур
+    s += '<path d="M60 55 L140 55 L132 178 L68 178 Z" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.5"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ----- СТАКАН КОФЕ (вид сверху/сбоку) ----- */
+  function cupCoffee(){
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s += '<ellipse cx="100" cy="185" rx="40" ry="7" fill="#000" opacity="0.45"/>';
+    // стакан
+    s += '<path d="M58 55 L142 55 L132 180 L68 180 Z" fill="#f0e8dc"/>';
+    // втулка (sleeve)
+    s += '<path d="M64 95 L136 95 L132 145 L68 145 Z" fill="#6b4520"/>';
+    s += '<path d="M64 95 L136 95 L135 100 L65 100 Z" fill="#8a5a2a" opacity="0.6"/>';
+    // логотип на втулке
+    s += '<ellipse cx="100" cy="120" rx="12" ry="10" fill="#f0d8b8"/>';
+    s += '<path d="M92 120 Q100 114 108 120 Q100 126 92 120 Z" fill="#6b4520"/>';
+    // кофейная пенка сверху (вид сверху)
+    s += '<ellipse cx="100" cy="58" rx="42" ry="8" fill="#3a2010"/>';
+    s += '<ellipse cx="100" cy="58" rx="38" ry="6" fill="#8a5a2a"/>';
+    s += '<ellipse cx="90" cy="57" rx="14" ry="3" fill="#f0d8b8" opacity="0.7"/>';
+    s += '<ellipse cx="112" cy="59" rx="10" ry="2.5" fill="#f0d8b8" opacity="0.6"/>';
+    s += '<circle cx="104" cy="57" r="2" fill="#f0d8b8" opacity="0.8"/>';
+    // крышка
+    s += '<path d="M55 40 L145 40 L142 55 L58 55 Z" fill="#d8d0c0"/>';
+    s += '<ellipse cx="100" cy="40" rx="45" ry="7" fill="#e8e0d0"/>';
+    s += '<circle cx="100" cy="40" r="7" fill="#8a5a2a" opacity="0.8"/>';
+    // пар
+    s += '<path d="M85 32 Q82 22 85 12" stroke="#fff" stroke-width="2" fill="none" opacity="0.35"/>';
+    s += '<path d="M100 30 Q97 18 100 6" stroke="#fff" stroke-width="2" fill="none" opacity="0.4"/>';
+    s += '<path d="M115 32 Q112 22 115 12" stroke="#fff" stroke-width="2" fill="none" opacity="0.35"/>';
+    // блик
+    s += '<path d="M70 60 L74 178" stroke="#fff" stroke-width="3" opacity="0.3"/>';
+    s += '</svg>';
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")';
+  }
+
+  /* ============================================================
+     6. КАРТА ИКОНОК
+     ============================================================ */
+  var ICONS = {
+    'pizza-pepperoni':  { icon:pizzaPepperoni(),  bg:'radial-gradient(circle at 50% 40%, #2a0a04, #0a0202)' },
+    'pizza-margherita': { icon:pizzaMargherita(), bg:'radial-gradient(circle at 50% 40%, #2a0a04, #0a0202)' },
+    'drink-cola':       { icon:bottleCola(),      bg:'radial-gradient(circle at 50% 40%, #2a0a0a, #0a0202)' },
+    'drink-orange':     { icon:bottleOrange(),    bg:'radial-gradient(circle at 50% 40%, #2a1400, #0a0400)' },
+    'drink-sprite':     { icon:bottleSprite(),    bg:'radial-gradient(circle at 50% 40%, #0a2a0a, #020a02)' },
+    'drink-lemonade':   { icon:cupLemonade(),     bg:'radial-gradient(circle at 50% 40%, #2a2a00, #0a0a00)' },
+    'drink-pee':        { icon:cupPee(),          bg:'radial-gradient(circle at 50% 40%, #2a2800, #0a0800)' },
+    'drink-coffee':     { icon:cupCoffee(),       bg:'radial-gradient(circle at 50% 40%, #2a1a0a, #0a0400)' }
+  };
+
+  var RULES = [
+    { keys:['пеперони','пепперони','pepperoni'],  id:'pizza-pepperoni' },
+    { keys:['маргарита','margherita'],            id:'pizza-margherita' },
+    { keys:['кола','cola','кока'],                id:'drink-cola' },
+    { keys:['апельсин','orange','сок'],           id:'drink-orange' },
+    { keys:['спрайт','sprite'],                   id:'drink-sprite' },
+    { keys:['лимонад','lemonade'],                id:'drink-lemonade' },
+    { keys:['моча','pee'],                        id:'drink-pee' },
+    { keys:['кофе','coffee','латте','latte'],     id:'drink-coffee' }
+  ];
+
+  function findIcon(card){
+    var type = card.getAttribute && card.getAttribute('data-type');
+    if (type && ICONS[type]) return ICONS[type];
+    var text = (card.textContent || '').toLowerCase();
+    for (var i=0;i<RULES.length;i++){
+      for (var j=0;j<RULES[i].keys.length;j++){
+        if (text.indexOf(RULES[i].keys[j]) !== -1){
+          return ICONS[RULES[i].id];
+        }
+      }
+    }
+    return null;
+  }
+
+  /* ============================================================
+     7. КРАСИМ
+     ============================================================ */
+  function paint(card){
+    if (card.dataset.hydraPainted === '1') return;
+    var info = findIcon(card);
+    if (!info) return;
+
+    var thumb = card.querySelector('.product-thumb, .card-visual, .product-visual, .thumb, img');
+    if (thumb && thumb.tagName === 'IMG'){
+      var div = document.createElement('div');
+      div.className = 'product-thumb';
+      thumb.replaceWith(div);
+      thumb = div;
+    }
+    if (!thumb){
+      thumb = document.createElement('div');
+      thumb.className = 'product-thumb';
+      card.insertBefore(thumb, card.firstChild);
+    }
+
+    thumb.style.cssText =
+      'aspect-ratio:16/11;display:block;' +
+      'background:' + info.bg + ';' +
+      'background-image:' + info.icon + ';' +
+      'background-repeat:no-repeat;' +
+      'background-position:center;' +
+      'background-size:88%;' +
+      'border-radius:14px 14px 0 0;';
+       </body>
+    
