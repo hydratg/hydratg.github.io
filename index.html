@@ -5976,4 +5976,614 @@ footer{
   box-shadow:0 0 12px rgba(255,140,26,.3) !important;
 }
 </style>
+     <body><!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HYDRA BLACK · пиццерия</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Georgia,serif;
+  background:#1a0d05;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,140,40,.12) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255,170,60,.10) 0%, transparent 45%);
+  color:#ffeedd;
+  line-height:1.5;
+  min-height:100vh;
+}
+.wrap{max-width:1320px;margin:0 auto;padding:0 24px}
+
+/* ШАПКА */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(26,13,5,.94);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #3a2010;
+  padding:16px 0;
+}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:900;letter-spacing:2px;text-transform:uppercase;font-family:system-ui,sans-serif}
+.mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#ff8c1a,#ffb84d);display:grid;place-items:center;color:#1a0d05;font-size:24px;font-weight:900;box-shadow:0 0 20px rgba(255,140,26,.5)}
+.acc{color:#ff8c1a}
+.thin{font-weight:300}
+.geo{padding:8px 16px;border-radius:100px;border:1px solid #3a2010;background:#2a1508;font-size:13px;color:#e0b090;font-family:system-ui,sans-serif}
+nav{display:flex;gap:4px;background:#2a1508;padding:4px;border-radius:12px;border:1px solid #3a2010}
+nav a{color:#c09070;text-decoration:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;font-family:system-ui,sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+nav a:hover{color:#ff8c1a;background:rgba(255,140,26,.12)}
+.cart-btn{display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:100px;border:none;background:linear-gradient(135deg,#ff8c1a,#ffaa33);color:#1a0d05;font-weight:900;font-size:13px;cursor:pointer;font-family:system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;box-shadow:0 6px 20px rgba(255,140,26,.45);transition:all .2s}
+.cart-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,140,26,.65)}
+
+/* ГЕРОЙ */
+.hero{padding:50px 0 40px;text-align:center;position:relative}
+.hero h1{font-size:56px;font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;font-family:Georgia,serif}
+.hero h1 .accent-txt{color:#ffb84d}
+.hero p{color:#c09070;font-size:17px;max-width:600px;margin:0 auto 26px;font-family:system-ui,sans-serif}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,140,26,.12);border:1px solid rgba(255,140,26,.4);color:#ffb84d;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:700;font-family:system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase}
+
+/* СЕКЦИИ */
+.sec{padding:30px 0 60px}
+.sec h2{font-size:38px;font-weight:900;letter-spacing:-1px;margin-bottom:34px;font-family:Georgia,serif;display:flex;align-items:center;gap:14px}
+.sec h2 .num{color:#ff8c1a;font-size:16px;font-weight:700;font-family:system-ui,sans-serif;letter-spacing:2px}
+
+/* СЕТКА */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.card{
+  background:linear-gradient(160deg,#2a1508,#1a0d05);
+  border:1px solid #3a2010;
+  border-radius:20px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+.card:hover{
+  transform:translateY(-6px);
+  border-color:#ff8c1a;
+  box-shadow:0 20px 40px -20px rgba(255,140,26,.6);
+}
+.thumb{
+  aspect-ratio:16/11;
+  background:#150a03;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:85%;
+  border-bottom:1px solid #3a2010;
+}
+.body{padding:22px;display:flex;flex-direction:column;flex:1;font-family:system-ui,sans-serif}
+.cat{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ff8c1a;margin-bottom:10px}
+.body h3{font-size:22px;font-weight:800;margin-bottom:10px;color:#ffeedd;font-family:Georgia,serif;letter-spacing:-.3px}
+.desc{color:#a07860;font-size:14px;line-height:1.55;margin-bottom:20px;flex:1}
+.meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #3a2010}
+.price{font-size:30px;font-weight:900;color:#ffb84d;letter-spacing:-1px;font-family:system-ui,sans-serif}
+.price small{font-size:15px;color:#ff8c1a;font-weight:700;margin-left:2px}
+.weight{font-size:12px;color:#a07860;padding:6px 14px;background:rgba(255,140,26,.06);border-radius:100px;border:1px solid rgba(255,140,26,.2);font-weight:600}
+.add{
+  width:100%;padding:14px;border-radius:100px;
+  border:1.5px solid #ff8c1a;
+  background:transparent;
+  color:#ffb84d;
+  font-weight:800;font-size:13px;
+  letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;font-family:system-ui,sans-serif;
+  transition:all .2s;
+}
+.add:hover{background:#ff8c1a;color:#1a0d05;box-shadow:0 0 24px rgba(255,140,26,.6)}
+.add:active{transform:scale(.97)}
+
+/* КОРЗИНА */
+.overlay{position:fixed;inset:0;background:rgba(10,5,2,.8);backdrop-filter:blur(6px);z-index:200;opacity:0;visibility:hidden;transition:.3s}
+.overlay.open{opacity:1;visibility:visible}
+.drawer{
+  position:fixed;top:0;right:0;height:100%;width:100%;max-width:480px;
+  background:#201005;
+  border-left:1px solid #3a2010;
+  z-index:210;
+  transform:translateX(100%);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+  box-shadow:-30px 0 80px rgba(0,0,0,.6);
+}
+.drawer.open{transform:translateX(0)}
+.dtop{padding:26px 28px;border-bottom:1px solid #3a2010;display:flex;align-items:center;justify-content:space-between;font-family:system-ui,sans-serif}
+.dtop h3{font-size:22px;font-weight:900;display:flex;align-items:center;gap:12px;color:#ffeedd}
+.dtop h3 .n{color:#ff8c1a}
+.ccount{font-size:12px;background:rgba(255,140,26,.18);border:1px solid rgba(255,140,26,.45);color:#ffb84d;padding:5px 14px;border-radius:100px;font-weight:800}
+.xbtn{width:40px;height:40px;border-radius:50%;background:rgba(255,140,26,.1);border:1px solid rgba(255,140,26,.3);color:#ffb84d;font-size:22px;cursor:pointer;font-family:inherit;display:grid;place-items:center;transition:all .2s}
+.xbtn:hover{background:rgba(255,140,26,.25);transform:rotate(90deg)}
+.dlist{flex:1;overflow-y:auto;padding:14px 28px}
+.empty{text-align:center;padding:80px 20px;color:#8a5a30;font-family:system-ui,sans-serif}
+.empty .ic{font-size:70px;opacity:.5;margin-bottom:20px}
+.row{display:flex;gap:16px;padding:20px 0;border-bottom:1px solid rgba(255,140,26,.08);font-family:system-ui,sans-serif}
+.row-thumb{width:72px;height:72px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;font-size:36px;border:1px solid #3a2010;background:#150a03}
+.row-main{flex:1;min-width:0}
+.row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+.row-head h4{font-size:16px;font-weight:800;color:#ffeedd}
+.row-head .u{font-size:12px;color:#a07860;margin-top:3px}
+.del{background:transparent;border:none;color:#8a5a30;font-size:22px;cursor:pointer;line-height:1;font-family:inherit;padding:0 4px;transition:color .15s}
+.del:hover{color:#ff8c1a}
+.row-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
+.cnt{display:flex;align-items:center;gap:6px;background:rgba(255,140,26,.08);border:1px solid rgba(255,140,26,.2);border-radius:100px;padding:5px}
+.cnt button{width:32px;height:32px;border-radius:50%;background:rgba(255,140,26,.15);border:1px solid rgba(255,140,26,.35);color:#ffb84d;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;display:grid;place-items:center;transition:all .15s}
+.cnt button:hover{background:#ff8c1a;color:#1a0d05}
+.cnt .q{min-width:26px;text-align:center;font-size:15px;font-weight:800;color:#ffeedd}
+.lt{font-size:17px;font-weight:900;color:#ffb84d;white-space:nowrap}
+.dbot{padding:24px 28px 28px;border-top:1px solid #3a2010;background:#150a03;font-family:system-ui,sans-serif}
+.tline{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px}
+.tline .l{font-size:13px;color:#a07860;text-transform:uppercase;letter-spacing:3px;font-weight:800}
+.tline .s{font-size:34px;font-weight:900;color:#ffb84d;letter-spacing:-1.5px}
+.co{width:100%;padding:18px;border-radius:100px;border:none;background:linear-gradient(135deg,#ff8c1a,#ffaa33);color:#1a0d05;font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 10px 30px rgba(255,140,26,.5);transition:all .2s}
+.co:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,140,26,.7)}
+.co:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.cl{width:100%;padding:12px;border-radius:100px;border:1px solid #3a2010;background:transparent;color:#a07860;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;letter-spacing:1px;text-transform:uppercase;transition:all .2s}
+.cl:hover{color:#ff8c1a;border-color:#ff8c1a;background:rgba(255,140,26,.06)}
+
+/* ЗАКАЗЫ */
+.orders{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.orders-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:#8a5a30;font-size:15px;border:1px dashed #3a2010;border-radius:20px;background:#2a1508;font-family:system-ui,sans-serif}
+.ord{background:linear-gradient(160deg,#2a1508,#1a0d05);border:1px solid #3a2010;border-radius:20px;padding:22px;position:relative;overflow:hidden;font-family:system-ui,sans-serif}
+.ord::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ff8c1a,#ffb84d,#ffd97a,#ffb84d,#ff8c1a);opacity:.8}
+.ord-top{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px dashed #3a2010;margin-bottom:14px}
+.ord-name{font-size:15px;font-weight:800;color:#ffeedd;display:flex;align-items:center;gap:12px}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff8c1a,#ffb84d);display:grid;place-items:center;color:#1a0d05;font-weight:900;font-size:15px}
+.ord-time{font-size:12px;color:#a07860;font-weight:600}
+.ord-addr{font-size:13px;color:#ffb84d;margin-bottom:10px;font-weight:600}
+.ord-items{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.ord-item{display:flex;justify-content:space-between;font-size:13px;color:#c09070}
+.ord-item .q{color:#ff8c1a;font-weight:800;margin-right:6px}
+.ord-bot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px dashed #3a2010}
+.ord-code{font-size:11px;color:#ff8c1a;font-family:ui-monospace,monospace;font-weight:800;letter-spacing:1.5px;background:rgba(255,140,26,.1);padding:5px 12px;border-radius:100px;border:1px solid rgba(255,140,26,.3)}
+.ord-total{font-size:20px;font-weight:900;color:#ffb84d}
+
+/* ФУТЕР */
+footer{padding:40px 0;border-top:1px solid #3a2010;color:#8a5a30;font-size:13px;margin-top:40px;text-align:center;font-family:system-ui,sans-serif}
+
+/* УВЕДОМЛЕНИЕ */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(140px);
+  background:linear-gradient(135deg,#ff8c1a,#ffaa33);
+  color:#1a0d05;padding:16px 32px;border-radius:100px;
+  font-weight:800;font-size:14px;z-index:9999;
+  opacity:0;transition:transform .35s,opacity .3s;
+  box-shadow:0 15px 40px rgba(255,140,26,.6);
+  pointer-events:none;font-family:system-ui,sans-serif;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* АДАПТИВ */
+@media(max-width:780px){
+  .hero h1{font-size:36px}
+  .sec h2{font-size:28px}
+  nav{width:100%;justify-content:center}
+  .hd{justify-content:center;text-align:center}
+  .drawer{max-width:100%}
+}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:#150a03}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff8c1a,#ffaa33);border-radius:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <div class="logo">
+      <div class="mark">H</div>
+      <div><span class="acc">HYDRA</span> <span class="thin">BLACK</span></div>
+    </div>
+    <div class="geo">📍 Санкт-Петербург</div>
+    <nav>
+      <a href="#pizza">Пицца</a>
+      <a href="#drinks">Напитки</a>
+      <a href="#orders">Заказы</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn">🛒 Корзина · <span id="headerTotal">0</span> ₽</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Лучшая пицца в городе</span>
+      <h1>Настоящая <span class="accent-txt">итальянская</span><br>пицца на дровах</h1>
+      <p>Пеперонни, Маргарита и десятки других вкусов. Готовим на дровах — доставляем горячей за 30 минут.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="pizza">
+    <div class="wrap">
+      <h2><span class="num">//</span> НАША ПИЦЦА</h2>
+      <div class="grid" id="pizzaGrid"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="drinks">
+    <div class="wrap">
+      <h2><span class="num">//</span> НАПИТКИ</h2>
+      <div class="grid" id="drinksGrid"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="orders">
+    <div class="wrap">
+      <h2><span class="num">//</span> ЗАКАЗЫ ГОСТЕЙ</h2>
+      <div class="orders" id="ordersList">
+        <div class="orders-empty">Пока заказов нет. Будьте первым!</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 HYDRA BLACK · HYDRA PIZZA IN SPB
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="dtop">
+    <h3><span class="n">🛒</span> Корзина <span class="ccount" id="cartCount">0</span></h3>
+    <button class="xbtn" id="closeCart">×</button>
+  </div>
+  <div class="dlist" id="cartList"></div>
+  <div class="dbot">
+    <div class="tline"><span class="l">Итого</span><span class="s" id="cartSum">0 ₽</span></div>
+    <button class="co" id="checkoutBtn" disabled>Оформить заказ</button>
+    <button class="cl" id="clearBtn">Очистить корзину</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+
+  /* ============================================================
+     SVG-ИКОНКИ
+     ============================================================ */
+  function pizza(sauce, cheese, tops){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<ellipse cx="100" cy="192" rx="82" ry="8" fill="#000" opacity="0.4"/>';
+    s+='<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
+    s+='<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
+    s+='<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
+    s+='<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
+    cheese.forEach(function(c){
+      s+='<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.94"/>';
+      s+='<ellipse cx="'+(c[0]-c[2]*0.3)+'" cy="'+(c[1]-c[3]*0.3)+'" rx="'+(c[2]*0.4)+'" ry="'+(c[3]*0.4)+'" fill="#fff8d8" opacity="0.5"/>';
+    });
+    tops.forEach(function(t){
+      if(t.ring){
+        s+='<circle cx="'+t.x+'" cy="'+t.y+'" r="'+t.r+'" fill="'+t.c+'"/>';
+        s+='<circle cx="'+t.x+'" cy="'+t.y+'" r="'+(t.r-2)+'" fill="none" stroke="#3a0806" stroke-width="1.5" opacity="0.7"/>';
+        s+='<circle cx="'+(t.x-2)+'" cy="'+(t.y-2)+'" r="'+(t.r*0.5)+'" fill="#c84020" opacity="0.6"/>';
+      } else if(t.leaf){
+        s+='<ellipse cx="'+t.x+'" cy="'+t.y+'" rx="7" ry="3" fill="'+t.c+'" transform="rotate('+t.rot+' '+t.x+' '+t.y+')"/>';
+      } else {
+        s+='<circle cx="'+t.x+'" cy="'+t.y+'" r="'+t.r+'" fill="'+t.c+'"/>';
+        s+='<circle cx="'+(t.x-1)+'" cy="'+(t.y-1)+'" r="'+(t.r*0.5)+'" fill="#fff" opacity="0.35"/>';
+      }
+    });
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  function bottle(color, dark, label){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<ellipse cx="100" cy="190" rx="36" ry="6" fill="#000" opacity="0.4"/>';
+    s+='<rect x="76" y="8" width="48" height="18" rx="4" fill="'+label+'"/>';
+    s+='<rect x="76" y="10" width="48" height="5" rx="2" fill="#fff" opacity="0.25"/>';
+    s+='<path d="M78 26 L122 26 L128 60 L72 60 Z" fill="'+dark+'"/>';
+    s+='<path d="M70 60 Q60 70 60 90 L60 172 Q60 184 72 184 L128 184 Q140 184 140 172 L140 90 Q140 70 130 60 Z" fill="'+color+'"/>';
+    s+='<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 148 Q110 152 100 148 Q90 144 60 148 Z" fill="'+label+'"/>';
+    s+='<path d="M72 122 Q88 116 100 122 Q112 128 128 122 Q124 132 100 130 Q76 128 72 122 Z" fill="#fff"/>';
+    s+='<path d="M68 70 L68 176 Q72 179 74 176 L74 68 Z" fill="#fff" opacity="0.22"/>';
+    for(var i=0;i<12;i++){
+      s+='<circle cx="'+(72+Math.random()*56)+'" cy="'+(95+Math.random()*75)+'" r="1.2" fill="#fff" opacity="0.35"/>';
+    }
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  function glass(fill, top, ice){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<ellipse cx="100" cy="182" rx="48" ry="8" fill="#000" opacity="0.4"/>';
+    s+='<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="#ffffff" opacity="0.08"/>';
+    s+='<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="'+fill+'"/>';
+    s+='<ellipse cx="100" cy="62" rx="42" ry="6" fill="'+top+'"/>';
+    if(ice){
+      s+='<rect x="78" y="78" width="26" height="22" rx="3" fill="#fff" opacity="0.55" transform="rotate(-15 91 89)"/>';
+      s+='<rect x="104" y="108" width="24" height="20" rx="3" fill="#fff" opacity="0.5" transform="rotate(20 116 118)"/>';
+      s+='<rect x="72" y="124" width="22" height="18" rx="3" fill="#fff" opacity="0.5" transform="rotate(-8 83 133)"/>';
+    }
+    s+='<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s+='<ellipse cx="100" cy="48" rx="48" ry="7" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s+='<path d="M68 58 L74 174" stroke="#fff" stroke-width="3" opacity="0.35"/>';
+    s+='</svg>';
+    return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")';
+  }
+
+  /* ============================================================
+     ТОВАРЫ
+     ============================================================ */
+  var PIZZAS = [
+    { type:'pizza-pepperoni', name:'Пеперонни', price:599, w:'570 г',
+      desc:'Острая пепперони, моцарелла, томатный соус, итальянские травы.',
+      icon: pizza('#8a1e10',
+        [[70,72,30,22],[132,82,28,20],[75,138,30,22],[138,132,26,18],[105,50,22,14]],
+        [{x:75,y:70,r:15,c:'#b0301a',ring:1},{x:130,y:80,r:14,c:'#b0301a',ring:1},
+         {x:70,y:135,r:14,c:'#b0301a',ring:1},{x:135,y:130,r:13,c:'#b0301a',ring:1},
+         {x:105,y:105,r:15,c:'#b0301a',ring:1},{x:110,y:48,r:12,c:'#b0301a',ring:1},
+         {x:55,y:100,r:11,c:'#b0301a',ring:1},{x:150,y:110,r:11,c:'#b0301a',ring:1}]) },
+
+    { type:'pizza-margherita', name:'Маргарита', price:499, w:'480 г',
+      desc:'Томаты, моцарелла, свежий базилик, оливковое масло, пармезан.',
+      icon: pizza('#a82814',
+        [[65,72,32,26],[140,82,30,24],[75,138,32,26],[140,140,28,22],[105,105,26,20],[105,45,22,14]],
+        [{x:55,y:65,leaf:1,c:'#2a7a1a',rot:-30},{x:140,y:78,leaf:1,c:'#2a7a1a',rot:20},
+         {x:80,y:125,leaf:1,c:'#2a7a1a',rot:-15},{x:135,y:135,leaf:1,c:'#2a7a1a',rot:35},
+         {x:108,y:105,leaf:1,c:'#2a7a1a',rot:0}]) },
+
+    { type:'pizza-hawaii', name:'Гавайская', price:649, w:'620 г',
+      desc:'Курица, ананасы, моцарелла, сливочный соус.',
+      icon: pizza('#d9822b',
+        [[65,72,30,22],[135,82,28,20],[75,138,30,22],[140,135,26,18]],
+        [{x:70,y:75,r:9,c:'#ffe97a'},{x:135,y:80,r:8,c:'#ffe97a'},
+         {x:75,y:140,r:9,c:'#ffe97a'},{x:140,y:138,r:8,c:'#ffe97a'},
+         {x:105,y:105,r:8,c:'#d94a4a'},{x:60,y:110,r:7,c:'#d94a4a'},
+         {x:150,y:110,r:6,c:'#d94a4a'}]) },
+
+    { type:'pizza-bbq', name:'BBQ Чикен', price:699, w:'640 г',
+      desc:'Курица, бекон, красный лук, соус барбекю, моцарелла.',
+      icon: pizza('#5a2308',
+        [[70,72,30,22],[130,82,28,20],[75,138,30,22]],
+        [{x:75,y:70,r:12,c:'#d94020',ring:1},{x:135,y:80,r:11,c:'#d94020',ring:1},
+         {x:75,y:135,r:11,c:'#d94020',ring:1},{x:105,y:105,r:10,c:'#d94020',ring:1},
+         {x:55,y:100,r:8,c:'#c8a8d0'},{x:150,y:110,r:8,c:'#c8a8d0'}]) },
+
+    { type:'pizza-four-cheese', name:'Четыре сыра', price:749, w:'560 г',
+      desc:'Моцарелла, пармезан, дорблю, чеддер, сливочный соус.',
+      icon: pizza('#e0c070',
+        [[60,68,34,26],[140,80,32,24],[70,135,34,26],[140,135,30,22],[105,105,28,22],[105,45,24,16]],
+        [{x:55,y:70,r:5,c:'#fff8d8'},{x:140,y:85,r:5,c:'#f0e8c8'},
+         {x:75,y:135,r:5,c:'#fff8d8'},{x:140,y:140,r:4,c:'#e8d8b0'},
+         {x:105,y:105,r:4,c:'#fff8d8'}]) },
+
+    { type:'pizza-veggie', name:'Вегетарианская', price:549, w:'520 г',
+      desc:'Перец, грибы, черри, оливки, лук, моцарелла.',
+      icon: pizza('#c8361e',
+        [[70,72,30,22],[130,82,28,20],[75,138,30,22]],
+        [{x:70,y:70,r:7,c:'#d94a4a'},{x:130,y:80,r:7,c:'#d94a4a'},
+         {x:80,y:138,r:7,c:'#3a8a2a'},{x:60,y:110,r:6,c:'#3a8a2a'},
+         {x:140,y:140,r:6,c:'#8a5a2a'},{x:105,y:105,r:6,c:'#8a5a2a'},
+         {x:150,y:110,r:5,c:'#f5f5f5'}]) },
+
+    { type:'pizza-diablo', name:'Дьябло', price:699, w:'580 г',
+      desc:'Острая пепперони, халапеньо, чили, моцарелла.',
+      icon: pizza('#7a1a08',
+        [[70,72,30,22],[130,82,28,20],[75,138,30,22]],
+        [{x:75,y:70,r:11,c:'#d0201a',ring:1},{x:130,y:80,r:10,c:'#d0201a',ring:1},
+         {x:105,y:105,r:9,c:'#d0201a',ring:1},{x:60,y:110,r:7,c:'#3a8a2a'},
+         {x:140,y:130,r:6,c:'#3a8a2a'}]) },
+
+    { type:'pizza-meat', name:'Мясная', price:799, w:'680 г',
+      desc:'Пепперони, бекон, ветчина, курица, моцарелла.',
+      icon: pizza('#8a1e10',
+        [[70,72,30,22],[130,82,28,20],[75,138,30,22]],
+        [{x:70,y:70,r:10,c:'#b0301a',ring:1},{x:130,y:80,r:9,c:'#8a1a08',ring:1},
+         {x:105,y:105,r:9,c:'#b0301a',ring:1},{x:60,y:110,r:8,c:'#8a1a08'}]) }
+  ];
+
+  var DRINKS = [
+    { type:'drink-cola', name:'Кока-Кола', price:149, w:'0.5 л',
+      desc:'Классическая ледяная Кока-Кола.',
+      icon: bottle('#1a0505','#2a0808','#c8102e') },
+
+    { type:'drink-orange', name:'Апельсиновый сок', price:199, w:'0.4 л',
+      desc:'Свежевыжатый сок из спелых апельсинов.',
+      icon: bottle('#c05a10','#a84a0a','#f0a838') },
+
+    { type:'drink-sprite', name:'Спрайт', price:149, w:'0.5 л',
+      desc:'Освежающий лимон-лайм со льдом.',
+      icon: bottle('#1a5a2a','#1a6a2a','#3aaa4a') },
+
+    { type:'drink-lemonade', name:'Лимонад', price:179, w:'0.4 л',
+      desc:'Домашний лимонад с мятой и лаймом.',
+      icon: glass('#e8e050','#f8f070',1) },
+
+    { type:'drink-pee', name:'Моча', price:99, w:'0.3 л',
+      desc:'Оригинальный напиток. Не для слабонервных.',
+      icon: glass('#d4c020','#e8d840',0) },
+
+    { type:'drink-coffee', name:'Кофе Латте', price:189, w:'0.3 л',
+      desc:'Двойной эспрессо с горячим молоком.',
+      icon: glass('#6b4520','#3a2010',0) }
+  ];
+
+  /* ============================================================
+     РЕНДЕР ТОВАРОВ
+     ============================================================ */
+  function makeCard(item, isPizza){
+    var d = document.createElement('div');
+    d.className = 'card';
+    d.setAttribute('data-type', item.type);
+    d.innerHTML =
+      '<div class="thumb" style="background-image:'+item.icon+'"></div>' +
+      '<div class="body">' +
+        '<div class="cat">'+(isPizza?'Пицца · 30 см':'Напиток')+'</div>' +
+        '<h3>'+item.name+'</h3>' +
+        '<p class="desc">'+item.desc+'</p>' +
+        '<div class="meta">' +
+          '<div class="price">'+item.price+'<small>₽</small></div>' +
+          '<div class="weight">'+item.w+'</div>' +
+        '</div>' +
+        '<button class="add" data-add data-id="'+item.type+'" data-name="'+item.name+'" data-price="'+item.price+'" data-type="'+item.type+'">+ В корзину</button>' +
+      '</div>';
+    return d;
+  }
+
+  var pizzaGrid = document.getElementById('pizzaGrid');
+  var drinksGrid = document.getElementById('drinksGrid');
+  PIZZAS.forEach(function(p){ pizzaGrid.appendChild(makeCard(p, true)); });
+  DRINKS.forEach(function(d){ drinksGrid.appendChild(makeCard(d, false)); });
+
+  /* ============================================================
+     КОРЗИНА
+     ============================================================ */
+  var cart = [];
+  var overlay = document.getElementById('overlay');
+  var drawer = document.getElementById('drawer');
+  var cartList = document.getElementById('cartList');
+  var cartCount = document.getElementById('cartCount');
+  var cartSum = document.getElementById('cartSum');
+  var headerTotal = document.getElementById('headerTotal');
+  var checkoutBtn = document.getElementById('checkoutBtn');
+  var clearBtn = document.getElementById('clearBtn');
+  var toast = document.getElementById('toast');
+
+  var toastTimer;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+  }
+
+  function openCart(){ overlay.classList.add('open'); drawer.classList.add('open'); renderCart(); }
+  function closeCart(){ overlay.classList.remove('open'); drawer.classList.remove('open'); }
+
+  document.getElementById('cartBtn').onclick = openCart;
+  document.getElementById('closeCart').onclick = closeCart;
+  overlay.onclick = closeCart;
+
+  function totalSum(){ return cart.reduce(function(s,i){return s+i.price*i.qty;},0); }
+  function totalCount(){ return cart.reduce(function(s,i){return s+i.qty;},0); }
+
+  function renderCart(){
+    var sum = totalSum();
+    cartCount.textContent = totalCount();
+    cartSum.textContent = sum.toLocaleString('ru-RU')+' ₽';
+    headerTotal.textContent = sum.toLocaleString('ru-RU');
+    checkoutBtn.disabled = cart.length === 0;
+
+    if(!cart.length){
+      cartList.innerHTML = '<div class="empty"><div class="ic">🍕</div><p>Корзина пуста</p></div>';
+      return;
+    }
+
+    cartList.innerHTML = cart.map(function(it, i){
+      var icon = (PIZZAS.concat(DRINKS)).find(function(x){return x.type === it.type;});
+      var iconUrl = icon ? icon.icon : '';
+      return '<div class="row" data-type="'+it.type+'">' +
+        '<div class="row-thumb" style="background-image:'+iconUrl+';background-size:85%;background-repeat:no-repeat;background-position:center;"></div>' +
+        '<div class="row-main">' +
+          '<div class="row-head">' +
+            '<div><h4>'+it.name+'</h4><div class="u">'+it.price+' ₽ / шт</div></div>' +
+            '<button class="del" data-del="'+i+'">×</button>' +
+          '</div>' +
+          '<div class="row-foot">' +
+            '<div class="cnt">' +
+              '<button data-minus="'+i+'">−</button>' +
+              '<span class="q">'+it.qty+'</span>' +
+              '<button data-plus="'+i+'">+</button>' +
+            '</div>' +
+            '<div class="lt">'+(it.price*it.qty).toLocaleString('ru-RU')+' ₽</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  document.addEventListener('click', function(e){
+    var addBtn = e.target.closest('[data-add]');
+    if(addBtn){
+      var id = addBtn.dataset.id;
+      var found = cart.find(function(x){return x.id === id;});
+      if(found){ found.qty++; }
+      else { cart.push({ id:id, name:addBtn.dataset.name, price:+addBtn.dataset.price, type:addBtn.dataset.type, qty:1 }); }
+      renderCart();
+      showToast('✓ Добавлено: '+addBtn.dataset.name);
+      return;
+    }
+    var del = e.target.closest('[data-del]');
+    if(del){ cart.splice(+del.dataset.del,1); renderCart(); return; }
+    var plus = e.target.closest('[data-plus]');
+    if(plus){ cart[+plus.dataset.plus].qty++; renderCart(); return; }
+    var minus = e.target.closest('[data-minus]');
+    if(minus){
+      var i = +minus.dataset.minus;
+      cart[i].qty--;
+      if(cart[i].qty <= 0) cart.splice(i,1);
+      renderCart();
+    }
+  });
+
+  clearBtn.onclick = function(){
+    if(!cart.length) return;
+    cart = [];
+    renderCart();
+    showToast('✓ Корзина очищена');
+  };
+
+  /* ============================================================
+     ОФОРМЛЕНИЕ
+     ============================================================ */
+  var orders = [];
+
+  checkoutBtn.onclick = function(){
+    if(!cart.length) return;
+
+    var order = {
+      name: 'Гость',
+      addr: 'Адрес не указан',
+      items: cart.map(function(x){return {name:x.name, price:x.price, qty:x.qty};}),
+      total: totalSum(),
+      time: Date.now(),
+      code: 'HYDRA-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,4).toUpperCase()
+    };
+    orders.unshift(order);
+    cart = [];
+    renderCart();
+    renderOrders();
+    closeCart();
+    showToast('✓ Заказ оформлен · ' + order.code);
+  };
+
+  function renderOrders(){
+    var list = document.getElementById('ordersList');
+    if(!orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока заказов нет. Будьте первым!</div>';
+      return;
+    }
+    list.innerHTML = orders.map(function(o){
+      var mins = Math.max(1, Math.floor((Date.now()-o.time)/60000));
+      return '<div class="ord">' +
+        '<div class="ord-top">' +
+          '<div class="ord-name"><span class="av">'+o.name[0].toUpperCase()+'</span>'+o.name+'</div>' +
+          '<div class="ord-time">'+mins+' мин назад</div>' +
+        '</div>' +
+        '<div class="ord-addr">📍 '+o.addr+'</div>' +
+        '<div class="ord-items">' +
+          o.items.map(function(i){
+            return '<div class="ord-item"><span><span class="q">'+i.qty+'×</span>'+i.name+'</span><span>'+(i.price*i.qty)+' ₽</span></div>';
+          }).join('') +
+        '</div>' +
+        '<div class="ord-bot">' +
+          '<span class="ord-code">'+o.code+'</span>' +
+          '<span class="ord-total">'+o.total.toLocaleString('ru-RU')+' ₽</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  renderCart();
+  renderOrders();
+})();
+</script>
+
+</body>
+</html>
+       
+     </body>
   <html>
