@@ -883,3 +883,54 @@ renderCart();
 
 
 </html>
+ыыыыыыыыыыы
+<script>
+/* ===== ОФОРМЛЕНИЕ ЗАКАЗА (через сервер) ===== */
+(function(){
+  window.checkout = async function(cart, closeCartFn){
+    if (!cart || !cart.length) return;
+
+    const name = prompt('Ваше имя для заказа:', 'Гость');
+    if (name === null) return;
+
+    const cleanName = (name.trim() || 'Гость').slice(0, 24);
+
+    const payload = {
+      name: cleanName,
+      items: cart.map(i => ({
+        name: i.name,
+        price: i.price,
+        qty: i.qty
+      }))
+    };
+
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!data.ok){
+        alert('Ошибка: ' + (data.error || 'не удалось оформить заказ'));
+        return;
+      }
+
+      alert('На вас оформлен кредит');
+
+      // Очищаем корзину
+      cart.length = 0;
+      if (typeof closeCartFn === 'function') closeCartFn();
+
+      // Если есть функция рендера корзины — обновляем
+      if (window.renderCart) window.renderCart();
+
+    } catch (err) {
+      console.error(err);
+      alert('Нет связи с сервером');
+    }
+  };
+})();
+</script>
