@@ -1501,30 +1501,36 @@ html
 </script>
 html
 
+html
+
 <script>
-/* ===== ФИКС: подсветка новых заказов + код заказа ===== */
+/* ===== СТАБИЛЬНАЯ ЛЕНТА ЗАКАЗОВ: код + подсветка + без пропаданий ===== */
 (function(){
   const LS_KEY = 'hydra_orders_v1';
-  let lastCount = 0;
+
   let firstRender = true;
+  let lastIds = new Set();
 
-  /* --- Генерация кода --- */
-  function generateCode(){
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const block = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
-    return 'HYDRA-' + block(4) + '-' + block(2);
-  }
-
-  /* --- Читаем заказы --- */
+  /* ---- Чтение/запись ---- */
   function getOrders(){
-    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
-    catch(e){ return []; }
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch(e){ return []; }
   }
   function saveOrders(arr){
     try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e){}
   }
 
-  /* --- Присваиваем коды старым заказам без кода --- */
+  /* ---- Генератор кода ---- */
+  function genCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const b = n => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return 'HYDRA-' + b(4) + '-' + b(2);
+  }
+
+  /* ---- Дописываем код тем заказам, у кого его нет ---- */
   function ensureCodes(){
     const orders = getOrders();
     const used = new Set(orders.map(o => o.code).filter(Boolean));
@@ -1532,7 +1538,7 @@ html
     orders.forEach(o => {
       if (!o.code){
         let c;
-        do { c = generateCode(); } while (used.has(c));
+        do { c = genCode(); } while (used.has(c));
         used.add(c);
         o.code = c;
         changed = true;
@@ -1542,7 +1548,7 @@ html
     return orders;
   }
 
-  /* --- Время "N минут назад" --- */
+  /* ---- "N минут назад" ---- */
   function timeAgo(t){
     const m = Math.max(0, Math.floor((Date.now() - t) / 60000));
     if (m < 1) return 'только что';
@@ -1552,7 +1558,7 @@ html
     return Math.floor(h / 24) + ' дн назад';
   }
 
-  /* --- Собственный рендер ленты --- */
+  /* ---- Главный рендер ---- */
   function renderOrders(){
     const list = document.getElementById('ordersList');
     if (!list) return;
@@ -1561,18 +1567,24 @@ html
 
     if (!orders.length){
       list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
-      lastCount = 0;
+      lastIds = new Set();
       return;
     }
 
-    const isNew = orders.length > lastCount && !firstRender;
+    // Определяем, какие id новые
+    const currentIds = new Set(orders.map(o => o.id));
+    const freshIds = new Set();
+    if (!firstRender){
+      currentIds.forEach(id => { if (!lastIds.has(id)) freshIds.add(id); });
+    }
     firstRender = false;
+    lastIds = currentIds;
 
-    list.innerHTML = orders.map((o, idx) => {
+    list.innerHTML = orders.map(o => {
       const total = o.items.reduce((s,i) => s + i.price * i.qty, 0);
-      const fresh = (isNew && idx === 0) ? ' fresh' : '';
+      const fresh = freshIds.has(o.id) ? ' fresh' : '';
       return `
-        <div class="order-card${fresh}">
+        <div class="order-card${fresh}" data-order-id="${o.id}">
           <div class="order-top">
             <div class="order-name">
               <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
@@ -1595,11 +1607,9 @@ html
         </div>
       `;
     }).join('');
-
-    lastCount = orders.length;
   }
 
-  /* --- Стили для кода --- */
+  /* ---- Стили ---- */
   const style = document.createElement('style');
   style.textContent = `
     .order-card.fresh {
@@ -1628,37 +1638,37 @@ html
   `;
   document.head.appendChild(style);
 
-  /* --- Публикуем функцию наружу, чтобы другие скрипты могли её звать --- */
+  /* ---- Отдаём наружу, чтобы основной скрипт мог звать ---- */
   window.renderOrdersList = renderOrders;
 
-  /* --- Отслеживаем появление новых заказов каждые 2 сек --- */
-  let prevRaw = localStorage.getItem(LS_KEY);
-  setInterval(() => {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw !== prevRaw){
-      prevRaw = raw;
-      renderOrders();
-    } else {
-      // Обновляем только "N минут назад"
+  /* ---- Простой наблюдатель: рендерим только когда данные изменились ---- */
+  let lastRaw = '';
+  function tick(){
+    const raw = localStorage.getItem(LS_KEY) || '';
+    if (raw !== lastRaw){
+      lastRaw = raw;
       renderOrders();
     }
-  }, 2000);
+  }
 
-  /* --- Также следим за событием storage (из других вкладок) --- */
+  setInterval(tick, 1000);
+
   window.addEventListener('storage', e => {
     if (e.key === LS_KEY){
-      prevRaw = e.newValue;
+      lastRaw = e.newValue || '';
       renderOrders();
     }
   });
 
-  /* --- Первый рендер --- */
+  /* ---- Первый рендер ---- */
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', renderOrders);
+    document.addEventListener('DOMContentLoaded', () => {
+      lastRaw = localStorage.getItem(LS_KEY) || '';
+      renderOrders();
+    });
   } else {
+    lastRaw = localStorage.getItem(LS_KEY) || '';
     renderOrders();
   }
 })();
-  <body>
-    
 </script>
