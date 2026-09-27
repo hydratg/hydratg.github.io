@@ -1216,6 +1216,85 @@ html
 })();
 </script>
 </body>
-  html
+html
 
 <script>
+/* ===== УБИРАЕМ ЛИШНИЕ КОРЗИНЫ — оставляем только одну ===== */
+(function(){
+  function dedupe(){
+    const carts = document.querySelectorAll('.cart');
+    const overlays = document.querySelectorAll('.overlay');
+
+    if (carts.length <= 1 && overlays.length <= 1) return;
+
+    console.log('[HYDRA] Найдено корзин:', carts.length, 'оверлеев:', overlays.length);
+
+    // Оставляем ту корзину, у которой внутри есть #cartList
+    let keepCart = null;
+    carts.forEach(c => {
+      if (!keepCart && c.querySelector('#cartList')) keepCart = c;
+    });
+    if (!keepCart) keepCart = carts[0];
+
+    // Удаляем остальные корзины
+    carts.forEach(c => {
+      if (c !== keepCart){
+        c.remove();
+        console.log('[HYDRA] Удалена лишняя корзина');
+      }
+    });
+
+    // Оставляем один overlay — первый
+    overlays.forEach((o, i) => {
+      if (i > 0){
+        o.remove();
+        console.log('[HYDRA] Удалён лишний overlay');
+      }
+    });
+
+    // Убираем дублирующиеся тосты
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach((t, i) => { if (i > 0) t.remove(); });
+  }
+
+  // Запускаем несколько раз — чтобы поймать корзину, даже если её создаёт другой скрипт позже
+  function run(){
+    dedupe();
+    setTimeout(dedupe, 50);
+    setTimeout(dedupe, 200);
+    setTimeout(dedupe, 500);
+    setTimeout(dedupe, 1000);
+    setTimeout(dedupe, 2000);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+
+  // Также следим за DOM — если кто-то добавит ещё корзину, удалим её сразу
+  const observer = new MutationObserver(function(mutations){
+    let needCheck = false;
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType === 1){
+          if (node.classList && (node.classList.contains('cart') || node.classList.contains('overlay') || node.classList.contains('toast'))){
+            needCheck = true;
+          }
+          if (node.querySelector && node.querySelector('.cart, .overlay, .toast')){
+            needCheck = true;
+          }
+        }
+      });
+    });
+    if (needCheck) dedupe();
+  });
+
+  window.addEventListener('load', function(){
+    observer.observe(document.body, { childList: true, subtree: true });
+    // Отключаем наблюдение через 10 секунд — чтобы не тратить ресурсы
+    setTimeout(() => observer.disconnect(), 10000);
+  });
+})();
+</script>
