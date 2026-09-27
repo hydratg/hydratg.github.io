@@ -4447,4 +4447,47 @@ body{
     });
 })();
 </script> 
-  </body>
+  </body>   <script>
+(function(){
+  var found = [];
+
+  // Ищем всё, что похоже на новые товары
+  ['Гавайская','BBQ','Четыре сыра','Вегетарианская','Кофе Латте','hawaii','bbq','four-cheese','veggie','coffee']
+    .forEach(function(name){
+      var all = document.querySelectorAll('*');
+      all.forEach(function(el){
+        if (el.children.length === 0 && (el.textContent || '').indexOf(name) !== -1){
+          found.push(name + ' → <' + el.tagName + '>');
+        }
+      });
+    });
+
+  alert('Найдено упоминаний: ' + found.length + '\n\n' + found.slice(0, 20).join('\n'));
+
+  // Пробуем удалить по всем возможным селекторам
+  var removed = 0;
+
+  // 1. По data-type
+  ['pizza-hawaii','pizza-bbq','pizza-four-cheese','pizza-veggie','drink-coffee',
+   'hawaii','bbq','four-cheese','veggie','coffee']
+    .forEach(function(t){
+      document.querySelectorAll('[data-type="' + t + '"]').forEach(function(el){
+        el.remove(); removed++;
+      });
+    });
+
+  // 2. По классам карточек с этими словами
+  ['Гавайская','BBQ Чикен','Четыре сыра','Вегетарианская','Кофе Латте']
+    .forEach(function(name){
+      document.querySelectorAll('article, .card, .product, .item, [class*="card"], [class*="product"]')
+        .forEach(function(c){
+          if ((c.textContent || '').indexOf(name) !== -1){
+            c.remove(); removed++;
+          }
+        });
+    });
+
+  alert('Удалено элементов: ' + removed);
+})();
+</script>
+  <body></body>
