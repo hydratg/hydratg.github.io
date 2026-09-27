@@ -230,9 +230,23 @@ body {
   letter-spacing: 4px; text-transform: uppercase;
   color: var(--neon-2); font-weight: 700; margin-bottom: 18px;
 }
-.about-content h2 { font-size: 46px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 22px; }
+.about-content h2 { font-size: 46px; font-weight: 900; letter-spacing: -2px; line-height: 1.05; margin-bottom: 22px; }
 .about-content h2 .hl { color: var(--neon); }
+.about-content h2 .pink-txt { color: var(--neon-2); }
 .about-content p { color: #b0b0c0; font-size: 16px; line-height: 1.7; margin-bottom: 14px; }
+.about-content .big-title {
+  display: block;
+  font-size: 54px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--neon), var(--neon-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+  text-shadow: 0 0 40px rgba(0, 255, 213, 0.3);
+}
 .about-badges { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .badge-row {
   display: flex; align-items: center; gap: 16px;
@@ -455,6 +469,7 @@ body {
   .hero-emoji { font-size: 140px; }
   .about-panel { grid-template-columns: 1fr; padding: 40px 30px; gap: 30px; }
   .about-content h2 { font-size: 34px; }
+  .about-content .big-title { font-size: 40px; }
   .section-head-new h2 { font-size: 32px; }
 }
 @media (max-width: 600px) {
@@ -572,13 +587,5 @@ body {
     <div class="wrap">
       <div class="section-head-new">
         <h2><span class="slash">//</span> НАПИТКИ <span class="pink">К ПИЦЦЕ</span></h2>
-        <div class="hint">Ледяные и освежающие · идеально к острой пицце</div>
-      </div>
-      <div class="products-grid">
-        <article class="product" data-type="drink-cola">
-          <div class="product-thumb"></div>
-          <div class="product-body">
-            <div class="product-cat">Напиток · 0.5 л</div>
-            <h3>Кока-Кола</h3>
-            <p class="product-desc">Классическая ледяная Кока-К
+        <div class="hint">
 
