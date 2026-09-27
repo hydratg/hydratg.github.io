@@ -95,6 +95,22 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
 .badge:nth-child(3) .badge-icon{background:rgba(255,200,0,.1);border-color:rgba(255,200,0,.3)}
 .badge-text h4{font-size:15px;font-weight:700;margin-bottom:2px}
 .badge-text p{font-size:13px;color:var(--muted)}
+.orders-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.orders-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:#5a5a6a;font-size:16px;border:1px dashed var(--line);border-radius:20px;background:var(--card)}
+.order-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;transition:border-color .2s,transform .2s;animation:orderIn .4s ease}
+.order-card:hover{border-color:rgba(0,255,213,.35);transform:translateY(-3px)}
+@keyframes orderIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.order-name{font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px}
+.order-name .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--neon2));display:grid;place-items:center;color:#0a0a0f;font-weight:900;font-size:15px}
+.order-time{font-size:12px;color:var(--muted)}
+.order-items{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.order-item{display:flex;justify-content:space-between;font-size:14px;color:#c0c0d0}
+.order-item .qty{color:var(--neon);font-weight:700;margin-right:6px}
+.order-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px dashed var(--line)}
+.order-status{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--neon2);background:rgba(255,45,117,.1);border:1px solid rgba(255,45,117,.3);padding:4px 12px;border-radius:20px}
+.order-status.done{color:var(--neon);background:rgba(0,255,213,.1);border-color:rgba(0,255,213,.3)}
+.order-total{font-size:20px;font-weight:900;color:var(--neon)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:200;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
 .overlay.open{opacity:1;visibility:visible}
 .cart{position:fixed;top:0;right:0;height:100%;width:100%;max-width:460px;background:#0d0d14;border-left:1px solid var(--line);z-index:210;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-30px 0 80px rgba(0,255,213,.08)}
@@ -172,6 +188,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
     <nav class="nav-menu">
       <a href="#pizza">Пицца</a>
       <a href="#drinks">Напитки</a>
+      <a href="#orders">Заказы</a>
       <a href="#about">О нас</a>
     </nav>
     <button class="cart-trigger" id="cartBtn" type="button">🛒 Корзина · <span id="headerTotal">0</span> ₽</button>
@@ -317,6 +334,18 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
     </div>
   </section>
 
+  <section class="section" id="orders">
+    <div class="wrap">
+      <div class="section-head">
+        <h2><span class="slash">//</span> ЧУЖИЕ <span class="pink">ЗАКАЗЫ</span></h2>
+        <div class="hint">Живая лента заказов · обновляется автоматически</div>
+      </div>
+      <div class="orders-list" id="ordersList">
+        <div class="orders-empty">Загрузка заказов…</div>
+      </div>
+    </div>
+  </section>
+
   <section class="about" id="about">
     <div class="wrap">
       <div class="about-panel">
@@ -360,15 +389,100 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
     <div class="foot-links">
       <a href="#pizza">Пицца</a>
       <a href="#drinks">Напитки</a>
+      <a href="#orders">Заказы</a>
       <a href="#about">О нас</a>
     </div>
-    <h4>© 2026 HYDRA BLACK — HYDRA PIZZA IN SPB · Лучшая пицца в городе</h4>
+    <div>© 2025 HYDRA BLACK — HYDRA PIZZA IN SPB · Лучшая пицца в городе</div>
   </div>
 </footer>
 
 <script>
 (function(){
   var cart=[];
+  var ordersFeed=[];
+
+  var FAKE_NAMES=['Алексей','Мария','Дмитрий','Ольга','Иван','Екатерина','Сергей','Анна','Никита','Полина','Максим','Дарья'];
+  var FAKE_ITEMS=[
+    {name:'Пеперонни',price:599},
+    {name:'Маргарита',price:499},
+    {name:'Кока-Кола',price:149},
+    {name:'Апельсиновый сок',price:199},
+    {name:'Спрайт',price:149},
+    {name:'Лимонад',price:179},
+    {name:'Моча',price:99}
+  ];
+  var STATUSES=['Готовится','В пути','Доставлен'];
+
+  function randomName(){return FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];}
+  function randomOrder(){
+    var items=[];var n=1+Math.floor(Math.random()*3);
+    for(var i=0;i<n;i++){
+      var src=FAKE_ITEMS[Math.floor(Math.random()*FAKE_ITEMS.length)];
+      var exists=items.find(function(x){return x.name===src.name;});
+      if(exists){exists.qty++;}
+      else{items.push({name:src.name,price:src.price,qty:1+Math.floor(Math.random()*2)});}
+    }
+    return {
+      name:randomName(),
+      items:items,
+      time:Date.now()-Math.floor(Math.random()*50)*60000,
+      status:STATUSES[Math.floor(Math.random()*STATUSES.length)]
+    };
+  }
+  function addOrderToFeed(order){
+    ordersFeed.unshift(order);
+    if(ordersFeed.length>12)ordersFeed.pop();
+    renderOrders();
+  }
+  function timeAgo(t){
+    var m=Math.max(1,Math.floor((Date.now()-t)/60000));
+    if(m<60)return m+' мин назад';
+    var h=Math.floor(m/60);
+    return h+' ч назад';
+  }
+  function renderOrders(){
+    var list=document.getElementById('ordersList');
+    if(!list)return;
+    if(!ordersFeed.length){
+      list.innerHTML='<div class="orders-empty">Пока никто ничего не заказал. Будьте первым!</div>';
+      return;
+    }
+    list.innerHTML=ordersFeed.map(function(o){
+      var sum=o.items.reduce(function(s,i){return s+i.price*i.qty;},0);
+      var done=o.status==='Доставлен'?' done':'';
+      return '<div class="order-card">'+
+        '<div class="order-top">'+
+          '<div class="order-name"><span class="avatar">'+o.name.charAt(0)+'</span>'+o.name+'</div>'+
+          '<div class="order-time">'+timeAgo(o.time)+'</div>'+
+        '</div>'+
+        '<div class="order-items">'+
+          o.items.map(function(i){
+            return '<div class="order-item"><span><span class="qty">'+i.qty+'×</span>'+i.name+'</span><span>'+(i.price*i.qty)+' ₽</span></div>';
+          }).join('')+
+        '</div>'+
+        '<div class="order-bottom">'+
+          '<span class="order-status'+done+'">'+o.status+'</span>'+
+          '<span class="order-total">'+sum.toLocaleString('ru-RU')+' ₽</span>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+  function seedOrders(){
+    for(var i=0;i<6;i++){
+      ordersFeed.push(randomOrder());
+    }
+    ordersFeed.sort(function(a,b){return b.time-a.time;});
+    renderOrders();
+    setInterval(function(){
+      if(Math.random()<0.5){
+        addOrderToFeed(randomOrder());
+      } else {
+        // обновляем только время
+        renderOrders();
+      }
+    },7000);
+  }
+
   var overlay=document.createElement('div');
   overlay.className='overlay';
   document.body.appendChild(overlay);
@@ -451,7 +565,13 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
 
   document.getElementById('checkoutBtn').addEventListener('click',function(){
     if(!cart.length)return;
-showToast('На вас оформлен кредит');
+    showToast('На вас оформлен кредит');
+    addOrderToFeed({
+      name:'Вы',
+      items:cart.map(function(i){return {name:i.name,price:i.price,qty:i.qty};}),
+      time:Date.now(),
+      status:'Оформлен'
+    });
     cart=[];
     render();
     closeCart();
@@ -499,6 +619,7 @@ showToast('На вас оформлен кредит');
   });
 
   render();
+  seedOrders();
 })();
 </script>
 
