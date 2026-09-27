@@ -5277,3 +5277,103 @@ body{
   });
 })();
 </script>
+<body><script>
+(function(){
+  function svg(s){return 'url("data:image/svg+xml;utf8,'+encodeURIComponent(s)+'")'}
+
+  var pizza = function(sauce, cheese, tops){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<circle cx="100" cy="100" r="92" fill="#6b3a1a"/>';
+    s+='<circle cx="100" cy="100" r="87" fill="#a86a2a"/>';
+    s+='<circle cx="100" cy="100" r="82" fill="#d8a04a"/>';
+    s+='<circle cx="100" cy="100" r="74" fill="'+sauce+'"/>';
+    cheese.forEach(function(c){s+='<ellipse cx="'+c[0]+'" cy="'+c[1]+'" rx="'+c[2]+'" ry="'+c[3]+'" fill="#f5d878" opacity="0.94"/>'});
+    tops.forEach(function(t){s+='<circle cx="'+t.x+'" cy="'+t.y+'" r="'+t.r+'" fill="'+t.c+'"/>'});
+    s+='</svg>';
+    return svg(s);
+  };
+
+  var bottle = function(color, dark, label){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<rect x="76" y="8" width="48" height="18" rx="4" fill="'+label+'"/>';
+    s+='<path d="M78 26 L122 26 L128 60 L72 60 Z" fill="'+dark+'"/>';
+    s+='<path d="M70 60 Q60 70 60 90 L60 172 Q60 184 72 184 L128 184 Q140 184 140 172 L140 90 Q140 70 130 60 Z" fill="'+color+'"/>';
+    s+='<path d="M60 100 Q90 96 100 100 Q110 104 140 100 L140 148 Q110 152 100 148 Q90 144 60 148 Z" fill="'+label+'"/>';
+    s+='</svg>';
+    return svg(s);
+  };
+
+  var glass = function(fill, top){
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">';
+    s+='<path d="M58 62 L142 62 L130 174 L70 174 Z" fill="'+fill+'"/>';
+    s+='<ellipse cx="100" cy="62" rx="42" ry="6" fill="'+top+'"/>';
+    s+='<path d="M52 48 L148 48 L134 178 L66 178 Z" fill="none" stroke="#fff" stroke-width="2" opacity="0.55"/>';
+    s+='</svg>';
+    return svg(s);
+  };
+
+  var P = [
+    ['Гавайская',649,'620 г','Курица, ананасы, моцарелла.',pizza('#d9822b',[[65,72,30,22],[135,82,28,20]],[{x:70,y:75,r:9,c:'#ffe97a'},{x:105,y:105,r:8,c:'#d94a4a'}])],
+    ['BBQ Чикен',699,'640 г','Курица, бекон, лук, соус барбекю.',pizza('#5a2308',[[70,72,30,22],[130,82,28,20]],[{x:75,y:70,r:12,c:'#d94020'},{x:105,y:105,r:10,c:'#d94020'}])],
+    ['Четыре сыра',749,'560 г','Моцарелла, пармезан, дорблю, чеддер.',pizza('#e0c070',[[60,68,34,26],[140,80,32,24]],[{x:55,y:70,r:5,c:'#fff8d8'},{x:140,y:85,r:5,c:'#f0e8c8'}])],
+    ['Вегетарианская',549,'520 г','Перец, грибы, черри, оливки.',pizza('#c8361e',[[70,72,30,22],[130,82,28,20]],[{x:70,y:70,r:7,c:'#d94a4a'},{x:80,y:138,r:7,c:'#3a8a2a'}])],
+    ['Дьябло',699,'580 г','Острая пепперони, халапеньо, чили.',pizza('#7a1a08',[[70,72,30,22],[130,82,28,20]],[{x:75,y:70,r:11,c:'#d0201a'},{x:60,y:110,r:7,c:'#3a8a2a'}])],
+    ['Мясная',799,'680 г','Пепперони, бекон, ветчина, курица.',pizza('#8a1e10',[[70,72,30,22],[130,82,28,20]],[{x:70,y:70,r:10,c:'#b0301a'},{x:105,y:105,r:9,c:'#8a1a08'}])],
+    ['Карбонара',729,'600 г','Бекон, сливочный соус, пармезан, яйцо.',pizza('#f0e0a0',[[65,72,32,24],[135,82,30,22]],[{x:70,y:70,r:8,c:'#a8481a'},{x:105,y:105,r:7,c:'#f0c040'}])],
+    ['Сырная',599,'540 г','Моцарелла, чеддер, пармезан.',pizza('#f0c050',[[65,72,32,24],[135,82,30,22]],[{x:70,y:70,r:4,c:'#fff8d8'},{x:135,y:85,r:4,c:'#fff8d8'}])]
+  ];
+
+  var D = [
+    ['Кофе Латте',189,'0.3 л','Двойной эспрессо с молоком.',glass('#6b4520','#3a2010')],
+    ['Апельсиновый сок',199,'0.4 л','Свежевыжатый апельсиновый.',bottle('#c05a10','#a84a0a','#f0a838')],
+    ['Спрайт',149,'0.5 л','Освежающий лимон-лайм.',bottle('#1a5a2a','#1a6a2a','#3aaa4a')],
+    ['Лимонад',179,'0.4 л','Домашний лимонад с мятой.',glass('#e8e050','#f8f070')],
+    ['Фанта',149,'0.5 л','Апельсиновая газировка.',bottle('#e88010','#c86008','#ffa838')],
+    ['Вода',99,'0.5 л','Минеральная без газа.',bottle('#a0c8e0','#80b0d0','#ffffff')]
+  ];
+
+  function card(name, price, w, desc, icon, isPizza){
+    var d = document.createElement('div');
+    d.className = 'product card';
+    d.style.cssText = 'background:linear-gradient(160deg,#1a0f18,#0a0608);border:1px solid #2a1a26;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;color:#fff;';
+    d.innerHTML =
+      '<div style="aspect-ratio:16/11;background:#0a0608;background-image:'+icon+';background-repeat:no-repeat;background-position:center;background-size:88%;"></div>' +
+      '<div style="padding:22px;display:flex;flex-direction:column;flex:1;">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#ff7a1a;margin-bottom:8px;">'+(isPizza?'ПИЦЦА · 30 СМ':'НАПИТОК')+'</div>' +
+        '<h3 style="font-size:22px;font-weight:800;margin-bottom:8px;">'+name+'</h3>' +
+        '<p style="color:#8a7080;font-size:14px;margin-bottom:20px;flex:1;">'+desc+'</p>' +
+        '<div style="display:flex;justify-content:space-between;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #2a1a26;">' +
+          '<div style="font-size:28px;font-weight:900;">'+price+'<small style="font-size:14px;color:#ff7a1a;margin-left:2px;">₽</small></div>' +
+          '<div style="font-size:12px;color:#8a7080;padding:5px 12px;background:rgba(255,255,255,.03);border-radius:100px;border:1px solid #2a1a26;">'+w+'</div>' +
+        '</div>' +
+        '<button data-add data-name="'+name+'" data-price="'+price+'" style="width:100%;padding:14px;border-radius:12px;border:1.5px solid #ff7a1a;background:transparent;color:#ff7a1a;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit;">+ В корзину</button>' +
+      '</div>';
+    return d;
+  }
+
+  function add(){
+    var pg = document.querySelector('#pizza .grid, #pizza [class*="grid"]');
+    var dg = document.querySelector('#drinks .grid, #drinks [class*="grid"]');
+    if (!pg) pg = document.querySelector('.grid, [class*="grid"]');
+    if (!dg) dg = pg;
+
+    if (pg && !pg.dataset.hp){
+      P.forEach(function(x){ pg.appendChild(card(x[0],x[1],x[2],x[3],x[4],true)); });
+      pg.dataset.hp = '1';
+    }
+    if (dg && !dg.dataset.hd){
+      D.forEach(function(x){ dg.appendChild(card(x[0],x[1],x[2],x[3],x[4],false)); });
+      dg.dataset.hd = '1';
+    }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', add);
+  } else { add(); }
+  setTimeout(add, 1000);
+})();
+</script>
+  <html>
+    
+  </html>
+</body>
