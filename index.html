@@ -1445,63 +1445,15 @@ html
       });
     }
   });
-
-  // ---------- Оформление заказа ----------
-  window.addEventListener('load', function(){
-    const btn = document.getElementById('checkoutBtn');
-    if (!btn) return;
-    const fresh = btn.cloneNode(true);
-    btn.parentNode.replaceChild(fresh, btn);
-
-    fresh.addEventListener('click', function(){
-      const cart = getCart();
-      if (!cart.length) return;
-
-      const name = prompt('Ваше имя для заказа:', 'Гость');
-      if (name === null) return;
-
-      const order = {
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
-        name: (name.trim() || 'Гость').slice(0, 24),
-        items: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty })),
-        time: Date.now(),
-        status: 'Оформлен'
-      };
-
-      // Сохраняем в ленту заказов
-      let orders = [];
-      try { orders = JSON.parse(localStorage.getItem('hydra_orders_v1')) || []; } catch(e){}
-      orders.unshift(order);
-      if (orders.length > 200) orders.length = 200;
-      try { localStorage.setItem('hydra_orders_v1', JSON.stringify(orders)); } catch(e){}
-
-      alert('На вас оформлен кредит');
-
-      // Очищаем корзину
-      setCart([]);
-      renderCartUI();
-      document.querySelector('.cart')?.classList.remove('open');
-      document.querySelector('.overlay')?.classList.remove('open');
-
-      // Обновляем ленту, если есть
-      if (typeof window.renderOrdersList === 'function') window.renderOrdersList();
-    });
-  });
-
-  // ---------- Первый рендер ----------
-  renderCartUI();
-})();
-</script>
-html
+  html
 
 <script>
-/* ===== HYDRA BLACK — корзина + заказы + адрес + защита от 2-й корзины ===== */
+/* ===== HYDRA BLACK — корзина + заказы + адрес + авто-обновление ленты ===== */
 (function(){
   const CART_KEY = 'hydra_cart_v1';
   const ORDERS_KEY = 'hydra_orders_v1';
   const $ = id => document.getElementById(id);
 
-  /* ---------- Хранилище ---------- */
   function getCart(){
     try { const r = localStorage.getItem(CART_KEY); const a = r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
     catch(e){ return []; }
@@ -1544,7 +1496,7 @@ html
     toastTimer = setTimeout(()=>toast.classList.remove('show'), 1800);
   }
 
-  /* ---------- Открытие/закрытие ---------- */
+  /* ---------- Открытие / закрытие ---------- */
   function openCart(){
     keepOnlyOneCart();
     const p = document.querySelector('.cart');
@@ -1600,7 +1552,14 @@ html
       </div>`).join('');
   }
 
-  /* ---------- Рендер заказов ---------- */
+  /* ---------- Рендер заказов (ищем контейнер по РАЗНЫМ id) ---------- */
+  function findOrdersContainer(){
+    return $('ordersList')
+        || $('orders')
+        || document.querySelector('.orders-list')
+        || document.querySelector('[data-orders]');
+  }
+
   function timeAgo(t){
     const m = Math.max(0, Math.floor((Date.now()-t)/60000));
     if (m<1) return 'только что';
@@ -1609,9 +1568,13 @@ html
     if (h<24) return h+' ч назад';
     return Math.floor(h/24)+' дн назад';
   }
+
   function renderOrders(){
-    const list = $('ordersList');
-    if (!list) return;
+    const list = findOrdersContainer();
+    if (!list){
+      // На случай, если контейнер ещё не отрисован
+      return;
+    }
 
     const orders = getOrders();
     const used = new Set(orders.map(o=>o.code).filter(Boolean));
@@ -1658,7 +1621,6 @@ html
 
   /* ---------- Обработчик кликов ---------- */
   document.addEventListener('click', function(e){
-    /* Добавить товар */
     const addBtn = e.target.closest('.add-btn, [data-add]');
     if (addBtn){
       e.preventDefault();
@@ -1700,7 +1662,7 @@ html
       setCart([]); renderCart(); showToast('Корзина очищена'); return;
     }
 
-    /* ОФОРМИТЬ ЗАКАЗ (с адресом) */
+    /* ОФОРМИТЬ ЗАКАЗ */
     if (e.target.closest('#checkoutBtn')){
       const cart = getCart();
       if (!cart.length) return;
@@ -1730,7 +1692,7 @@ html
 
       setCart([]);
       renderCart();
-      renderOrders();
+      renderOrders();          // ← сразу рисуем ленту
       showToast('На вас оформлен кредит');
       closeCart();
       return;
@@ -1759,13 +1721,25 @@ html
   `;
   document.head.appendChild(st);
 
+  /* ---------- Периодическое обновление ленты ---------- */
+  let lastRaw = '';
+  function tick(){
+    const raw = localStorage.getItem(ORDERS_KEY) || '';
+    if (raw !== lastRaw){
+      lastRaw = raw;
+      renderOrders();
+    }
+  }
+
   /* ---------- Старт ---------- */
   function init(){
     keepOnlyOneCart();
     renderCart();
     renderOrders();
+
     setInterval(keepOnlyOneCart, 300);
-    setInterval(renderOrders, 30000);
+    setInterval(tick, 400);           // следим за изменениями и рисуем
+    setInterval(renderOrders, 30000); // обновляем «N минут назад»
   }
   if (document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init);
@@ -1775,8 +1749,9 @@ html
 
   window.addEventListener('storage', function(e){
     if (e.key === CART_KEY) renderCart();
-    if (e.key === ORDERS_KEY) renderOrders();
+    if (e.key === ORDERS_KEY){ lastRaw = e.newValue || ''; renderOrders(); }
   });
 })();
 </script>
 
+  
