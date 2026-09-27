@@ -8352,7 +8352,150 @@ footer{padding:40px 0;border-top:1px solid #3a2010;color:#8a5a30;font-size:13px;
   .card .price{ font-size:18px !important; }
   .grid{ grid-template-columns:repeat(2,1fr) !important; gap:12px !important; }
   .card .add{ font-size:10px !important; padding:10px 12px !important; letter-spacing:1px !important; }
+
+  <style>
+/* ============================================================
+   ФИКС ПУСТЫХ И РАСТЯНУТЫХ КАРТОЧЕК
+   ============================================================ */
+
+/* 1. Жёстко ограничиваем высоту карточек */
+#pizzaGrid > *,
+#drinksGrid > *,
+.grid > *,
+[id*="Grid"] > *,
+#hydraPizzaGrid > *,
+#hydraDrinksGrid > *{
+  height:auto !important;
+  min-height:0 !important;
+  max-height:520px !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  border-radius:20px !important;
+  background:linear-gradient(160deg,#2a1508,#1a0d05) !important;
+  border:1px solid #3a2010 !important;
+}
+
+/* 2. Верхний блок с фото — фиксированные размеры */
+#pizzaGrid > * > *:first-child,
+#drinksGrid > * > *:first-child,
+.grid > * > *:first-child,
+[id*="Grid"] > * > *:first-child{
+  width:100% !important;
+  height:200px !important;
+  min-height:200px !important;
+  max-height:200px !important;
+  flex-shrink:0 !important;
+  background-color:#150a03 !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:70% !important;
+  border-radius:20px 20px 0 0 !important;
+  position:relative !important;
+  display:block !important;
+}
+
+/* 3. Тело карточки — компактное */
+#pizzaGrid > * > *:last-child,
+#drinksGrid > * > *:last-child,
+.grid > * > *:last-child,
+[id*="Grid"] > * > *:last-child{
+  padding:16px 18px 18px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  flex:0 0 auto !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+
+/* 4. Скрываем "призрачные" пустые заголовки */
+#pizzaGrid > * > *:last-child > *:empty,
+#drinksGrid > * > *:last-child > *:empty{
+  display:none !important;
+}
+
+/* 5. Если карточка совсем пустая — уменьшаем её */
+[id*="Grid"] > *:not(:has(*)){
+  display:none !important;
+}
+
+/* 6. Название и описание не растягиваются */
+#pizzaGrid h3, #drinksGrid h3,
+.grid h3{
+  font-size:18px !important;
+  margin:0 0 6px 0 !important;
+  line-height:1.15 !important;
+}
+#pizzaGrid p, #drinksGrid p, .grid p{
+  font-size:12px !important;
+  margin:0 0 12px 0 !important;
+  line-height:1.4 !important;
+}
+
+/* 7. Цена — компактная */
+#pizzaGrid .price, #drinksGrid .price{
+  font-size:22px !important;
+}
+#pizzaGrid .price small, #drinksGrid .price small{
+  font-size:12px !important;
+}
+
+/* 8. Вес — компактный */
+#pizzaGrid .weight, #drinksGrid .weight{
+  font-size:10px !important;
+  padding:5px 10px !important;
+}
+
+/* 9. Кнопка — компактная */
+#pizzaGrid button, #drinksGrid button,
+.grid button[data-add]{
+  padding:11px 14px !important;
+  font-size:11px !important;
+  border-radius:100px !important;
+}
+
+/* 10. Сетка — компактнее */
+#pizzaGrid, #drinksGrid, .grid{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr)) !important;
+  gap:18px !important;
+  align-items:start !important;
+}
+
+/* 11. Мобильные */
+@media(max-width:640px){
+  #pizzaGrid > * > *:first-child,
+  #drinksGrid > * > *:first-child{
+    height:150px !important;
+    min-height:150px !important;
+    max-height:150px !important;
+  }
+  #pizzaGrid, #drinksGrid, .grid{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:12px !important;
+  }
 }
 </style>
+
+<script>
+/* Убираем совсем пустые карточки */
+(function(){
+  function cleanEmpty(){
+    document.querySelectorAll('.grid > *, [id*="Grid"] > *').forEach(function(card){
+      var text = (card.textContent || '').trim();
+      var hasImg = card.querySelector('[style*="background-image"]');
+      /* Если карточка пустая и без картинки — удаляем */
+      if (!text && !hasImg){
+        card.remove();
+      }
+    });
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', cleanEmpty);
+  } else { cleanEmpty(); }
+  setTimeout(cleanEmpty, 1500);
+  setTimeout(cleanEmpty, 3500);
+})();
+</script>
   </body>
   </html>
