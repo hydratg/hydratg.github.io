@@ -1,3 +1,94 @@
+json
+
+{
+  "name": "hydra-black-pizza",
+  "version": "1.0.0",
+  "description": "HYDRA BLACK pizzeria with real-time orders",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
+
+js
+
+// server.js — сервер HYDRA BLACK
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// В памяти сервера — только реальные заказы от живых людей
+const orders = [];
+const MAX_ORDERS = 200;
+
+// --- REST API ---
+
+// Получить список заказов
+app.get('/api/orders', (req, res) => {
+  res.json(orders);
+});
+
+// Создать заказ
+app.post('/api/orders', (req, res) => {
+  const { name, items } = req.body || {};
+
+  if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    return res.status(400).json({ error: 'Укажите имя' });
+  }
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Пустой заказ' });
+  }
+
+  const order = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    name: name.trim().slice(0, 24),
+    items: items.map(i => ({
+      name: String(i.name).slice(0, 40),
+      price: Math.max(0, parseInt(i.price, 10) || 0),
+      qty: Math.max(1, Math.min(50, parseInt(i.qty, 10) || 1))
+    })),
+    time: Date.now(),
+    status: 'Оформлен'
+  };
+
+  orders.unshift(order);
+  if (orders.length > MAX_ORDERS) orders.length = MAX_ORDERS;
+
+  // Отправляем всем подключённым клиентам
+  io.emit('new-order', order);
+
+  console.log(`[${new Date().toLocaleTimeString('ru-RU')}] Заказ от "${order.name}": ${order.items.map(i => i.qty + '× ' + i.name).join(', ')}`);
+
+  res.json({ ok: true, order });
+});
+
+// --- WebSocket ---
+io.on('connection', (socket) => {
+  // Сразу отправляем актуальный список заказов
+  socket.emit('init-orders', orders);
+
+  socket.on('disconnect', () => {});
+});
+
+server.listen(PORT, () => {
+  console.log(`HYDRA BLACK работает: http://localhost:${PORT}`);
+});
+
+3️⃣ public/index.html
 html
 
 <!DOCTYPE html>
@@ -100,7 +191,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
 .orders-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:#5a5a6a;font-size:16px;border:1px dashed var(--line);border-radius:20px;background:var(--card)}
 .order-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;transition:border-color .2s,transform .2s;animation:orderIn .5s ease}
 .order-card:hover{border-color:rgba(0,255,213,.35);transform:translateY(-3px)}
-.order-card.fresh{border-color:var(--neon);box-shadow:0 0 30px rgba(0,255,213,.3)}
+.order-card.fresh{border-color:var(--neon);box-shadow:0 0 40px rgba(0,255,213,.35)}
 @keyframes orderIn{from{opacity:0;transform:translateY(-15px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
 .order-name{font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px}
@@ -114,6 +205,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
 .order-status.done{color:var(--neon);background:rgba(0,255,213,.1);border-color:rgba(0,255,213,.3)}
 .order-total{font-size:20px;font-weight:900;color:var(--neon)}
 .live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 10px var(--neon);margin-right:8px;animation:pulse 1.5s infinite;vertical-align:middle}
+.live-dot.off{background:#555;box-shadow:none;animation:none}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:200;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
 .overlay.open{opacity:1;visibility:visible}
 .cart{position:fixed;top:0;right:0;height:100%;width:100%;max-width:460px;background:#0d0d14;border-left:1px solid var(--line);z-index:210;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-30px 0 80px rgba(0,255,213,.08)}
@@ -222,7 +314,418 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background
   <section class="section" id="pizza">
     <div class="wrap">
       <div class="section-head">
-        <h2><span class="slash">//</span> ПИЦЦА <span class
+        <h2><span class="slash">//</span> ПИЦЦА <span class="pink">HYDRA</span></h2>
+        <div class="hint">Готовим на дровах · тесто 48 часов · свежие ингредиенты</div>
+      </div>
+      <div class="grid">
+        <article class="product" data-type="pizza-pepperoni">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Пицца · 30 см</div>
+            <h3>Пеперонни</h3>
+            <p class="product-desc">Острая пепперони, моцарелла, томатный соус, смесь итальянских трав.</p>
+            <div class="product-meta">
+              <div class="product-price">599<small>₽</small></div>
+              <div class="product-weight">570 г</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="pepperoni" data-name="Пеперонни" data-price="599" data-type="pizza-pepperoni">+ В корзину</button>
+          </div>
+        </article>
+
+        <article class="product" data-type="pizza-margherita">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Пицца · 30 см</div>
+            <h3>Маргарита</h3>
+            <p class="product-desc">Томаты, моцарелла, свежий базилик, оливковое масло и пармезан.</p>
+            <div class="product-meta">
+              <div class="product-price">499<small>₽</small></div>
+              <div class="product-weight">480 г</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="margherita" data-name="Маргарита" data-price="499" data-type="pizza-margherita">+ В корзину</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="drinks">
+    <div class="wrap">
+      <div class="section-head">
+        <h2><span class="slash">//</span> НАПИТКИ <span class="pink">К ПИЦЦЕ</span></h2>
+        <div class="hint">Ледяные и освежающие · идеально к острой пицце</div>
+      </div>
+      <div class="grid">
+        <article class="product" data-type="drink-cola">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Напиток · 0.5 л</div>
+            <h3>Кока-Кола</h3>
+            <p class="product-desc">Классическая ледяная Кока-Кола. Идеально к острой пеперонни.</p>
+            <div class="product-meta">
+              <div class="product-price">149<small>₽</small></div>
+              <div class="product-weight">0.5 л</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="cola" data-name="Кока-Кола" data-price="149" data-type="drink-cola">+ В корзину</button>
+          </div>
+        </article>
+
+        <article class="product" data-type="drink-orange">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Напиток · 0.4 л</div>
+            <h3>Апельсиновый сок</h3>
+            <p class="product-desc">Свежевыжатый сок из спелых апельсинов. Яркий вкус и витамин C.</p>
+            <div class="product-meta">
+              <div class="product-price">199<small>₽</small></div>
+              <div class="product-weight">0.4 л</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="orange" data-name="Апельсиновый сок" data-price="199" data-type="drink-orange">+ В корзину</button>
+          </div>
+        </article>
+
+        <article class="product" data-type="drink-sprite">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Напиток · 0.5 л</div>
+            <h3>Спрайт</h3>
+            <p class="product-desc">Освежающий лимон-лайм. Хорошо охлаждает после острой пиццы.</p>
+            <div class="product-meta">
+              <div class="product-price">149<small>₽</small></div>
+              <div class="product-weight">0.5 л</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="sprite" data-name="Спрайт" data-price="149" data-type="drink-sprite">+ В корзину</button>
+          </div>
+        </article>
+
+        <article class="product" data-type="drink-lemonade">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Напиток · 0.4 л</div>
+            <h3>Лимонад</h3>
+            <p class="product-desc">Домашний лимонад с мятой и лаймом. Свежий и бодрящий вкус.</p>
+            <div class="product-meta">
+              <div class="product-price">179<small>₽</small></div>
+              <div class="product-weight">0.4 л</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="lemonade" data-name="Лимонад" data-price="179" data-type="drink-lemonade">+ В корзину</button>
+          </div>
+        </article>
+
+        <article class="product" data-type="drink-pee">
+          <div class="product-thumb"></div>
+          <div class="product-body">
+            <div class="product-cat">Напиток · 0.3 л</div>
+            <h3>Моча</h3>
+            <p class="product-desc">Оригинальный напиток с ярким вкусом. Не для слабонервных.</p>
+            <div class="product-meta">
+              <div class="product-price">99<small>₽</small></div>
+              <div class="product-weight">0.3 л</div>
+            </div>
+            <button class="add-btn" type="button" data-add data-id="pee" data-name="Моча" data-price="99" data-type="drink-pee">+ В корзину</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="orders">
+    <div class="wrap">
+      <div class="section-head">
+        <h2><span class="slash">//</span> ЗАКАЗЫ <span class="pink">ГОСТЕЙ</span></h2>
+        <div class="hint"><span class="live-dot" id="liveDot"></span><span id="liveText">Подключение к серверу…</span></div>
+      </div>
+      <div class="orders-list" id="ordersList">
+        <div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="wrap">
+      <div class="about-panel">
+        <div class="about-content">
+          <span class="tag">// О НАС</span>
+          <span class="big-title">HYDRA PIZZA IN SPB</span>
+          <h2>Лучшая пицца в Санкт-Петербурге</h2>
+          <p>HYDRA BLACK — это не просто пиццерия. Это место, где <span class="accent-txt">классические рецепты</span> встречаются с тёмной эстетикой города.</p>
+          <p>Мы готовим на дровах, используем только свежие продукты и никогда не экономим на начинке. Наши гости говорят, что у нас <span class="accent-txt">лучшая пицца в городе</span> — и мы не спорим.</p>
+        </div>
+        <div class="badges">
+          <div class="badge">
+            <div class="badge-icon">🏆</div>
+            <div class="badge-text">
+              <h4>Лучшая пицца в городе</h4>
+              <p>Выбор наших гостей в СПб</p>
+            </div>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">🔥</div>
+            <div class="badge-text">
+              <h4>Дровяная печь</h4>
+              <p>Готовим при 450°C</p>
+            </div>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">🚀</div>
+            <div class="badge-text">
+              <h4>Доставка 30 минут</h4>
+              <p>Горячей к вашей двери</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div class="foot-links">
+      <a href="#pizza">Пицца</a>
+      <a href="#drinks">Напитки</a>
+      <a href="#orders">Заказы</a>
+      <a href="#about">О нас</a>
+    </div>
+    <div>© 2025 HYDRA BLACK — HYDRA PIZZA IN SPB · Лучшая пицца в городе</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var cart=[];
+  var ordersFeed=[];
+  var socket=null;
+
+  // ===== WebSocket подключение =====
+  try{
+    socket=io();
+    socket.on('connect',function(){
+      document.getElementById('liveDot').classList.remove('off');
+      document.getElementById('liveText').textContent='Онлайн · заказы в реальном времени';
+    });
+    socket.on('disconnect',function(){
+      document.getElementById('liveDot').classList.add('off');
+      document.getElementById('liveText').textContent='Нет связи с сервером';
+    });
+    socket.on('init-orders',function(list){
+      ordersFeed=list||[];
+      renderOrders();
+    });
+    socket.on('new-order',function(order){
+      ordersFeed.unshift(order);
+      if(ordersFeed.length>200)ordersFeed.length=200;
+      renderOrders(true);
+    });
+  }catch(e){
+    document.getElementById('liveText').textContent='Ошибка подключения';
+  }
+
+  function timeAgo(t){
+    var m=Math.max(0,Math.floor((Date.now()-t)/60000));
+    if(m<1)return 'только что';
+    if(m<60)return m+' мин назад';
+    var h=Math.floor(m/60);
+    if(h<24)return h+' ч назад';
+    var d=Math.floor(h/24);
+    return d+' дн назад';
+  }
+
+  function renderOrders(isFresh){
+    var list=document.getElementById('ordersList');
+    if(!list)return;
+    if(!ordersFeed.length){
+      list.innerHTML='<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
+      return;
+    }
+    list.innerHTML=ordersFeed.map(function(o,idx){
+      var sum=o.items.reduce(function(s,i){return s+i.price*i.qty;},0);
+      var fresh=(isFresh&&idx===0)?' fresh':'';
+      return '<div class="order-card'+fresh+'">'+
+        '<div class="order-top">'+
+          '<div class="order-name"><span class="avatar">'+o.name.charAt(0).toUpperCase()+'</span>'+o.name+'</div>'+
+          '<div class="order-time">'+timeAgo(o.time)+'</div>'+
+        '</div>'+
+        '<div class="order-items">'+
+          o.items.map(function(i){
+            return '<div class="order-item"><span><span class="qty">'+i.qty+'×</span>'+i.name+'</span><span>'+(i.price*i.qty)+' ₽</span></div>';
+          }).join('')+
+        '</div>'+
+        '<div class="order-bottom">'+
+          '<span class="order-status done">'+(o.status||'Оформлен')+'</span>'+
+          '<span class="order-total">'+sum.toLocaleString('ru-RU')+' ₽</span>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  setInterval(function(){if(ordersFeed.length)renderOrders();},30000);
+
+  // ===== Корзина =====
+  var overlay=document.createElement('div');
+  overlay.className='overlay';
+  document.body.appendChild(overlay);
+
+  var drawer=document.createElement('div');
+  drawer.className='cart';
+  drawer.innerHTML=
+    '<div class="cart-top">'+
+      '<h3><span class="neon">🛒</span> Корзина <span class="cart-count" id="cartCount">0</span></h3>'+
+      '<button class="close-x" id="closeCart" type="button">×</button>'+
+    '</div>'+
+    '<div class="cart-list" id="cartList"></div>'+
+    '<div class="cart-bottom">'+
+      '<div class="total-line"><span class="lbl">Итого</span><span class="sum" id="cartSum">0 ₽</span></div>'+
+      '<button class="checkout" id="checkoutBtn" type="button" disabled>Оформить заказ</button>'+
+      '<button class="clear" id="clearCart" type="button">Очистить корзину</button>'+
+    '</div>';
+  document.body.appendChild(drawer);
+
+  var toast=document.createElement('div');
+  toast.className='toast';
+  document.body.appendChild(toast);
+  var toastTimer;
+  function showToast(msg){
+    toast.textContent=msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){toast.classList.remove('show');},2000);
+  }
+
+  function openCart(){drawer.classList.add('open');overlay.classList.add('open');}
+  function closeCart(){drawer.classList.remove('open');overlay.classList.remove('open');}
+
+  function totalSum(){return cart.reduce(function(s,i){return s+i.price*i.qty;},0);}
+  function totalCount(){return cart.reduce(function(s,i){return s+i.qty;},0);}
+
+  function render(){
+    var list=document.getElementById('cartList');
+    var sum=totalSum(), cnt=totalCount();
+    document.getElementById('cartCount').textContent=cnt;
+    document.getElementById('cartSum').textContent=sum.toLocaleString('ru-RU')+' ₽';
+    document.getElementById('headerTotal').textContent=sum.toLocaleString('ru-RU');
+    document.getElementById('checkoutBtn').disabled=cart.length===0;
+
+    if(!cart.length){
+      list.innerHTML='<div class="empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
+      return;
+    }
+    list.innerHTML=cart.map(function(it,idx){
+      return '<div class="row" data-type="'+it.type+'">'+
+        '<div class="row-thumb"></div>'+
+        '<div class="row-main">'+
+          '<div class="row-head">'+
+            '<div><h4>'+it.name+'</h4><div class="unit">'+it.price+' ₽ / шт</div></div>'+
+            '<button class="del" type="button" data-del="'+idx+'" title="Удалить">×</button>'+
+          '</div>'+
+          '<div class="row-foot">'+
+            '<div class="counter">'+
+              '<button type="button" data-minus="'+idx+'">−</button>'+
+              '<span class="qty">'+it.qty+'</span>'+
+              '<button type="button" data-plus="'+idx+'">+</button>'+
+            '</div>'+
+            '<div class="line-total">'+(it.price*it.qty).toLocaleString('ru-RU')+' ₽</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  document.getElementById('cartBtn').addEventListener('click',openCart);
+  document.getElementById('closeCart').addEventListener('click',closeCart);
+  overlay.addEventListener('click',closeCart);
+
+  document.getElementById('clearCart').addEventListener('click',function(){
+    if(!cart.length)return;
+    cart=[];
+    render();
+    showToast('Корзина очищена');
+  });
+
+  // Оформление заказа — отправляем на сервер
+  document.getElementById('checkoutBtn').addEventListener('click',function(){
+    if(!cart.length)return;
+    var name=prompt('Ваше имя для заказа:','Гость');
+    if(name===null)return;
+    name=(name||'').trim()||'Гость';
+    if(name.length>24)name=name.slice(0,24);
+
+    var payload={
+      name:name,
+      items:cart.map(function(i){return {name:i.name,price:i.price,qty:i.qty};})
+    };
+
+    fetch('/api/orders',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    })
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.ok){
+        showToast('На вас оформлен кредит');
+        cart=[];
+        render();
+        closeCart();
+        // Сам заказ придёт через WebSocket всем клиентам
+      } else {
+        showToast('Ошибка: '+(data.error||'не удалось оформить'));
+      }
+    })
+    .catch(function(){
+      showToast('Нет связи с сервером');
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    var addBtn=e.target.closest('[data-add]');
+    if(addBtn){
+      var id=addBtn.getAttribute('data-id');
+      var name=addBtn.getAttribute('data-name');
+      var price=parseInt(addBtn.getAttribute('data-price'),10);
+      var type=addBtn.getAttribute('data-type');
+      var existing=cart.find(function(x){return x.id===id;});
+      if(existing){existing.qty++;}
+      else{cart.push({id:id,name:name,price:price,type:type,qty:1});}
+      render();
+      showToast('Добавлено: '+name);
+      var trigger=document.getElementById('cartBtn');
+      trigger.classList.remove('bump');
+      void trigger.offsetWidth;
+      trigger.classList.add('bump');
+      return;
+    }
+    var delBtn=e.target.closest('[data-del]');
+    if(delBtn){
+      var di=parseInt(delBtn.getAttribute('data-del'),10);
+      cart.splice(di,1);
+      render();
+      return;
+    }
+    var plus=e.target.closest('[data-plus]');
+    if(plus){
+      var pi=parseInt(plus.getAttribute('data-plus'),10);
+      cart[pi].qty++;
+      render();
+      return;
+    }
+    var minus=e.target.closest('[data-minus]');
+    if(minus){
+      var mi=parseInt(minus.getAttribute('data-minus'),10);
+      cart[mi].qty--;
+      if(cart[mi].qty<=0)cart.splice(mi,1);
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
 
 </body>
+</html>
+
+
+
+
 </html>
