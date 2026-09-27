@@ -1,37 +1,4 @@
-json
 
-{
-  "name": "hydra-black-pizza",
-  "version": "1.0.0",
-  "description": "HYDRA BLACK pizzeria with real-time orders",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.19.2",
-    "socket.io": "^4.7.5"
-  }
-}
-
-js
-
-// server.js — сервер HYDRA BLACK
-const express = require('express');
-const http = require('http');
-const path = require('path');
-const { Server } = require('socket.io');
-
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// В памяти сервера — только реальные заказы от живых людей
 const orders = [];
 const MAX_ORDERS = 200;
 
