@@ -2745,4 +2745,135 @@ body{
   </body>
 
 <body>
+  <style id="hydra-img-fix">
+/* Фон с пиццами */
+body{
+  background-color:#0a0608 !important;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,122,26,.14) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(255,45,149,.14) 0%, transparent 40%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><text x='20' y='65' font-size='44' opacity='0.07'>🍕</text><text x='130' y='120' font-size='36' opacity='0.06'>🍕</text><text x='60' y='185' font-size='40' opacity='0.07'>🍕</text><text x='160' y='35' font-size='30' opacity='0.06'>🍕</text></svg>") !important;
+  background-size:100% 100%, 100% 100%, 220px 220px !important;
+  background-attachment:fixed !important;
+}
+
+/* Стиль "картинки" для новых товаров */
+.hydra-thumb{
+  display:grid !important;
+  place-items:center !important;
+  font-size:96px !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:cover !important;
+}
+.hydra-thumb[data-kind="hawaii"]{
+  background:radial-gradient(circle at 40% 35%, #ffb84d 0%, #d9822b 35%, #a85a1a 65%, #4a2808 100%) !important;
+}
+.hydra-thumb[data-kind="bbq"]{
+  background:radial-gradient(circle at 50% 40%, #8a3a12 0%, #5a2308 45%, #2a0a04 100%) !important;
+}
+.hydra-thumb[data-kind="four-cheese"]{
+  background:radial-gradient(circle at 50% 40%, #f5d878 0%, #c9a748 45%, #6b5518 80%, #2a2208 100%) !important;
+}
+.hydra-thumb[data-kind="veggie"]{
+  background:radial-gradient(circle at 50% 40%, #4a8a3a 0%, #2a5a1a 45%, #122a08 100%) !important;
+}
+.hydra-thumb[data-kind="coffee"]{
+  background:radial-gradient(circle at 50% 40%, #a8754a 0%, #6b4520 45%, #2a1a0a 100%) !important;
+}
+.hydra-thumb::before{
+  content: attr(data-icon) !important;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.7));
+  font-size:96px !important;
+  line-height:1 !important;
+}
+</style>
+
+<script id="hydra-img-fix-js">
+(function(){
+  // Убираем старый вариант CSS, если мешает
+  var old = document.getElementById('hydra-bg-new');
+  if (old) old.remove();
+
+  // Ключ -> {icon, kind}
+  var KINDS = {
+    'pizza-hawaii':      { icon:'🍕', kind:'hawaii' },
+    'pizza-bbq':         { icon:'🍕', kind:'bbq' },
+    'pizza-four-cheese': { icon:'🍕', kind:'four-cheese' },
+    'pizza-veggie':      { icon:'🍕', kind:'veggie' },
+    'drink-coffee':      { icon:'☕', kind:'coffee' }
+  };
+
+  function fixCard(card){
+    var type = card.getAttribute('data-type');
+    if (!type || !KINDS[type]) return;
+
+    var info = KINDS[type];
+
+    // Ищем визуальный блок разными способами
+    var thumb =
+      card.querySelector('.product-thumb, .card-visual, .product-visual, .thumb, .image') ||
+      card.querySelector('img') ||
+      card.firstElementChild;
+
+    if (!thumb) return;
+
+    // Если это <img> — превращаем в div со стилем
+    if (thumb.tagName === 'IMG'){
+      var div = document.createElement('div');
+      div.className = 'product-thumb hydra-thumb';
+      div.setAttribute('data-kind', info.kind);
+      div.setAttribute('data-icon', info.icon);
+      thumb.replaceWith(div);
+      return;
+    }
+
+    // Иначе превращаем существующий блок в нашу картинку
+    if (!thumb.classList.contains('hydra-thumb')){
+      thumb.classList.add('hydra-thumb');
+      thumb.setAttribute('data-kind', info.kind);
+      thumb.setAttribute('data-icon', info.icon);
+      // Скрываем старый псевдо-контент, если был
+      thumb.style.fontSize = '0';
+    }
+  }
+
+  function fixAll(){
+    var cards = document.querySelectorAll('[data-type]');
+    cards.forEach(fixCard);
+  }
+
+  // Запускаем сразу и по таймерам — на случай, если товары появляются позже
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', fixAll);
+  } else {
+    fixAll();
+  }
+  [100, 300, 800, 1500, 3000, 5000].forEach(function(t){
+    setTimeout(fixAll, t);
+  });
+
+  // Следим за DOM — если добавляются новые товары, красим их
+  var obs = new MutationObserver(function(muts){
+    var need = false;
+    muts.forEach(function(m){
+      m.addedNodes.forEach(function(n){
+        if (n.nodeType === 1){
+          if ((n.getAttribute && n.getAttribute('data-type')) ||
+              (n.querySelector && n.querySelector('[data-type]'))) need = true;
+        }
+      });
+    });
+    if (need) fixAll();
+  });
+  window.addEventListener('load', function(){
+    obs.observe(document.body, { childList:true, subtree:true });
+    setTimeout(function(){ obs.disconnect(); }, 15000);
+  });
+})();
+</script>
+  <body>
+
+  
+  </body>
   
