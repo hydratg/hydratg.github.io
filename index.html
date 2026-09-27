@@ -4312,4 +4312,112 @@ body{
   });
 })();
 </script>
-    
+    <script id="hydra-new-to-cart">
+(function(){
+  /* ============================================================
+     НОВЫЕ ТОВАРЫ — ДАННЫЕ
+     ============================================================ */
+  var NEW = [
+    { id:'hawaii',      name:'Гавайская',       price:649, type:'pizza-hawaii' },
+    { id:'bbq',         name:'BBQ Чикен',       price:699, type:'pizza-bbq' },
+    { id:'four-cheese', name:'Четыре сыра',     price:749, type:'pizza-four-cheese' },
+    { id:'veggie',      name:'Вегетарианская',  price:549, type:'pizza-veggie' },
+    { id:'coffee',      name:'Кофе Латте',      price:189, type:'drink-coffee' }
+  ];
+
+  /* ============================================================
+     ЧИТАЕМ И ПИШЕМ КОРЗИНУ НАПРЯМУЮ В localStorage
+     (это работает с любой корзиной, читающей оттуда)
+     ============================================================ */
+  var KEYS = ['hydra_cart_v1','cart','hydra_cart','carts']; // пробуем все возможные ключи
+
+  function getCart(){
+    for(var i=0;i<KEYS.length;i++){
+      try{
+        var raw = localStorage.getItem(KEYS[i]);
+        if(raw){
+          var arr = JSON.parse(raw);
+          if(Array.isArray(arr)) return { key:KEYS[i], cart:arr };
+        }
+      }catch(e){}
+    }
+    return { key:'hydra_cart_v1', cart:[] };
+  }
+
+  function setCart(key, cart){
+    try{ localStorage.setItem(key, JSON.stringify(cart)); }catch(e){}
+  }
+
+  /* ============================================================
+     ОБРАБОТЧИК КЛИКА ПО КНОПКАМ НОВЫХ ТОВАРОВ
+     ============================================================ */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-add]');
+    if(!btn) return;
+
+    var id    = btn.getAttribute('data-id');
+    var name  = btn.getAttribute('data-name');
+    var price = parseInt(btn.getAttribute('data-price'), 10);
+    var type  = btn.getAttribute('data-type');
+
+    if(!name || !price) return;
+
+    /* Пишем в корзину через localStorage */
+    var data = getCart();
+    var cart = data.cart;
+
+    var found = null;
+    for(var i=0;i<cart.length;i++){
+      if(cart[i].id === id){ found = cart[i]; break; }
+    }
+    if(found){ found.qty++; }
+    else { cart.push({ id:id, name:name, price:price, type:type, qty:1 }); }
+
+    setCart(data.key, cart);
+
+    console.log('[HYDRA] В корзину добавлено:', name, '| всего позиций:', cart.length);
+  }, true); // true = срабатываем раньше, чем другие обработчики
+
+  /* ============================================================
+     АВТОДОБАВЛЕНИЕ НОВЫХ ТОВАРОВ, ЕСЛИ ИХ НЕТ НА СТРАНИЦЕ
+     ============================================================ */
+  function addCards(){
+    var any = document.querySelector('[data-type]');
+    if(!any) return;
+
+    var grid = any.parentElement;
+
+    NEW.forEach(function(item){
+      if(document.querySelector('[data-type="'+item.type+'"]')) return;
+
+      var card = document.createElement('article');
+      card.className = 'product';
+      card.setAttribute('data-type', item.type);
+      card.style.cssText = 'background:linear-gradient(160deg,#1a0f18,#0a0608);border:1px solid #2a1a26;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;color:#fff;';
+
+      card.innerHTML =
+        '<div class="product-thumb" style="aspect-ratio:16/11;background:#0a0608;"></div>' +
+        '<div class="product-body" style="padding:22px;display:flex;flex-direction:column;flex:1;">' +
+          '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ff7a1a;margin-bottom:8px;">Товар</div>' +
+          '<h3 style="font-size:22px;font-weight:800;margin-bottom:8px;color:#fff;">'+item.name+'</h3>' +
+          '<p style="color:#8a7080;font-size:14px;line-height:1.55;margin-bottom:20px;flex:1;">Попробуйте нашу новинку.</p>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #2a1a26;">' +
+            '<div style="font-size:28px;font-weight:900;color:#fff;">'+item.price+'<small style="font-size:14px;color:#ff7a1a;font-weight:700;margin-left:2px;">₽</small></div>' +
+          '</div>' +
+          '<button class="add-btn" type="button" ' +
+            'data-add data-id="'+item.id+'" data-name="'+item.name+'" ' +
+            'data-price="'+item.price+'" data-type="'+item.type+'" ' +
+            'style="width:100%;padding:14px;border-radius:12px;border:1.5px solid #ff7a1a;background:transparent;color:#ff7a1a;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit;">' +
+            '+ В корзину</button>' +
+        '</div>';
+
+      grid.appendChild(card);
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', addCards);
+  } else { addCards(); }
+  [300, 1000, 2500].forEach(function(t){ setTimeout(addCards, t); });
+})();
+</script>
