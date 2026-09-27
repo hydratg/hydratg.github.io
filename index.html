@@ -1168,5 +1168,51 @@ footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-s
   console.log('[HYDRA] Скрипт оформления заказа активен');
 })();
 </script>
+  <script>
+(function(){
+
+  /* ============================================================
+     УБИРАЕМ disabled С КНОПКИ «ОФОРМИТЬ ЗАКАЗ»
+     ============================================================ */
+  function enableCheckoutButton(){
+    var btn = document.getElementById('checkoutBtn');
+    if (!btn) return;
+
+    /* Снимаем атрибут disabled, если он стоит */
+    if (btn.hasAttribute('disabled')){
+      btn.removeAttribute('disabled');
+    }
+
+    /* Возвращаем нормальную яркость и кликабельность */
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    btn.style.cursor = 'pointer';
+  }
+
+  /* Запускаем сразу и несколько раз */
+  enableCheckoutButton();
+  setTimeout(enableCheckoutButton, 200);
+  setTimeout(enableCheckoutButton, 800);
+  setTimeout(enableCheckoutButton, 2000);
+  setInterval(enableCheckoutButton, 1000);
+
+  /* ============================================================
+     ЕСЛИ КНОПКА ВСЁ РАВНО НЕ РАБОТАЕТ — КЛИК ОФОРМЛЯЕТ ЗАКАЗ
+     ============================================================ */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('#checkoutBtn');
+    if (!btn) return;
+
+    /* Если кнопка была disabled — всё равно пропускаем клик */
+    if (btn.disabled){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+
+  console.log('[HYDRA] Кнопка «Оформить заказ» активирована');
+})();
+</script>
   </body>
 </html>
