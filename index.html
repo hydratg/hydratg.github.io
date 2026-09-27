@@ -2561,6 +2561,188 @@ body{
   background-repeat: no-repeat, no-repeat !important;
 }
 </style>
+  <body>
+    <style id="hydra-bg-new">
+/* ============================================================
+   ФОН С УЗОРОМ ПИЦЦЫ
+   ============================================================ */
+body{
+  background-color:#0a0608 !important;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,122,26,.14) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(255,45,149,.14) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(200,255,0,.05) 0%, transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><text x='20' y='65' font-size='44' opacity='0.07'>🍕</text><text x='130' y='120' font-size='36' opacity='0.06'>🍕</text><text x='60' y='185' font-size='40' opacity='0.07'>🍕</text><text x='160' y='35' font-size='30' opacity='0.06'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 220px 220px !important;
+  background-attachment: fixed !important;
+}
+
+/* ============================================================
+   КАРТИНКИ ДЛЯ НОВЫХ ТОВАРОВ
+   ============================================================ */
+
+/* Общий стиль "картинки" — круг по центру */
+.product[data-type="pizza-hawaii"] .product-thumb,
+.product[data-type="pizza-bbq"] .product-thumb,
+.product[data-type="pizza-four-cheese"] .product-thumb,
+.product[data-type="pizza-veggie"] .product-thumb,
+.product[data-type="drink-coffee"] .product-thumb{
+  display:grid !important;
+  place-items:center !important;
+  font-size:0 !important;
+  background-repeat:no-repeat !important;
+  background-position:center, center !important;
+}
+
+/* ГАВАЙСКАЯ — золотистая, с ананасами */
+.product[data-type="pizza-hawaii"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 40% 35%, #ffb84d 0%, #d9822b 35%, #a85a1a 65%, #4a2808 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+}
+
+/* BBQ ЧИКЕН — тёмно-красная, с мясом */
+.product[data-type="pizza-bbq"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #8a3a12 0%, #5a2308 45%, #2a0a04 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+}
+
+/* ЧЕТЫРЕ СЫРА — сырно-жёлтая */
+.product[data-type="pizza-four-cheese"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #f5d878 0%, #c9a748 45%, #6b5518 80%, #2a2208 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+}
+
+/* ВЕГЕТАРИАНСКАЯ — зелёная */
+.product[data-type="pizza-veggie"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #4a8a3a 0%, #2a5a1a 45%, #122a08 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>🍕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+}
+
+/* КОФЕ ЛАТТЕ — коричневая с чашкой */
+.product[data-type="drink-coffee"] .product-thumb{
+  background-image:
+    radial-gradient(circle at 50% 40%, #a8754a 0%, #6b4520 45%, #2a1a0a 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='72' font-size='72' text-anchor='middle' x='50'>☕</text></svg>") !important;
+  background-size: 100% 100%, 130px 130px !important;
+}
+</style>
+
+<script id="hydra-add-new-dishes">
+/* ============================================================
+   ДОБАВЛЯЕМ НОВЫЕ БЛЮДА, ЕСЛИ ИХ НЕТ
+   ============================================================ */
+(function(){
+  const NEW_PIZZAS = [
+    { type:'pizza-hawaii', cat:'Пицца · 30 см', name:'Гавайская',
+      desc:'Курица, ананасы, моцарелла, сливочный соус.',
+      price:649, weight:'620 г', icon:'🍕' },
+    { type:'pizza-bbq', cat:'Пицца · 30 см', name:'BBQ Чикен',
+      desc:'Курица, бекон, красный лук, соус барбекю, моцарелла.',
+      price:699, weight:'640 г', icon:'🍕' },
+    { type:'pizza-four-cheese', cat:'Пицца · 30 см', name:'Четыре сыра',
+      desc:'Моцарелла, пармезан, дорблю, чеддер, сливочный соус.',
+      price:749, weight:'560 г', icon:'🍕' },
+    { type:'pizza-veggie', cat:'Пицца · 30 см', name:'Вегетарианская',
+      desc:'Перец, грибы, черри, оливки, лук, моцарелла.',
+      price:549, weight:'520 г', icon:'🍕' }
+  ];
+
+  const NEW_DRINKS = [
+    { type:'drink-coffee', cat:'Напиток · 0.3 л', name:'Кофе Латте',
+      desc:'Двойной эспрессо с горячим молоком.',
+      price:189, weight:'0.3 л', icon:'☕' }
+  ];
+
+  function makeCard(item){
+    const a = document.createElement('article');
+    a.className = 'product card';
+    a.setAttribute('data-type', item.type);
+    a.innerHTML = `
+      <div class="product-thumb"></div>
+      <div class="product-body">
+        <div class="product-cat">${item.cat}</div>
+        <h3>${item.name}</h3>
+        <p class="product-desc">${item.desc}</p>
+        <div class="product-meta">
+          <div class="product-price">${item.price}<small>₽</small></div>
+          <div class="product-weight">${item.weight}</div>
+        </div>
+        <button class="add-btn" type="button"
+          data-add
+          data-id="${item.type.replace(/^(pizza|drink)-/,'')}"
+          data-name="${item.name}"
+          data-price="${item.price}"
+          data-type="${item.type}">+ В корзину</button>
+      </div>`;
+    return a;
+  }
+
+  function findGrids(){
+    const nodes = document.querySelectorAll('[data-type^="pizza-"], [data-type^="drink-"]');
+    const map = new Map();
+
+    nodes.forEach(node => {
+      const parent = node.parentElement;
+      if (!parent) return;
+      if (!map.has(parent)) map.set(parent, { el:parent, hasPizza:false, hasDrink:false });
+      const t = node.getAttribute('data-type');
+      if (t.startsWith('pizza-')) map.get(parent).hasPizza = true;
+      if (t.startsWith('drink-')) map.get(parent).hasDrink = true;
+    });
+
+    let pizzaGrid = null, drinkGrid = null;
+    map.forEach(info => {
+      if (info.hasPizza && !pizzaGrid) pizzaGrid = info.el;
+      if (info.hasDrink && !drinkGrid) drinkGrid = info.el;
+    });
+
+    return { pizzaGrid, drinkGrid };
+  }
+
+  function addDishes(){
+    const { pizzaGrid, drinkGrid } = findGrids();
+
+    if (pizzaGrid){
+      NEW_PIZZAS.forEach(item => {
+        if (!document.querySelector('[data-type="' + item.type + '"]')){
+          pizzaGrid.appendChild(makeCard(item));
+        }
+      });
+    }
+
+    if (drinkGrid){
+      NEW_DRINKS.forEach(item => {
+        if (!document.querySelector('[data-type="' + item.type + '"]')){
+          drinkGrid.appendChild(makeCard(item));
+        }
+      });
+    }
+  }
+
+  function run(){
+    try { addDishes(); } catch(e){ console.error('[HYDRA]', e); }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+  [100, 400, 1000, 2000, 4000].forEach(t => setTimeout(run, t));
+})();
+</script>
+    <body>
+      
+    </body>
+  </body>
 
 <body>
   
