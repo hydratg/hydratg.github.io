@@ -1214,5 +1214,264 @@ footer{padding:50px 0;border-top:1px solid var(--line);color:var(--muted);font-s
   console.log('[HYDRA] Кнопка «Оформить заказ» активирована');
 })();
 </script>
+  <script>
+(function(){
+
+  /* ============================================================
+     ЧИТАЕМ КОРЗИНУ ПРЯМО ИЗ ОКНА КОРЗИНЫ (из DOM)
+     ============================================================ */
+  function readCartFromDOM(){
+    var items = [];
+
+    /* Ищем все строки корзины */
+    var rows = document.querySelectorAll('.cart-row, .row, .dlist .row, #cartList .row');
+
+    rows.forEach(function(row){
+      /* Название */
+      var nameEl = row.querySelector('h4, .name, .title, [class*="name"]');
+      if (!nameEl) return;
+      var name = (nameEl.textContent || '').trim();
+      if (!name) return;
+
+      /* Количество */
+      var qtyEl = row.querySelector('.qty, .q, [class*="qty"]');
+      var qty = 1;
+      if (qtyEl){
+        qty = parseInt((qtyEl.textContent || '1').replace(/\D/g, ''), 10) || 1;
+      }
+
+      /* Цена за штуку */
+      var priceEl = row.querySelector('.unit, .u, [class*="unit"]');
+      var price = 0;
+      if (priceEl){
+        var m = (priceEl.textContent || '').match(/(\d[\d\s]*)/);
+        if (m) price = parseInt(m[1].replace(/\s/g, ''), 10) || 0;
+      }
+
+      /* Если цена не найдена — ищем в общей сумме строки */
+      if (!price){
+        var totalEl = row.querySelector('.line-total, .lt');
+        if (totalEl && qty > 0){
+          var mt = (totalEl.textContent || '').match(/(\d[\d\s]*)/);
+          if (mt){
+            price = Math.round(parseInt(mt[1].replace(/\s/g, ''), 10) / qty);
+          }
+        }
+      }
+
+      if (name && qty > 0){
+        items.push({ name: name, price: price, qty: qty });
+      }
+    });
+
+    return items;
+  }
+
+  /* ============================================================
+     ОФОРМЛЕНИЕ ЗАКАЗА
+     ============================================================ */
+  function doCheckout(){
+    var items = readCartFromDOM();
+
+    if (!items.length){
+      /* Если DOM не сработал — пробуем localStorage */
+      try {
+        var raw = localStorage.getItem('hydra_cart_v1');
+        var arr = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(arr) && arr.length){
+          items = arr.map(function(x){
+            return { name: x.name, price: x.price, qty: x.qty };
+          });
+        }
+      } catch(e){}
+    }
+
+    if (!items.length){
+      alert('Корзина пуста');
+      return;
+    }
+
+    /* Имя */
+    var name = prompt('Ваше имя для заказа:', 'Гость');
+    if (name === null) return;
+    name = (name.trim() || 'Гость').slice(0, 24);
+
+    /* Адрес */
+    var address = prompt('Адрес доставки (улица, дом, квартира):', '');
+    if (address === null) return;
+    address = (address.trim() || 'Адрес не указан').slice(0, 120);
+
+    /* Сумма */
+    var total = items.reduce(function(s, i){
+      return s + (i.price || 0) * (i.qty || 1);
+    }, 0);
+
+    /* Код заказа */
+    var code = 'HYDRA-' +
+      Math.random().toString(36).slice(2, 6).toUpperCase() + '-' +
+      Math.random().toString(36).slice(2, 4).toUpperCase();
+
+    /* Заказ */
+    var order = {
+      code: code,
+      name: name,
+      address: address,
+      items: items,
+      total: total,
+      time: Date.now()
+    };
+
+    /* Сохраняем в ленту */
+    var orders = [];
+    try { orders = JSON.parse(localStorage.getItem('hydra_orders_v1')) || []; } catch(e){}
+    if (!Array.isArray(orders)) orders = [];
+    orders.unshift(order);
+    if (orders.length > 100) orders.length = 100;
+    try { localStorage.setItem('hydra_orders_v1', JSON.stringify(orders)); } catch(e){}
+
+    /* Очищаем корзину в localStorage */
+    try { localStorage.setItem('hydra_cart_v1', '[]'); } catch(e){}
+
+    /* Очищаем UI корзины */
+    var cartBody = document.getElementById('cartList')
+                || document.querySelector('.cart-list, .cart-body, .dlist');
+    if (cartBody){
+      cartBody.innerHTML = '<div class="empty"><div class="ic">🛒</div><p>Корзина пуста</p></div>';
+    }
+
+    /* Обнуляем счётчики в шапке и в корзине */
+    ['headerTotal','cartSum'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.textContent = id === 'headerTotal' ? '0' : '0 ₽';
+    });
+    var cnt = document.getElementById('cartCount');
+    if (cnt) cnt.textContent = '0';
+
+    /* Обновляем ленту заказов */
+    renderOrders();
+
+    /* Уведомление */
+    showToast('✓ Заказ оформлен · ' + code);
+
+    /* Закрываем корзину */
+    var drawer = document.getElementById('drawer') || document.querySelector('.cart, .cart-panel');
+    var overlay = document.getElementById('overlay') || document.querySelector('.overlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+
+    console.log('[HYDRA] Заказ оформлен:', order);
+  }
+
+  /* ============================================================
+     ЛЕНТА ЗАКАЗОВ
+     ============================================================ */
+  function renderOrders(){
+    var list = document.getElementById('ordersList');
+    if (!list) return;
+
+    var orders = [];
+    try { orders = JSON.parse(localStorage.getItem('hydra_orders_v1')) || []; } catch(e){}
+
+    if (!Array.isArray(orders) || !orders.length){
+      list.innerHTML = '<div class="orders-empty">Пока заказов нет. Будьте первым!</div>';
+      return;
+    }
+
+    list.innerHTML = orders.map(function(o){
+      var mins = Math.max(1, Math.floor((Date.now() - o.time) / 60000));
+      return '<div class="ord">' +
+        '<div class="ord-top">' +
+          '<div class="ord-name"><span class="av">' + (o.name[0] || '?').toUpperCase() + '</span>' + o.name + '</div>' +
+          '<div class="ord-time">' + mins + ' мин назад</div>' +
+        '</div>' +
+        '<div class="ord-addr">📍 ' + o.address + '</div>' +
+        '<div class="ord-items">' +
+          (o.items || []).map(function(i){
+            return '<div class="ord-item"><span><span class="q">' + i.qty + '×</span>' + i.name + '</span><span>' + ((i.price || 0) * (i.qty || 1)) + ' ₽</span></div>';
+          }).join('') +
+        '</div>' +
+        '<div class="ord-bot">' +
+          '<span class="ord-code">' + o.code + '</span>' +
+          '<span class="ord-total">' + (o.total || 0).toLocaleString('ru-RU') + ' ₽</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ============================================================
+     УВЕДОМЛЕНИЕ
+     ============================================================ */
+  var toastTimer;
+  function showToast(msg){
+    var toast = document.getElementById('toast');
+    if (!toast){
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(140px);background:linear-gradient(135deg,#ff9f2e,#e63a1f);color:#0d0603;padding:16px 34px;border-radius:100px;font-weight:900;font-size:14px;z-index:9999;opacity:0;transition:transform .35s,opacity .3s;box-shadow:0 20px 44px rgba(255,159,46,.7);pointer-events:none;white-space:nowrap;font-family:system-ui,sans-serif;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    toast.style.opacity = '1';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){
+      toast.style.transform = 'translateX(-50%) translateY(140px)';
+      toast.style.opacity = '0';
+    }, 2000);
+  }
+
+  /* ============================================================
+     ПРИВЯЗЫВАЕМ КНОПКУ «ОФОРМИТЬ ЗАКАЗ»
+     ============================================================ */
+  function bindCheckout(){
+    var btn = document.getElementById('checkoutBtn');
+    if (!btn) return;
+
+    /* Снимаем старые обработчики через клон */
+    var fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+
+    /* Убираем disabled, если стоит */
+    fresh.disabled = false;
+    fresh.removeAttribute('disabled');
+
+    /* Навешиваем свой обработчик */
+    fresh.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      doCheckout();
+    }, false);
+
+    console.log('[HYDRA] Кнопка «Оформить заказ» переподключена');
+  }
+
+  /* ============================================================
+     СТАРТ
+     ============================================================ */
+  function init(){
+    bindCheckout();
+    renderOrders();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  /* Перепривязываем на случай, если другой скрипт пересоздаёт кнопку */
+  setTimeout(bindCheckout, 1000);
+  setTimeout(bindCheckout, 3000);
+
+  setInterval(renderOrders, 30000);
+
+  /* Экспорт */
+  window.hydraCheckout = doCheckout;
+  window.hydraReadCart = readCartFromDOM;
+
+  console.log('[HYDRA] Оформление заказа активно. Корзина читается из DOM.');
+
+})();
+</script>
   </body>
 </html>
