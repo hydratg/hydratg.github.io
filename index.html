@@ -1753,379 +1753,59 @@ html
   });
 })();
 </script>
-<script>
-/* ===== HYDRA BLACK — корзина + заказы + адрес + устройство ===== */
+script>
+/* ===== Определение IP + информации об устройстве ===== */
 (function(){
-  const CART_KEY = 'hydra_cart_v1';
-  const ORDERS_KEY = 'hydra_orders_v1';
-  const $ = id => document.getElementById(id);
-
-  /* ---------- Хранилище ---------- */
-  function getCart(){
-    try { const r = localStorage.getItem(CART_KEY); const a = r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
-    catch(e){ return []; }
-  }
-  function setCart(a){ try { localStorage.setItem(CART_KEY, JSON.stringify(a)); } catch(e){} }
-  function getOrders(){
-    try { const r = localStorage.getItem(ORDERS_KEY); const a = r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
-    catch(e){ return []; }
-  }
-  function setOrders(a){ try { localStorage.setItem(ORDERS_KEY, JSON.stringify(a)); } catch(e){} }
-
-  function genCode(){
-    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const b=n=>Array.from({length:n},()=>c[Math.floor(Math.random()*c.length)]).join('');
-    return 'HYDRA-'+b(4)+'-'+b(2);
-  }
-  function toNum(v){ return parseInt(String(v).replace(/[^\d]/g,''),10)||0; }
-
-  /* ---------- Определение устройства ---------- */
   function detectDevice(){
     const ua = navigator.userAgent || '';
-    const platform = navigator.platform || '';
+    let type='Компьютер', icon='💻';
+    if (/iPad|Tablet|PlayBook|Silk/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) { type='Планшет'; icon='📱'; }
+    else if (/Mobi|Android|iPhone|iPod|Windows Phone|BlackBerry/i.test(ua)) { type='Телефон'; icon='📱'; }
 
-    // Тип устройства
-    let type = 'Компьютер';
-    let typeIcon = '💻';
-    if (/iPad|Tablet|PlayBook|Silk/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) {
-      type = 'Планшет'; typeIcon = '📱';
-    } else if (/Mobi|Android|iPhone|iPod|Windows Phone|BlackBerry/i.test(ua)) {
-      type = 'Телефон'; typeIcon = '📱';
-    }
+    let os='Неизвестно';
+    if (/Windows NT 10/i.test(ua)) os='Windows 10/11';
+    else if (/Windows NT 6\.3/i.test(ua)) os='Windows 8.1';
+    else if (/Windows NT 6\.1/i.test(ua)) os='Windows 7';
+    else if (/Windows/i.test(ua)) os='Windows';
+    else if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) os='macOS';
+    else if (/iPhone|iPad|iPod/i.test(ua)) os='iOS';
+    else if (/Android/i.test(ua)) os='Android';
+    else if (/Linux/i.test(ua) && !/Android/i.test(ua)) os='Linux';
 
-    // Операционная система
-    let os = 'Неизвестно';
-    if (/Windows NT 10/i.test(ua)) os = 'Windows 10/11';
-    else if (/Windows NT 6\.3/i.test(ua)) os = 'Windows 8.1';
-    else if (/Windows NT 6\.1/i.test(ua)) os = 'Windows 7';
-    else if (/Windows/i.test(ua)) os = 'Windows';
-    else if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) os = 'macOS';
-    else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
-    else if (/Android/i.test(ua)) os = 'Android';
-    else if (/Linux/i.test(ua) && !/Android/i.test(ua)) os = 'Linux';
+    let browser='Неизвестно';
+    if (/YaBrowser/i.test(ua)) browser='Яндекс.Браузер';
+    else if (/Edg\//i.test(ua)) browser='Edge';
+    else if (/OPR|Opera/i.test(ua)) browser='Opera';
+    else if (/Chrome/i.test(ua) && !/Edg|OPR/i.test(ua)) browser='Chrome';
+    else if (/Firefox/i.test(ua)) browser='Firefox';
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari';
 
-    // Браузер
-    let browser = 'Неизвестно';
-    if (/YaBrowser/i.test(ua)) browser = 'Яндекс.Браузер';
-    else if (/Edg\//i.test(ua)) browser = 'Edge';
-    else if (/OPR|Opera/i.test(ua)) browser = 'Opera';
-    else if (/Chrome/i.test(ua) && !/Edg|OPR/i.test(ua)) browser = 'Chrome';
-    else if (/Firefox/i.test(ua)) browser = 'Firefox';
-    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Safari';
-
-    // Разрешение и язык
-    const screenSize = (screen.width || 0) + '×' + (screen.height || 0);
-    const lang = navigator.language || '—';
-
-    return { type, typeIcon, os, browser, screenSize, lang };
+    return {
+      type, icon, os, browser,
+      screen: (screen.width||0)+'×'+(screen.height||0),
+      lang: navigator.language || '—',
+      cores: navigator.hardwareConcurrency || '—',
+      memory: navigator.deviceMemory || '—',
+      touch: ('ontouchstart' in window) ? 'Да' : 'Нет',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '—'
+    };
   }
 
-  /* ---------- Защита от второй корзины ---------- */
-  function keepOnlyOneCart(){
-    const carts = Array.from(document.querySelectorAll('.cart'));
-    const overlays = Array.from(document.querySelectorAll('.overlay'));
-    if (carts.length > 1){
-      const keep = carts.find(c=>c.querySelector('#cartList')) || carts[0];
-      carts.forEach(c=>{ if(c!==keep) c.remove(); });
-    }
-    if (overlays.length > 1){
-      overlays.forEach((o,i)=>{ if(i>0) o.remove(); });
-    }
+  function getIP(){
+    return fetch('https://api.ipify.org?format=json')
+      .then(r => r.json())
+      .then(data => data.ip)
+      .catch(() => 'Не удалось определить');
   }
 
-  /* ---------- Toast ---------- */
-  let toast = document.querySelector('.toast');
-  if (!toast){ toast = document.createElement('div'); toast.className='toast'; document.body.appendChild(toast); }
-  let toastTimer;
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=>toast.classList.remove('show'), 1800);
-  }
+  // Публикуем функцию наружу — её можно вызвать при оформлении заказа
+  window.getDeviceInfo = async function(){
+    const device = detectDevice();
+    const ip = await getIP();
+    return { ...device, ip };
+  };
 
-  /* ---------- Открытие / закрытие ---------- */
-  function openCart(){
-    keepOnlyOneCart();
-    const p = document.querySelector('.cart');
-    const o = document.querySelector('.overlay');
-    if (p) p.classList.add('open');
-    if (o) o.classList.add('open');
-    renderCart();
-  }
-  function closeCart(){
-    document.querySelectorAll('.cart').forEach(p=>p.classList.remove('open'));
-    document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open'));
-  }
-
-  /* ---------- Рендер корзины ---------- */
-  function renderCart(){
-    const cart = getCart();
-    const list = $('cartList');
-    const countEl = $('cartCount');
-    const sumEl = $('cartSum');
-    const headerTotal = $('headerTotal');
-    const checkoutBtn = $('checkoutBtn');
-
-    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-    const count = cart.reduce((s,i)=>s+i.qty,0);
-
-    if (countEl) countEl.textContent = count;
-    if (sumEl) sumEl.textContent = total.toLocaleString('ru-RU')+' ₽';
-    if (headerTotal) headerTotal.textContent = total.toLocaleString('ru-RU');
-    if (checkoutBtn) checkoutBtn.disabled = cart.length===0;
-
-    if (!list) return;
-    if (!cart.length){
-      list.innerHTML = '<div class="empty"><div class="ico">🛒</div><p>Корзина пуста</p><small>Добавьте что-нибудь вкусное</small></div>';
-      return;
-    }
-    list.innerHTML = cart.map((it,i)=>`
-      <div class="row" data-type="${it.type||''}">
-        <div class="row-thumb"></div>
-        <div class="row-main">
-          <div class="row-head">
-            <div><h4>${it.name}</h4><div class="unit">${it.price} ₽ / шт</div></div>
-            <button class="del" type="button" data-del="${i}">×</button>
-          </div>
-          <div class="row-foot">
-            <div class="counter">
-              <button type="button" data-minus="${i}">−</button>
-              <span class="qty">${it.qty}</span>
-              <button type="button" data-plus="${i}">+</button>
-            </div>
-            <div class="line-total">${(it.price*it.qty).toLocaleString('ru-RU')} ₽</div>
-          </div>
-        </div>
-      </div>`).join('');
-  }
-
-  /* ---------- Поиск контейнера заказов ---------- */
-  function findOrdersContainer(){
-    return $('ordersList')
-        || $('orders')
-        || document.querySelector('.orders-list')
-        || document.querySelector('[data-orders]');
-  }
-
-  function timeAgo(t){
-    const m = Math.max(0, Math.floor((Date.now()-t)/60000));
-    if (m<1) return 'только что';
-    if (m<60) return m+' мин назад';
-    const h = Math.floor(m/60);
-    if (h<24) return h+' ч назад';
-    return Math.floor(h/24)+' дн назад';
-  }
-
-  /* ---------- Рендер заказов ---------- */
-  function renderOrders(){
-    const list = findOrdersContainer();
-    if (!list) return;
-
-    const orders = getOrders();
-    const used = new Set(orders.map(o=>o.code).filter(Boolean));
-    let changed = false;
-    orders.forEach(o=>{
-      if (!o.code){
-        let c; do { c = genCode(); } while (used.has(c));
-        used.add(c); o.code = c; changed = true;
-      }
-    });
-    if (changed) setOrders(orders);
-
-    if (!orders.length){
-      list.innerHTML = '<div class="orders-empty">Пока никто не оформлял заказ. Будьте первым!</div>';
-      return;
-    }
-
-    list.innerHTML = orders.map(o=>{
-      const total = o.items.reduce((s,i)=>s+i.price*i.qty,0);
-      const addr = o.address ? `<div class="order-address">📍 ${o.address}</div>` : '';
-
-      // Блок с устройством
-      let deviceBlock = '';
-      if (o.device){
-        const d = o.device;
-        deviceBlock = `
-          <div class="order-device">
-            <span class="device-line">${d.typeIcon||'💻'} ${d.type} · ${d.os}</span>
-            <span class="device-line">🌐 ${d.browser}</span>
-            <span class="device-line">🖥️ ${d.screenSize||'—'} · ${d.lang||'—'}</span>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="order-card">
-          <div class="order-top">
-            <div class="order-name">
-              <span class="avatar">${(o.name[0]||'?').toUpperCase()}</span>${o.name}
-            </div>
-            <div class="order-time">${timeAgo(o.time)}</div>
-          </div>
-          ${addr}
-          ${deviceBlock}
-          <div class="order-items">
-            ${o.items.map(i=>`
-              <div class="order-item">
-                <span><span class="qty">${i.qty}×</span>${i.name}</span>
-                <span>${i.price*i.qty} ₽</span>
-              </div>`).join('')}
-          </div>
-          <div class="order-bottom">
-            <span class="order-status done">${o.status||'Оформлен'}</span>
-            <span class="order-total">${total.toLocaleString('ru-RU')} ₽</span>
-          </div>
-          <div class="order-code">Код: ${o.code}</div>
-        </div>`;
-    }).join('');
-  }
-
-  /* ---------- Обработчик кликов ---------- */
-  document.addEventListener('click', function(e){
-    const addBtn = e.target.closest('.add-btn, [data-add]');
-    if (addBtn){
-      e.preventDefault();
-      const id = addBtn.dataset.id || addBtn.getAttribute('data-id');
-      const name = addBtn.dataset.name || addBtn.getAttribute('data-name');
-      const price = toNum(addBtn.dataset.price || addBtn.getAttribute('data-price'));
-      const type = addBtn.dataset.type || addBtn.getAttribute('data-type') || '';
-      if (!name) return;
-
-      const cart = getCart();
-      const ex = cart.find(x=>x.id===id);
-      if (ex) ex.qty++;
-      else cart.push({ id: id||name, name, price, type, qty: 1 });
-      setCart(cart);
-      renderCart();
-      showToast('Добавлено: '+name);
-
-      const cartBtn = $('cartBtn');
-      if (cartBtn){ cartBtn.classList.remove('bump'); void cartBtn.offsetWidth; cartBtn.classList.add('bump'); }
-      return;
-    }
-
-    const del = e.target.closest('[data-del]');
-    if (del){ const c = getCart(); c.splice(toNum(del.dataset.del),1); setCart(c); renderCart(); return; }
-    const plus = e.target.closest('[data-plus]');
-    if (plus){ const c = getCart(); c[toNum(plus.dataset.plus)].qty++; setCart(c); renderCart(); return; }
-    const minus = e.target.closest('[data-minus]');
-    if (minus){
-      const c = getCart(); const i = toNum(minus.dataset.minus);
-      c[i].qty--; if (c[i].qty<=0) c.splice(i,1); setCart(c); renderCart(); return;
-    }
-
-    if (e.target.closest('#cartBtn')){ openCart(); return; }
-    if (e.target.closest('#closeCart') || e.target.closest('.overlay')){ closeCart(); return; }
-
-    if (e.target.closest('#clearCart')){
-      if (!getCart().length) return;
-      if (!confirm('Очистить корзину?')) return;
-      setCart([]); renderCart(); showToast('Корзина очищена'); return;
-    }
-
-    /* ОФОРМИТЬ ЗАКАЗ */
-    if (e.target.closest('#checkoutBtn')){
-      const cart = getCart();
-      if (!cart.length) return;
-
-      const name = prompt('Ваше имя для заказа:', 'Гость');
-      if (name === null) return;
-      const cleanName = (name.trim() || 'Гость').slice(0, 24);
-
-      const address = prompt('Адрес доставки (улица, дом, квартира):', '');
-      if (address === null) return;
-      const cleanAddress = (address.trim() || 'Адрес не указан').slice(0, 120);
-
-      const device = detectDevice();
-
-      const order = {
-        id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
-        name: cleanName,
-        address: cleanAddress,
-        device: device,                 // ← сохраняем устройство
-        items: cart.map(i=>({ name:i.name, price:i.price, qty:i.qty })),
-        time: Date.now(),
-        status: 'Оформлен',
-        code: genCode()
-      };
-
-      const orders = getOrders();
-      orders.unshift(order);
-      if (orders.length>200) orders.length = 200;
-      setOrders(orders);
-
-      setCart([]);
-      renderCart();
-      renderOrders();
-      showToast('На вас оформлен кредит');
-      closeCart();
-      return;
-    }
-  }, true);
-
-  /* ---------- Стили ---------- */
-  const st = document.createElement('style');
-  st.textContent = `
-    .order-code {
-      margin-top: 12px; padding: 6px 12px; border-radius: 8px;
-      background: rgba(0,255,213,.08);
-      border: 1px dashed rgba(0,255,213,.35);
-      color: #00ffd5;
-      font-family: ui-monospace, monospace;
-      font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
-      display: inline-block;
-    }
-    .order-address {
-      margin-top: 10px; padding: 6px 12px; border-radius: 8px;
-      background: rgba(255,45,117,.08);
-      border: 1px dashed rgba(255,45,117,.35);
-      color: #ff2d75;
-      font-size: 13px; font-weight: 600;
-    }
-    .order-device {
-      margin-top: 10px; padding: 10px 12px; border-radius: 8px;
-      background: rgba(192,132,252,.06);
-      border: 1px dashed rgba(192,132,252,.3);
-      display: flex; flex-direction: column; gap: 4px;
-    }
-    .order-device .device-line {
-      color: #c084fc;
-      font-size: 12px; font-weight: 600;
-    }
-  `;
-  document.head.appendChild(st);
-
-  /* ---------- Периодическое обновление ленты ---------- */
-  let lastRaw = '';
-  function tick(){
-    const raw = localStorage.getItem(ORDERS_KEY) || '';
-    if (raw !== lastRaw){
-      lastRaw = raw;
-      renderOrders();
-    }
-  }
-
-  /* ---------- Старт ---------- */
-  function init(){
-    keepOnlyOneCart();
-    renderCart();
-    renderOrders();
-
-    setInterval(keepOnlyOneCart, 300);
-    setInterval(tick, 400);
-    setInterval(renderOrders, 30000);
-  }
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.addEventListener('storage', function(e){
-    if (e.key === CART_KEY) renderCart();
-    if (e.key === ORDERS_KEY){ lastRaw = e.newValue || ''; renderOrders(); }
-  });
+  // Если хочешь сразу увидеть данные в консоли — раскомментируй:
+  // window.getDeviceInfo().then(info => console.log('Устройство:', info));
 })();
 </script>
-  
